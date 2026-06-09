@@ -886,7 +886,8 @@ async function openWatchView(id) {
   
   const m = d.Media;
   state = { anilistId:m.id, malId:m.idMal, currentEp:null, provider:'megaplay', lang:'sub', totalEps: m.episodes || (m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : 12), animeTitle: m.title.romaji, animeCover: m.coverImage.large, animeObj: m };
-  
+  document.getElementById('lang-sub').classList.add('active');
+  document.getElementById('lang-dub').classList.remove('active');
   document.getElementById('bc-title').textContent = m.title.romaji;
   document.getElementById('watch-title').textContent = m.title.romaji;
   document.getElementById('watch-cover').src = m.coverImage.large;
