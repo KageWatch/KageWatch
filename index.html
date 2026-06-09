@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KageWatch | Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060f;
+  --surface: #0e0e1c;
+  --card: #111120;
+  --card2: #181828;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.13);
+  --accent: #e63950;
+  --accent2: #ff6b35;
+  --purple: #7c4dff;
+  --text: #ededf8;
+  --muted: #52526e;
+  --muted2: #8888aa;
+  --glow: rgba(230,57,80,0.22);
+  --r: 11px;
+  --rl: 16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* --- AMBIENT DYNAMIC BACKGROUND --- */
+#ambient-bg { position: fixed; inset: -50px; z-index: -1; background-size: cover; background-position: center top; filter: blur(25px) brightness(0.15); opacity: 0; transition: opacity 0.6s ease, background-image 0.6s ease; pointer-events: none; }
+#ambient-bg.active { opacity: 1; }
+
+/* Premium Custom Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:10px;transition:background 0.3s}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+/* --- HEADER --- */
+header{position:fixed;top:0;left:0;right:0;z-index:300;padding:0 44px;height:70px;display:flex;align-items:center;gap:35px;transition:all .4s;background:linear-gradient(to bottom, rgba(6,6,15,0.9) 0%, transparent 100%);}
+header.scrolled{background:rgba(6,6,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);height:62px;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;}
+
+nav{display:flex;gap:8px;flex:1;position:relative;}
+nav a{padding:8px 16px;color:var(--muted2);font-size:0.85rem;font-weight:600;border-radius:8px;cursor:pointer;transition:color .3s;text-decoration:none;position:relative;z-index:2;}
+nav a:hover, nav a.active{color:var(--text);}
+.nav-indicator{position:absolute;bottom:0;height:100%;background:rgba(255,255,255,0.08);border-radius:8px;transition:all 0.4s cubic-bezier(0.34,1.3,0.64,1);z-index:1;}
+
+.header-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.search-pill{display:flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:24px;cursor:text;transition:all .3s;}
+.search-pill input{background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.85rem;width:180px;}
+.search-pill input::placeholder{color:var(--muted)}
+.search-pill:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);background:rgba(230,57,80,0.04)}
+.shortcut-hint{font-size:0.65rem;font-weight:700;color:var(--muted);background:var(--card2);padding:2px 6px;border-radius:4px;border:1px solid var(--border2);letter-spacing:1px;}
+
+.icon-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--muted2);font-size:0.9rem;}
+.icon-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-2px);box-shadow:0 6px 16px var(--glow)}
+.icon-btn.active-heart{color:#e63950;background:rgba(230,57,80,0.1);border-color:#e63950;}
+
+/* --- VIEWS LOGIC --- */
+.view { display: none; animation: fadeIn 0.4s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- PREMIUM HERO --- */
+#hero{position:relative;width:100%;height:580px;overflow:hidden;margin-bottom:0;}
+#hero::before, #hero::after{content:'';position:absolute;left:0;right:0;height:40px;background:#000;z-index:10;}
+#hero::before{top:0;} #hero::after{bottom:0;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;pointer-events:none;}
+.hero-slide.active{opacity:1;pointer-events:auto}
+.hero-bg{position:absolute;inset:-50px;background-size:cover;background-position:center top;filter:blur(3px) brightness(0.4);transition:transform 0.1s ease-out;}
+.hero-grad{position:absolute;inset:0;background:linear-gradient(to right,rgba(6,6,15,0.95) 0%,rgba(6,6,15,0.7) 45%,rgba(6,6,15,0.1) 100%),linear-gradient(to top,rgba(6,6,15,1) 0%,transparent 30%);}
+.hero-content{position:relative;z-index:2;height:100%;display:flex;align-items:center;padding:0 60px;gap:0;transform:translateY(10px);transition:transform 0.8s cubic-bezier(0.34,1.3,0.64,1);opacity:0;}
+.hero-slide.active .hero-content{transform:translateY(0);opacity:1;}
+
+.hero-left{max-width:550px;flex:1}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+.hero-eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--glow)}50%{box-shadow:0 0 0 6px transparent}}
+
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:4.2rem;letter-spacing:2px;line-height:0.9;margin-bottom:18px;text-shadow: 0 10px 30px rgba(0,0,0,0.8);}
+.hero-genres{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.hero-genre{font-size:0.75rem;font-weight:600;padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(4px);}
+.hero-desc{font-size:0.9rem;color:var(--muted2);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:28px;}
+
+.btn-watch{display:flex;align-items:center;gap:10px;padding:14px 32px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all .3s;box-shadow:0 8px 24px var(--glow);}
+.btn-watch:hover{background:#c92d42;transform:translateY(-3px);box-shadow:0 12px 32px rgba(230,57,80,0.4)}
+
+.hero-right{position:absolute;right:80px;top:50%;transform:translateY(-50%) perspective(1000px) rotateY(-5deg);width:220px;}
+.hero-cover{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.1);animation:coverFloat 6s ease-in-out infinite;}
+@keyframes coverFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(1deg)}}
+
+.hero-dots{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:5;}
+.hero-dot{width:24px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .3s;}
+.hero-dot.active{background:var(--accent);width:40px;box-shadow:0 0 10px var(--glow);}
+
+/* Filters & Home Body */
+.genre-filters{padding:20px 44px 0;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;}
+.genre-filters::-webkit-scrollbar{display:none;}
+.filter-chip{padding:6px 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;font-size:0.75rem;font-weight:600;color:var(--muted2);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.filter-chip:hover, .filter-chip.active{background:var(--text);color:var(--bg);border-color:var(--text);}
+
+#page-body{padding:0 0 80px}
+.strip-section{padding:36px 0 0}
+.strip-head{display:flex;align-items:center;justify-content:space-between;padding:0 44px;margin-bottom:18px}
+.strip-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1.5px;display:flex;align-items:center;gap:12px;}
+.strip-title .bar{width:4px;height:22px;background:var(--accent);border-radius:2px;}
+.h-scroll{display:flex;gap:16px;overflow-x:auto;padding:6px 44px 20px;scrollbar-width:none; cursor:grab;}
+.h-scroll:active {cursor:grabbing;}
+.h-scroll::-webkit-scrollbar{display:none}
+
+.h-scroll.dragging .a-card, .h-scroll.dragging .cw-card { pointer-events: none; }
+
+@keyframes cardEntrance { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* Premium Anime Cards */
+.a-card{flex-shrink:0;width:160px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);position:relative;transition:all .3s cubic-bezier(0.34,1.3,0.64,1);}
+.a-card:hover{transform:translateY(-8px) scale(1.02);border-color:var(--accent);box-shadow:0 15px 40px var(--glow);z-index:10;}
+.a-card-img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;}
+.a-card-body{padding:12px}
+.a-card-title{font-size:0.8rem;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--text)}
+
+.live-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);border:1px solid rgba(78,255,158,0.3);border-radius:6px;padding:3px 8px;font-size:0.6rem;font-weight:700;color:#4eff9e;display:flex;align-items:center;gap:4px;z-index:2;}
+.live-badge .dot{width:5px;height:5px;background:#4eff9e;border-radius:50%;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.a-card-score{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);border-radius:6px;padding:3px 8px;font-size:0.65rem;font-weight:700;color:#ffd700;z-index:2;}
+
+.a-card-hover{position:absolute;inset:0;background:rgba(6,6,15,0.95);backdrop-filter:blur(5px);display:flex;flex-direction:column;justify-content:center;padding:16px;opacity:0;transition:opacity .3s;text-align:center;}
+.a-card:hover .a-card-hover{opacity:1}
+.a-card-play{width:40px;height:40px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1rem;color:#fff;box-shadow:0 4px 14px var(--glow);transition:transform 0.2s;}
+.a-card-play:hover{transform:scale(1.1);}
+.hover-synopsis{font-size:0.7rem;color:var(--muted2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;}
+.btn-fav{position:absolute;bottom:12px;right:12px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer;transition:all 0.2s;}
+.btn-fav:hover{background:var(--accent);color:#fff;}
+.btn-fav.saved{color:#e63950;}
+
+/* Continue Watching Progress */
+.cw-card{flex-shrink:0;width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);position:relative;transition:all .3s;}
+.cw-card:hover{transform:translateY(-5px);border-color:var(--accent);box-shadow:0 10px 30px var(--glow);}
+.cw-thumb-wrap{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden}
+.cw-thumb{width:100%;height:100%;object-fit:cover;display:block}
+.cw-thumb-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;}
+.cw-card:hover .cw-thumb-overlay{opacity:1}
+.cw-play{width:46px;height:46px;border-radius:50%;background:rgba(230,57,80,0.9);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;}
+.cw-info{padding:12px 14px}
+.cw-title{font-size:0.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.cw-ep{font-size:0.75rem;color:var(--muted2);margin-bottom:10px;display:flex;justify-content:space-between;}
+.cw-bar{height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
+.cw-fill{height:100%;background:linear-gradient(90deg, var(--accent2), var(--accent));border-radius:2px;box-shadow:0 0 10px var(--glow);}
+
+/* Empty States & Skeletons */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;color:var(--muted);}
+.empty-state svg{font-size:3rem;margin-bottom:16px;opacity:0.3;}
+.skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200%;animation:shimmer 1.5s infinite;border-radius:12px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:10px 20px;font-size:.83rem;color:var(--text);opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* --- ZORO-STYLE WATCH VIEW --- */
+#watch-view { padding: 90px 44px 40px; max-width: 1600px; margin: 0 auto; }
+.breadcrumb { font-size: 0.8rem; color: var(--muted2); margin-bottom: 20px; display: flex; gap: 8px; }
+.breadcrumb span { color: var(--text); font-weight: 600; cursor: pointer; }
+.watch-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+.player-container { background: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; margin-bottom: 16px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.player-container iframe { width: 100%; height: 100%; border: none; display: block; }
+.player-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; background: var(--card2); color: var(--muted); }
+
+/* Zoro Actions */
+.player-actions { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); }
+.action-group { display: flex; gap: 20px; }
+.action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; transition: color 0.2s; }
+.action-btn:hover { color: var(--text); }
+
+/* Servers & Audio Box */
+.server-box { display: flex; align-items: center; gap: 20px; background: var(--bg); margin-bottom: 24px; }
+.server-btn { background: var(--card2); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; color: var(--muted2); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.server-btn:hover { border-color: var(--muted2); color: var(--text); }
+.server-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 10px var(--glow); }
+
+/* Airing Schedule Widget */
+#airing-schedule { display:none; background: var(--card2); padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.85rem; color: var(--text); border-left: 4px solid var(--accent); align-items: center; gap: 10px; }
+
+/* Anime Details */
+.anime-details-box { display: flex; gap: 20px; background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 8px; }
+.anime-cover { width: 120px; border-radius: 8px; flex-shrink: 0; }
+.anime-info h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 10px; letter-spacing: 1px; line-height: 1.1; }
+.anime-desc { font-size: 0.85rem; color: var(--muted2); line-height: 1.6; margin-bottom: 16px; }
+.anime-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; color: var(--text); }
+
+/* Right Grid */
+.episodes-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; height: 100%; max-height: 800px; }
+.ep-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.ep-header-title { font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; color: var(--text); }
+.ep-search { background: var(--card2); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; color: var(--text); font-size: 0.8rem; width: 120px; outline: none; }
+.ep-search:focus { border-color: var(--accent); }
+.ep-grid-wrap { padding: 16px; overflow-y: auto; flex: 1; }
+.ep-grid-wrap::-webkit-scrollbar{width:4px;}
+.ep-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.ep-box { background: var(--card2); border: 1px solid transparent; color: var(--muted2); padding: 10px 0; text-align: center; font-size: 0.85rem; font-weight: 600; border-radius: 4px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+.ep-box:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.ep-box.active { background: var(--accent); color: #fff; }
+.ep-box.watched::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--accent); opacity: 0.5; }
+.ep-box.active.watched::after { background: #fff; opacity: 1; }
+
+@media(max-width: 1100px) { .watch-layout { grid-template-columns: 1fr; } .episodes-panel { max-height: 400px; } }
+</style>
+</head>
+<body>
+
+<div id="ambient-bg"></div>
+
+<header id="main-header">
+  <div class="logo" onclick="goHome()">KageWatch</div>
+  <nav id="main-nav">
+    <a class="active" onclick="goHome()">Home</a>
+    <a onclick="goHome(); loadSection('trending')">Trending</a>
+    <a onclick="goHome(); loadSection('top')">Top Rated</a>
+    <a onclick="goHome(); loadSection('airing')">Airing</a>
+    <div class="nav-indicator" id="nav-indicator"></div>
+  </nav>
+  <div class="header-right">
+    <div class="search-pill" id="search-trigger">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Quick Search...">
+      <span class="shortcut-hint">Ctrl K</span>
+    </div>
+    <div class="icon-btn" title="Watchlist" onclick="loadWatchlist()" id="nav-watchlist">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+  </div>
+</header>
+
+<div id="toast"></div>
+
+<div id="home-view" class="view active">
+  <div id="hero">
+    <div id="hero-slider-container"></div>
+    <div class="hero-dots" id="hero-dots"></div>
+    <div class="hero-arrows">
+      <div class="hero-arrow" onclick="heroNav(-1)">&#8592;</div>
+      <div class="hero-arrow" onclick="heroNav(1)">&#8594;</div>
+    </div>
+  </div>
+
+  <div class="genre-filters" id="genre-filters">
+    <div class="filter-chip active" onclick="filterGenre('')">All</div>
+    <div class="filter-chip" onclick="filterGenre('Action')">Action</div>
+    <div class="filter-chip" onclick="filterGenre('Romance')">Romance</div>
+    <div class="filter-chip" onclick="filterGenre('Comedy')">Comedy</div>
+    <div class="filter-chip" onclick="filterGenre('Fantasy')">Fantasy</div>
+    <div class="filter-chip" onclick="filterGenre('Horror')">Horror</div>
+    <div class="filter-chip" onclick="filterGenre('Mecha')">Mecha</div>
+  </div>
+
+  <div id="page-body">
+    <section class="strip-section" id="history-section" style="display:none">
+      <div class="strip-head">
+        <div class="strip-title"><span class="bar"></span>Continue Watching</div>
+        <span class="see-all" onclick="clearHistory()">Clear all</span>
+      </div>
+      <div class="h-scroll" id="history-scroll"></div>
+    </section>
+    
+    <section class="strip-section">
+      <div class="strip-head">
+        <div class="strip-title"><span class="bar"></span>Trending Now</div>
+        <span class="see-all" onclick="loadSection('trending')">See all →</span>
+      </div>
+      <div class="h-scroll" id="strip-trending"></div>
+    </section>
+    
+    <section class="strip-section">
+      <div class="strip-head">
+        <div class="strip-title"><span class="bar"></span>Currently Airing</div>
+        <span class="see-all" onclick="loadSection('airing')">See all →</span>
+      </div>
+      <div class="h-scroll" id="strip-airing"></div>
+    </section>
+    
+    <section class="strip-section" style="padding-bottom:20px" id="dynamic-section">
+      <div class="strip-head">
+        <div class="strip-title"><span class="bar"></span>Top Rated</div>
+      </div>
+      <div class="h-scroll" id="strip-top"></div>
+    </section>
+    
+    <section class="strip-section" id="search-section" style="display:none;padding-bottom:20px">
+      <div class="strip-head">
+        <div class="strip-title"><span class="bar"></span><span id="search-label">Results</span></div>
+      </div>
+      <div class="h-scroll" id="strip-search"></div>
+    </section>
+  </div>
+</div>
+
+<div id="watch-view" class="view">
+  <div class="breadcrumb">
+    <span onclick="goHome()">Home</span> / <span id="bc-title">Anime</span>
+  </div>
+
+  <div class="watch-layout">
+    <div class="watch-left">
+      <div class="player-container" id="player-wrap">
+        <div class="player-placeholder">
+          <div style="font-size: 3rem; margin-bottom:10px;">▶</div>
+          <p>Select an episode to watch</p>
+        </div>
+      </div>
+
+      <div class="player-actions">
+        <div class="action-group">
+          <div class="action-btn">🌙 Focus</div>
+          <div class="action-btn" id="btn-autonext" onclick="toggleAuto('next')" style="color:var(--accent);">
+            ⏭ AutoNext <span style="font-size:0.7rem; background:rgba(230,57,80,0.2); padding:2px 6px; border-radius:4px; margin-left:4px;">ON</span>
+          </div>
+          <div class="action-btn" id="btn-autoplay" onclick="toggleAuto('play')" style="color:var(--accent);">
+            ▶ AutoPlay <span style="font-size:0.7rem; background:rgba(230,57,80,0.2); padding:2px 6px; border-radius:4px; margin-left:4px;">ON</span>
+          </div>
+        </div>
+        <div class="action-group">
+          <div class="action-btn" onclick="navEp(-1)">⏮ Prev</div>
+          <div class="action-btn" onclick="navEp(1)">Next ⏭</div>
+          <div class="action-btn" onclick="Store.toggleFav(state.animeObj)">♥ Bookmark</div>
+          <div class="action-btn">⚑ Report</div>
+        </div>
+      </div>
+
+      <div class="server-box">
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:0.75rem; color:var(--muted); font-weight:700;">You are watching <span style="color:var(--accent);">Episode <span id="current-ep-label">1</span></span></div>
+          <div style="font-size:0.65rem; color:var(--muted2);">SWITCH SERVERS IF THE CURRENT LINK IS UNSTABLE.</div>
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-left:auto;">
+           <button class="server-btn active" id="lang-sub" onclick="setLang('sub')">SUB</button>
+           <button class="server-btn" id="lang-dub" onclick="setLang('dub')">DUB</button>
+        </div>
+        <div id="server-wrap" style="display:flex; gap:8px; border-left:1px solid var(--border); padding-left:20px;">
+           </div>
+      </div>
+
+      <div id="airing-schedule">
+        <span style="font-size: 1.2rem;">🔔</span>
+        <span id="airing-text"></span>
+      </div>
+
+      <div class="anime-details-box">
+        <img class="anime-cover" id="watch-cover" src="" alt="">
+        <div class="anime-info">
+          <h1 id="watch-title">Anime Title</h1>
+          <div class="anime-tags" id="watch-tags" style="margin-bottom: 12px;"></div>
+          <div class="anime-desc" id="watch-desc">Description goes here...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="episodes-panel">
+      <div class="ep-header">
+        <div class="ep-header-title">EPISODES</div>
+        <input type="number" class="ep-search" placeholder="Jump to..." min="1" oninput="filterEps(this.value)" onkeydown="if(event.key==='Enter') playEp(parseInt(this.value))">
+      </div>
+      <div class="ep-grid-wrap">
+        <div class="ep-grid" id="ep-grid">
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const AL = 'https://graphql.anilist.co';
+
+const PROVIDERS = {
+  megaplay: { name:'MegaPlay', url:(id,ep,lang)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/${lang}` },
+  animeplay:{ name:'AnimePlay',url:(id,ep,lang)=>`https://animeplay.cfd/stream/mal/${id}/${ep}/${lang}` },
+  vidplus:  { name:'VidPlus',  url:(id,ep,lang)=>`https://player.vidplus.to/embed/anime/${id}/${ep}?dub=${lang==='dub'}` },
+  tryembed: { name:'TryEmbed', url:(id,ep,lang)=>`https://tryembed.us.cc/embed/anime/${id}/${ep}/${lang}` }
+};
+
+let state = { anilistId:null, malId:null, currentEp:null, provider:'megaplay', lang:'sub', totalEps:0, animeTitle:'', animeCover:'', animeObj:null };
+let heroAnimes = [], heroIdx = 0, heroTimer = null;
+
+// ── UTILS & STORE ──
+async function alQ(query, vars={}) {
+  const r = await fetch(AL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({query, variables:vars}) });
+  const j = await r.json(); return j.data;
+}
+
+const Store = {
+  get(k){ try{return JSON.parse(localStorage.getItem(k)||'{}')}catch{return{}} },
+  set(k,v){ localStorage.setItem(k,JSON.stringify(v)) },
+  addHist(malId,d){ const h=this.get('otaku_hist'); h[malId]={...d,ts:Date.now()}; this.set('otaku_hist',h); renderHistory(); },
+  getHist(){ return Object.values(this.get('otaku_hist')).sort((a,b)=>b.ts-a.ts).slice(0,10); },
+  watchedEps(mid){ return this.get('otaku_hist')[mid]?.eps||[]; },
+  toggleFav(anime){
+    const w=this.get('otaku_fav');
+    if(w[anime.id]) { delete w[anime.id]; showToast('Removed from Watchlist'); }
+    else { w[anime.id]={...anime, ts:Date.now()}; showToast('Added to Watchlist ❤️'); }
+    this.set('otaku_fav',w);
+  },
+  isFav(id){ return !!this.get('otaku_fav')[id]; },
+  getFavs(){ return Object.values(this.get('otaku_fav')).sort((a,b)=>b.ts-a.ts); }
+};
+
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+// ── UI HELPERS ──
+function updateNavIndicator() {
+  const activeLink = document.querySelector('nav a.active');
+  const indicator = document.getElementById('nav-indicator');
+  if(activeLink && indicator) {
+    indicator.style.width = `${activeLink.offsetWidth}px`;
+    indicator.style.left = `${activeLink.offsetLeft}px`;
+  }
+}
+document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', function() {
+    document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+    updateNavIndicator();
+  });
+});
+
+function setupDragScroll() {
+  const sliders = document.querySelectorAll('.h-scroll, .genre-filters');
+  let isDown = false, startX, scrollLeft;
+  sliders.forEach(s => {
+    s.addEventListener('mousedown', e => { isDown = true; startX = e.pageX - s.offsetLeft; scrollLeft = s.scrollLeft; });
+    s.addEventListener('mouseleave', () => { isDown = false; s.classList.remove('dragging'); });
+    s.addEventListener('mouseup', () => { isDown = false; s.classList.remove('dragging'); });
+    s.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      e.preventDefault();
+      s.classList.add('dragging'); 
+      const walk = (e.pageX - s.offsetLeft - startX) * 1.5;
+      s.scrollLeft = scrollLeft - walk;
+    });
+  });
+}
+
+// ── HOME VIEW LOGIC ──
+function makeCard(a, index = 0){
+  const score=a.averageScore?`<div class="a-card-score">⭐ ${(a.averageScore/10).toFixed(1)}</div>`:'';
+  const live=a.status==='RELEASING'?`<div class="live-badge"><div class="dot"></div>Live</div>`:'';
+  const desc=a.description ? a.description.replace(/<[^>]*>/g,'').slice(0,100)+'...' : 'No synopsis available.';
+  const isFav = Store.isFav(a.id);
+  const bannerBg = a.bannerImage || a.coverImage.extraLarge || a.coverImage.large;
+  
+  const el=document.createElement('div'); 
+  el.className='a-card';
+  el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${index * 0.05}s both`;
+  
+  el.addEventListener('mouseenter', () => {
+    const ambient = document.getElementById('ambient-bg');
+    ambient.style.backgroundImage = `url('${bannerBg}')`;
+    ambient.classList.add('active');
+  });
+  el.addEventListener('mouseleave', () => {
+    document.getElementById('ambient-bg').classList.remove('active');
+  });
+  
+  el.innerHTML=`
+    <img class="a-card-img" src="${a.coverImage.large}" loading="lazy">
+    ${score} ${live}
+    <div class="a-card-hover" onclick="openWatchView(${a.id})">
+      <div class="a-card-play">▶</div>
+      <div class="hover-synopsis">${desc}</div>
+      <div class="a-card-genres">${(a.genres||[]).slice(0,2).map(g=>`<span class="a-card-genre">${g}</span>`).join('')}</div>
+    </div>
+    <button class="btn-fav ${isFav?'saved':''}" onclick="event.stopPropagation(); Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')}); this.classList.toggle('saved');">♥</button>
+    <div class="a-card-body" onclick="openWatchView(${a.id})">
+      <div class="a-card-title">${a.title.romaji}</div>
+    </div>`;
+  return el;
+}
+
+function fillStrip(id,list){
+  const c=document.getElementById(id); c.innerHTML='';
+  if(!list.length) { c.innerHTML = `<div class="empty-state"><svg>📭</svg><p>Nothing found here.</p></div>`; return; }
+  list.forEach((a, i)=>c.appendChild(makeCard(a, i)));
+}
+
+function buildHero(list){
+  heroAnimes=list; 
+  const cont = document.getElementById('hero-slider-container');
+  const dotsEl = document.getElementById('hero-dots');
+  cont.innerHTML = ''; dotsEl.innerHTML = '';
+  
+  list.forEach((a,i)=>{
+    const slide=document.createElement('div');
+    slide.className='hero-slide'+(i===0?' active':'');
+    slide.innerHTML=`
+      <div class="hero-bg" style="background-image:url('${a.bannerImage||a.coverImage.extraLarge}')"></div>
+      <div class="hero-grad"></div>
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-eyebrow"><span class="pulse"></span>Spotlight</div>
+          <div class="hero-title">${a.title.english||a.title.romaji}</div>
+          <div class="hero-genres">${(a.genres||[]).slice(0,4).map(g=>`<span class="hero-genre">${g}</span>`).join('')}</div>
+          <div class="hero-desc">${(a.description||'').replace(/<[^>]*>/g,'').slice(0,180)}…</div>
+          <div class="hero-actions">
+            <button class="btn-watch" onclick="openWatchView(${a.id})">▶ Watch Now</button>
+          </div>
+        </div>
+        <div class="hero-right">
+          <img class="hero-cover" src="${a.coverImage.extraLarge||a.coverImage.large}" alt="">
+        </div>
+      </div>`;
+    cont.appendChild(slide);
+    const dot=document.createElement('div'); dot.className='hero-dot'+(i===0?' active':'');
+    dot.onclick=()=>goHero(i); dotsEl.appendChild(dot);
+  });
+  startHeroTimer();
+}
+
+document.getElementById('hero').addEventListener('mousemove', e => {
+  const { clientX, clientY } = e;
+  const x = (clientX / window.innerWidth - 0.5) * 20;
+  const y = (clientY / window.innerHeight - 0.5) * 20;
+  const activeBg = document.querySelector('.hero-slide.active .hero-bg');
+  const activeCover = document.querySelector('.hero-slide.active .hero-cover');
+  if(activeBg) activeBg.style.transform = `scale(1.05) translate(${x}px, ${y}px)`;
+  if(activeCover) activeCover.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+});
+
+function goHero(i){
+  document.querySelectorAll('.hero-slide').forEach((s,j)=>s.classList.toggle('active',j===i));
+  document.querySelectorAll('.hero-dot').forEach((d,j)=>d.classList.toggle('active',j===i));
+  heroIdx=i;
+}
+function heroNav(dir){ clearTimeout(heroTimer); heroIdx=(heroIdx+dir+heroAnimes.length)%heroAnimes.length; goHero(heroIdx); startHeroTimer(); }
+function startHeroTimer(){ clearTimeout(heroTimer); heroTimer=setTimeout(()=>heroNav(1), 6000); }
+
+async function doSearch(){
+  const q=document.getElementById('search-input').value.trim();
+  if(!q) return;
+  goHome(); 
+  document.getElementById('search-label').textContent=`Results for "${q}"`;
+  document.getElementById('search-section').style.display='block';
+  document.getElementById('strip-search').innerHTML='<div class="skeleton" style="height:200px;width:100%"></div>';
+  document.getElementById('search-section').scrollIntoView({behavior:'smooth'});
+  const d=await alQ(`query($s:String){Page(perPage:20){media(search:$s,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`,{s:q});
+  fillStrip('strip-search', d?.Page?.media||[]);
+}
+
+document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+
+async function filterGenre(genre) {
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.textContent.trim() === (genre || 'All'));
+  });
+  const sectionTitle = document.querySelector('#dynamic-section .strip-title');
+  const stripId = 'strip-top'; 
+  document.getElementById('dynamic-section').scrollIntoView({behavior: 'smooth', block: 'center'});
+  document.getElementById(stripId).innerHTML = '<div class="skeleton" style="height:200px;width:100%"></div>';
+  if (!genre) { sectionTitle.innerHTML = '<span class="bar"></span>Top Rated'; loadSection('top'); return; }
+  sectionTitle.innerHTML = `<span class="bar"></span>Best in ${genre}`;
+  const d = await alQ(`query($g:String){ Page(perPage:20){ media(genre:$g, sort:SCORE_DESC, type:ANIME, isAdult:false){ id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description } } }`, {g: genre});
+  fillStrip(stripId, d?.Page?.media || []);
+}
+
+async function loadSection(type){
+  let sort='TRENDING_DESC', filter='';
+  if(type==='top') sort='SCORE_DESC';
+  if(type==='airing'){ filter=',status:RELEASING'; sort='POPULARITY_DESC'; }
+  const d=await alQ(`query{Page(perPage:20){media(sort:${sort},type:ANIME,isAdult:false${filter}){ id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description }}}`);
+  if(d?.Page?.media){
+    document.getElementById('search-section').style.display='block';
+    document.getElementById('search-label').textContent=type==='trending'?'Trending':type==='top'?'Top Rated':'Airing';
+    fillStrip('strip-search',d.Page.media);
+    document.getElementById('search-section').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+function renderHistory(){
+  const items=Store.getHist(), sec=document.getElementById('history-section'), sc=document.getElementById('history-scroll');
+  if(!items.length){sec.style.display='none';return;}
+  sec.style.display='block'; sc.innerHTML='';
+  items.forEach((item, i)=>{
+    const pct = item.total ? Math.round((item.eps.length)/item.total*100) : 0;
+    const el=document.createElement('div'); el.className='cw-card';
+    el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${i * 0.05}s both`;
+    
+    el.addEventListener('mouseenter', () => { document.getElementById('ambient-bg').style.backgroundImage = `url('${item.cover}')`; document.getElementById('ambient-bg').classList.add('active'); });
+    el.addEventListener('mouseleave', () => { document.getElementById('ambient-bg').classList.remove('active'); });
+
+    el.innerHTML=`
+      <div class="cw-thumb-wrap"><img class="cw-thumb" src="${item.cover}" loading="lazy"><div class="cw-thumb-overlay"><div class="cw-play">▶</div></div></div>
+      <div class="cw-info"><div class="cw-title">${item.title}</div><div class="cw-ep"><span>Ep ${item.ep}</span><span>${pct}%</span></div><div class="cw-bar"><div class="cw-fill" style="width:${pct}%"></div></div></div>`;
+    el.onclick=()=>openWatchView(item.aid);
+    sc.appendChild(el);
+  });
+}
+
+function loadWatchlist() {
+  goHome();
+  document.getElementById('search-label').textContent=`My Watchlist ❤️`;
+  document.getElementById('search-section').style.display='block';
+  fillStrip('strip-search', Store.getFavs());
+  document.getElementById('search-section').scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+  updateNavIndicator();
+}
+
+// ── WATCH VIEW LOGIC (ZORO STYLE) ──
+function goHome() {
+  document.getElementById('watch-view').classList.remove('active');
+  document.getElementById('home-view').classList.add('active');
+  document.getElementById('player-wrap').innerHTML = ''; 
+  clearInterval(window.airingTimer); // Stop countdown when going home
+  window.history.pushState({}, '', window.location.pathname); 
+  window.scrollTo(0,0);
+}
+
+let isAutoNext = true;
+let isAutoPlay = true;
+
+function toggleAuto(type) {
+  if (type === 'next') {
+    isAutoNext = !isAutoNext;
+    const btn = document.getElementById('btn-autonext');
+    btn.style.color = isAutoNext ? 'var(--accent)' : 'var(--muted)';
+    btn.innerHTML = `⏭ AutoNext <span style="font-size:0.7rem; background:${isAutoNext ? 'rgba(230,57,80,0.2)' : 'var(--card2)'}; padding:2px 6px; border-radius:4px; margin-left:4px;">${isAutoNext ? 'ON' : 'OFF'}</span>`;
+  } else if (type === 'play') {
+    isAutoPlay = !isAutoPlay;
+    const btn = document.getElementById('btn-autoplay');
+    btn.style.color = isAutoPlay ? 'var(--accent)' : 'var(--muted)';
+    btn.innerHTML = `▶ AutoPlay <span style="font-size:0.7rem; background:${isAutoPlay ? 'rgba(230,57,80,0.2)' : 'var(--card2)'}; padding:2px 6px; border-radius:4px; margin-left:4px;">${isAutoPlay ? 'ON' : 'OFF'}</span>`;
+  }
+}
+
+function updateEpLabel(ep) {
+  const label = document.getElementById('current-ep-label');
+  if(label) label.textContent = ep;
+}
+
+async function openWatchView(id) {
+  window.history.pushState({animeId: id}, '', '?anime=' + id);
+  document.getElementById('home-view').classList.remove('active');
+  document.getElementById('watch-view').classList.add('active');
+  window.scrollTo(0,0);
+  
+  document.getElementById('player-wrap').innerHTML=`<div class="player-placeholder"><div style="font-size:3rem; margin-bottom:10px;">⏳</div><p>Fetching Data...</p></div>`;
+  document.getElementById('ep-grid').innerHTML = '';
+
+  // Added airingAt back to the GraphQL Query
+  const d = await alQ(`query($id:Int){Media(id:$id,type:ANIME){
+    id idMal title{romaji} coverImage{large} episodes averageScore status description(asHtml:false) genres
+    nextAiringEpisode { episode airingAt } 
+  }}`, {id});
+  
+  const m = d.Media;
+  state = { anilistId:m.id, malId:m.idMal, currentEp:null, provider:'megaplay', lang:'sub', totalEps: m.episodes || (m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : 12), animeTitle: m.title.romaji, animeCover: m.coverImage.large, animeObj: m };
+  
+  document.getElementById('bc-title').textContent = m.title.romaji;
+  document.getElementById('watch-title').textContent = m.title.romaji;
+  document.getElementById('watch-cover').src = m.coverImage.large;
+  document.getElementById('watch-desc').textContent = m.description ? m.description.replace(/<[^>]*>/g,'').slice(0,250)+'...' : 'No description available.';
+  
+  const tags=document.getElementById('watch-tags'); tags.innerHTML='';
+  if(m.averageScore) tags.innerHTML+=`<span class="tag">⭐ ${(m.averageScore/10).toFixed(1)}</span>`;
+  (m.genres||[]).slice(0,3).forEach(g=>{tags.innerHTML+=`<span class="tag">${g}</span>`;});
+
+  const srv=document.getElementById('server-wrap'); srv.innerHTML='';
+  Object.keys(PROVIDERS).forEach(k=>{
+    const btn=document.createElement('button');
+    btn.className='server-btn'+(k===state.provider?' active':'');
+    btn.textContent = PROVIDERS[k].name;
+    btn.onclick=()=> { document.querySelectorAll('.server-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.provider=k; if(state.currentEp) playEp(state.currentEp); };
+    srv.appendChild(btn);
+  });
+
+  // RESTORED AIRING SCHEDULE LOGIC
+  const sched = document.getElementById('airing-schedule');
+  const aText = document.getElementById('airing-text');
+  if (m.nextAiringEpisode) {
+    sched.style.display = 'flex';
+    clearInterval(window.airingTimer);
+    window.airingTimer = setInterval(() => {
+      const dist = (m.nextAiringEpisode.airingAt * 1000) - new Date().getTime();
+      if (dist < 0) { aText.innerHTML = `Episode ${m.nextAiringEpisode.episode} is Live!`; return; }
+      const d = Math.floor(dist / 86400000), h = Math.floor((dist % 86400000) / 3600000), min = Math.floor((dist % 3600000) / 60000);
+      aText.innerHTML = `Ep <b>${m.nextAiringEpisode.episode}</b> drops in: <span style="color:var(--accent);">${d}d ${h}h ${min}m</span>`;
+    }, 1000);
+  } else { 
+    sched.style.display = 'none'; 
+    clearInterval(window.airingTimer); 
+  }
+
+  const grid = document.getElementById('ep-grid');
+  const watched = Store.watchedEps(state.malId);
+  
+  for(let i=1; i<=state.totalEps; i++) {
+    const isW = watched.includes(i);
+    const box = document.createElement('div');
+    box.className = `ep-box ${isW ? 'watched' : ''}`;
+    box.textContent = i;
+    box.dataset.ep = i;
+    box.onclick = () => playEp(i);
+    grid.appendChild(box);
+  }
+
+  document.getElementById('player-wrap').innerHTML=`<div class="player-placeholder"><div style="font-size:3rem; margin-bottom:10px;">▶</div><p>Select Episode from Grid</p></div>`;
+  
+  if(watched.length > 0) playEp(Math.max(...watched));
+}
+
+function playEp(ep) {
+  if(ep < 1 || ep > state.totalEps) return;
+  state.currentEp = ep;
+  updateEpLabel(ep);
+  
+  document.querySelectorAll('.ep-box').forEach(b => b.classList.remove('active'));
+  const activeBox = document.querySelector(`.ep-box[data-ep="${ep}"]`);
+  if(activeBox) {
+    activeBox.classList.add('active', 'watched');
+    activeBox.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  const url = PROVIDERS[state.provider].url(state.malId, ep, state.lang);
+  document.getElementById('player-wrap').innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
+  
+  const h=Store.get('otaku_hist'); const eps=h[state.malId]?.eps||[]; if(!eps.includes(ep)) eps.push(ep);
+  Store.addHist(state.malId,{malId:state.malId, aid:state.anilistId, title:state.animeTitle, cover:state.animeCover, ep, total:state.totalEps, eps});
+}
+
+function navEp(dir) { if(state.currentEp) playEp(state.currentEp + dir); }
+function setLang(l) {
+  state.lang = l;
+  document.getElementById('lang-sub').classList.toggle('active', l==='sub');
+  document.getElementById('lang-dub').classList.toggle('active', l==='dub');
+  if(state.currentEp) playEp(state.currentEp);
+}
+
+window.addEventListener('popstate', (e) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const animeId = urlParams.get('anime');
+  if (animeId) openWatchView(parseInt(animeId));
+  else goHome();
+});
+
+// ── INIT ──
+(async()=>{
+  setupDragScroll();
+  updateNavIndicator();
+  renderHistory();
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const sharedAnimeId = urlParams.get('anime');
+  if(sharedAnimeId) { openWatchView(parseInt(sharedAnimeId)); }
+  
+  const [trending, airing, top] = await Promise.all([
+    alQ(`query{Page(perPage:20){media(sort:TRENDING_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`),
+    alQ(`query{Page(perPage:20){media(sort:POPULARITY_DESC,type:ANIME,status:RELEASING,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`),
+    alQ(`query{Page(perPage:20){media(sort:SCORE_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`)
+  ]);
+  const tList=trending?.Page?.media||[];
+  buildHero(tList.slice(0,5));
+  fillStrip('strip-trending', tList);
+  fillStrip('strip-airing', airing?.Page?.media||[]);
+  fillStrip('strip-top', top?.Page?.media||[]);
+})();
+</script>
+</body>
+</html>
