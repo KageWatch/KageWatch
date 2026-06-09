@@ -173,8 +173,15 @@ nav a:hover, nav a.active{color:var(--text);}
 .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; transition: color 0.2s; }
 .action-btn:hover { color: var(--text); }
 
-/* Servers & Audio Box */
-.server-box { display: flex; align-items: center; gap: 20px; background: var(--bg); margin-bottom: 24px; }
+/* Servers & Audio Box (NEW CLEAN STRUCTURE) */
+.server-box { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+.server-labels { display: flex; flex-direction: column; gap: 6px; }
+.ep-label { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
+.ep-label span { color: var(--accent); }
+.server-notice { font-size: 0.65rem; color: var(--muted2); }
+.server-options { display: flex; align-items: center; gap: 16px; }
+.lang-btns { display: flex; gap: 8px; }
+.server-list { display: flex; gap: 8px; border-left: 1px solid var(--border); padding-left: 16px; }
 .server-btn { background: var(--card2); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; color: var(--muted2); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .server-btn:hover { border-color: var(--muted2); color: var(--text); }
 .server-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 10px var(--glow); }
@@ -217,32 +224,39 @@ nav a:hover, nav a.active{color:var(--text);}
 .ep-box.watched::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--accent); opacity: 0.5; }
 .ep-box.active.watched::after { background: #fff; opacity: 1; }
 
-/* --- MOBILE RESPONSIVENESS --- */
+/* --- MOBILE RESPONSIVENESS & ORDERING TRICK --- */
 @media(max-width: 1100px) { 
-  .watch-layout { grid-template-columns: 1fr; } 
-  .episodes-panel { max-height: 400px; } 
+  .watch-layout { display: flex; flex-direction: column; } 
+  .watch-left { display: contents; } /* Magically unwraps watch-left for mobile flex ordering */
+  
+  #player-wrap { order: 1; }
+  .player-actions { order: 2; }
+  .server-box { order: 3; }
+  #airing-schedule { order: 4; }
+  
+  /* EPISODES PLACED EXACTLY ABOVE DETAILS */
+  .episodes-panel { order: 5; margin-bottom: 24px; max-height: 400px; width: 100%; } 
+  .anime-details-box { order: 6; width: 100%; }
 }
 
 @media(max-width: 768px) {
-  /* Header ko 2 line mein divide karne ka logic */
-  header { padding: 10px 15px; height: auto; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+  /* Dynamic Double Row Header */
+  header { padding: 10px 15px; height: auto; flex-wrap: wrap; gap: 10px; justify-content: space-between; background: rgba(6,6,15,0.98); backdrop-filter: blur(10px); }
   header.scrolled { height: auto; padding: 10px 15px; }
   .logo { font-size: 1.5rem; letter-spacing: 1px; flex: 1; }
+  .nav-indicator { display: none; } /* Hide on mobile to fix visual glitches */
   
-  /* Menu ko neeche shift karke swipeable banana */
-  nav { order: 3; width: 100%; overflow-x: auto; white-space: nowrap; padding-bottom: 5px; scrollbar-width: none; }
+  nav { order: 3; width: 100%; overflow-x: auto; white-space: nowrap; padding-bottom: 5px; scrollbar-width: none; border-top: 1px solid var(--border); padding-top: 8px; }
   nav::-webkit-scrollbar { display: none; }
   nav a { padding: 6px 12px; font-size: 0.85rem; display: inline-block; }
   
-  /* Search aur Icons ko right side set karna */
   .header-right { order: 2; flex-shrink: 0; gap: 8px; }
   .search-pill { padding: 6px 12px; }
   .search-pill input { width: 90px; transition: width 0.3s; }
-  .search-pill input:focus { width: 140px; } /* Tap karne par search bada hoga */
-  .shortcut-hint { display: none; } /* Mobile par Ctrl+K nahi chahiye */
+  .search-pill input:focus { width: 140px; } 
+  .shortcut-hint { display: none; } 
   .icon-btn { width: 34px; height: 34px; font-size: 0.8rem; }
 
-  /* Baki purana mobile CSS */
   .hero-content { padding: 0 20px; text-align: center; }
   .hero-left { margin: 0 auto; }
   .hero-title { font-size: 3rem; }
@@ -250,9 +264,17 @@ nav a:hover, nav a.active{color:var(--text);}
   .hero-actions { justify-content: center; }
   .hero-right { display: none; } 
   
-  #watch-view { padding: 120px 15px 30px; } /* Header double hone ki wajah se padding badhai */
+  #watch-view { padding: 120px 15px 30px; } 
   .watch-layout { gap: 16px; }
   .player-container { aspect-ratio: 16/9; width: 100%; border-radius: 4px; }
+  
+  /* Fixed Mobile Server Box - No Overlaps! */
+  .server-box { flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px; }
+  .server-options { flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
+  .lang-btns { width: 100%; display: flex; gap: 8px; }
+  .lang-btns .server-btn { flex: 1; text-align: center; } /* Sub/Dub takes 50% each */
+  .server-list { border-left: none; padding-left: 0; width: 100%; flex-wrap: wrap; display: flex; gap: 8px; }
+  .server-list .server-btn { flex: 1 1 calc(50% - 8px); text-align: center; margin: 0; } /* 2 buttons per row */
   
   .anime-details-box { flex-direction: column; align-items: center; text-align: center; }
   .anime-cover { width: 100px; margin-bottom: 10px; }
@@ -260,8 +282,6 @@ nav a:hover, nav a.active{color:var(--text);}
   
   .player-actions { flex-direction: column; gap: 15px; align-items: flex-start; }
   .action-group { flex-wrap: wrap; justify-content: center; width: 100%; }
-  .server-box { flex-direction: column; align-items: flex-start; gap: 12px; }
-  #server-wrap { border-left: none; padding-left: 0; flex-wrap: wrap; }
   
   .episodes-panel { max-height: 350px; }
   .ep-grid { grid-template-columns: repeat(4, 1fr); }
@@ -428,18 +448,21 @@ nav a:hover, nav a.active{color:var(--text);}
         </div>
       </div>
 
+      <!-- NEW CLEAN SERVER BOX HTML -->
       <div class="server-box">
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <div style="font-size:0.75rem; color:var(--muted); font-weight:700;">You are watching <span style="color:var(--accent);">Episode <span id="current-ep-label">1</span></span></div>
-          <div style="font-size:0.65rem; color:var(--muted2);">SWITCH SERVERS IF THE CURRENT LINK IS UNSTABLE.</div>
+        <div class="server-labels">
+          <div class="ep-label">You are watching <span>Episode <span id="current-ep-label">1</span></span></div>
+          <div class="server-notice">SWITCH SERVERS IF THE CURRENT LINK IS UNSTABLE.</div>
         </div>
-        
-        <div style="display:flex; gap:10px; margin-left:auto;">
-           <button class="server-btn active" id="lang-sub" onclick="setLang('sub')">SUB</button>
-           <button class="server-btn" id="lang-dub" onclick="setLang('dub')">DUB</button>
+        <div class="server-options">
+          <div class="lang-btns">
+            <button class="server-btn active" id="lang-sub" onclick="setLang('sub')">SUB</button>
+            <button class="server-btn" id="lang-dub" onclick="setLang('dub')">DUB</button>
+          </div>
+          <div id="server-wrap" class="server-list">
+             <!-- Server buttons will be injected here by JS -->
+          </div>
         </div>
-        <div id="server-wrap" style="display:flex; gap:8px; border-left:1px solid var(--border); padding-left:20px;">
-           </div>
       </div>
 
       <div id="airing-schedule">
@@ -455,7 +478,10 @@ nav a:hover, nav a.active{color:var(--text);}
           <div class="anime-desc" id="watch-desc">Description goes here...</div>
         </div>
       </div>
-    </div> <div class="episodes-panel">
+    </div> <!-- End of watch-left -->
+
+    <!-- EPISODES (Placed inside layout, CSS orders it dynamically) -->
+    <div class="episodes-panel">
       <div class="ep-header">
         <div class="ep-header-title">EPISODES</div>
         <input type="number" class="ep-search" placeholder="Jump to..." min="1" oninput="filterEps(this.value)" onkeydown="if(event.key==='Enter') playEp(parseInt(this.value))">
@@ -466,13 +492,17 @@ nav a:hover, nav a.active{color:var(--text);}
       </div>
     </div>
 
-  </div> <div class="relations-section" id="relations-wrap">
+  </div> <!-- End of watch-layout -->
+
+  <div class="relations-section" id="relations-wrap">
     <div class="rel-header">More from this series</div>
     <div class="rel-grid" id="watch-relations">
       </div>
   </div>
 
-</div> <footer id="main-footer">
+</div> <!-- End of watch-view -->
+
+<footer id="main-footer">
   <div class="footer-content">
     <div class="footer-left">
       <div class="logo" onclick="goHome()">KageWatch</div>
