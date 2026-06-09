@@ -25,7 +25,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}
 
 /* --- AMBIENT DYNAMIC BACKGROUND --- */
 #ambient-bg { position: fixed; inset: -50px; z-index: -1; background-size: cover; background-position: center top; filter: blur(25px) brightness(0.15); opacity: 0; transition: opacity 0.6s ease, background-image 0.6s ease; pointer-events: none; }
@@ -59,7 +59,7 @@ nav a:hover, nav a.active{color:var(--text);}
 .icon-btn.active-heart{color:#e63950;background:rgba(230,57,80,0.1);border-color:#e63950;}
 
 /* --- VIEWS LOGIC --- */
-.view { display: none; animation: fadeIn 0.4s ease; }
+.view { display: none; animation: fadeIn 0.4s ease; flex: 1; }
 .view.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -189,6 +189,18 @@ nav a:hover, nav a.active{color:var(--text);}
 .anime-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; color: var(--text); }
 
+/* --- RELATIONS (MORE FROM SERIES) --- */
+.relations-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); display: none; }
+.rel-header { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; }
+.rel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.rel-card { display: flex; align-items: center; gap: 12px; background: var(--card2); border: 1px solid var(--border); padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.rel-card:hover { border-color: var(--muted2); background: rgba(255,255,255,0.05); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+.rel-img { width: 44px; height: 60px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+.rel-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.rel-title { font-size: 0.8rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rel-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--muted2); }
+.rel-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 0.6rem; color: var(--text); }
+
 /* Right Grid */
 .episodes-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; height: 100%; max-height: 800px; }
 .ep-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
@@ -205,6 +217,34 @@ nav a:hover, nav a.active{color:var(--text);}
 .ep-box.active.watched::after { background: #fff; opacity: 1; }
 
 @media(max-width: 1100px) { .watch-layout { grid-template-columns: 1fr; } .episodes-panel { max-height: 400px; } }
+
+/* --- FOOTER --- */
+#main-footer { background: var(--surface); border-top: 1px solid var(--border); padding: 60px 44px 20px; margin-top: auto; }
+.footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; max-width: 1400px; margin: 0 auto; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
+.footer-left { max-width: 400px; }
+.footer-desc { font-size: 0.85rem; color: var(--muted2); line-height: 1.6; margin-top: 16px; }
+.footer-links { display: flex; gap: 60px; flex-wrap: wrap; }
+.link-col { display: flex; flex-direction: column; gap: 12px; }
+.link-col span { font-size: 0.9rem; font-weight: 700; color: var(--text); letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
+.link-col a { color: var(--muted2); font-size: 0.85rem; text-decoration: none; cursor: pointer; transition: color 0.2s; }
+.link-col a:hover { color: var(--accent); }
+.footer-bottom { text-align: center; padding-top: 20px; color: var(--muted); font-size: 0.8rem; }
+.footer-bottom p { margin-bottom: 6px; }
+.footer-bottom .disclaimer { font-size: 0.65rem; opacity: 0.6; }
+
+/* --- MODAL (POPUP) --- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s; }
+.modal-overlay.active .modal-box { transform: translateY(0); }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 10; }
+.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 1px; color: var(--accent); }
+.close-btn { background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
+.close-btn:hover { color: var(--text); }
+.modal-body { padding: 24px; font-size: 0.9rem; color: var(--muted2); line-height: 1.6; }
+.modal-body h3 { color: var(--text); margin: 16px 0 8px; font-size: 1.1rem; }
+.modal-body p { margin-bottom: 12px; }
+.modal-body a { color: var(--accent); text-decoration: none; }
 </style>
 </head>
 <body>
@@ -354,6 +394,13 @@ nav a:hover, nav a.active{color:var(--text);}
           <div class="anime-desc" id="watch-desc">Description goes here...</div>
         </div>
       </div>
+
+      <div class="relations-section" id="relations-wrap">
+        <div class="rel-header">More from this series</div>
+        <div class="rel-grid" id="watch-relations">
+          </div>
+      </div>
+
     </div>
 
     <div class="episodes-panel">
@@ -365,6 +412,47 @@ nav a:hover, nav a.active{color:var(--text);}
         <div class="ep-grid" id="ep-grid">
           </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<footer id="main-footer">
+  <div class="footer-content">
+    <div class="footer-left">
+      <div class="logo" onclick="goHome()">KageWatch</div>
+      <p class="footer-desc">Your ultimate destination for premium, high-quality anime streaming. Dive into the shadows and explore thousands of titles ad-free.</p>
+    </div>
+    <div class="footer-links">
+      <div class="link-col">
+        <span>Navigation</span>
+        <a onclick="goHome()">Home</a>
+        <a onclick="loadSection('trending')">Trending</a>
+        <a onclick="loadSection('top')">Top Rated</a>
+        <a onclick="loadWatchlist()">Watchlist</a>
+      </div>
+      <div class="link-col">
+        <span>Legal</span>
+        <a onclick="openModal('terms')">Terms of Service</a>
+        <a onclick="openModal('privacy')">Privacy Policy</a>
+        <a onclick="openModal('dmca')">DMCA</a>
+        <a onclick="openModal('contact')">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 KageWatch. A NAMANIKA STUDIOS Project. All rights reserved.</p>
+    <p class="disclaimer">Disclaimer: This site does not store any files on its server. All contents are provided by non-affiliated third parties.</p>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="legal-modal" onclick="if(event.target===this) closeModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Title</div>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      Content goes here.
     </div>
   </div>
 </div>
@@ -401,10 +489,48 @@ const Store = {
     this.set('otaku_fav',w);
   },
   isFav(id){ return !!this.get('otaku_fav')[id]; },
-  getFavs(){ return Object.values(this.get('otaku_fav')).sort((a,b)=>b.ts-a.ts); }
+  getFavs(){ return Object.values(this.get('otaku_fav')).sort((a,b)=>b.ts-a.ts); },
+  clearHist(){ localStorage.removeItem('otaku_hist'); renderHistory(); }
 };
 
+function clearHistory() { Store.clearHist(); }
+
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+// ── MODAL LOGIC ──
+const legalData = {
+  terms: { 
+    title: "Terms of Service", 
+    content: "<p>By accessing KageWatch, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you are prohibited from using this site.</p><h3>Use of Service</h3><p>KageWatch provides a custom user interface that aggregates links to third-party streaming providers. We do not host, upload, or manage any media files on our own servers.</p><h3>Disclaimer</h3><p>The service is provided 'as is' without any warranties. We are not responsible for the content, advertisements, or security of the third-party providers linked on this platform.</p>" 
+  },
+  privacy: { 
+    title: "Privacy Policy", 
+    content: "<p>Your privacy is critically important to us.</p><h3>Data Collection</h3><p>KageWatch operates entirely on the client-side within your browser. We do not collect, store, or sell any of your personal data, IP addresses, or viewing habits on any external databases.</p><h3>Local Storage</h3><p>Your continue watching history and watchlist are saved strictly using your browser's Local Storage. If you clear your browser data, this information will be lost permanently.</p>" 
+  },
+  dmca: { 
+    title: "DMCA Disclaimer", 
+    content: "<p>KageWatch respects the intellectual property rights of others.</p><h3>No Hosted Content</h3><p>We do not host any video content, episodes, or movies on our servers. All media streamed on KageWatch is hosted on third-party services that are not affiliated with us.</p><h3>Takedown Requests</h3><p>Since we do not host the files, we cannot remove them. If you believe your copyrighted content is being displayed, please contact the respective media hosting providers (e.g., MegaPlay, VidPlus) to have the files removed. Once removed from their servers, the content will automatically disappear from KageWatch.</p>" 
+  },
+  contact: { 
+    title: "Contact Us", 
+    content: "<p>For any inquiries, bug reports, feature requests, or business propositions, you can reach out to the KageWatch administration.</p><h3>Email</h3><p><a href='mailto:otakustream.admin@gmail.com'>otakustream.admin@gmail.com</a></p><p>Please note that we cannot assist with issues regarding missing episodes or broken videos, as those are handled entirely by our third-party indexers.</p>" 
+  }
+};
+
+function openModal(type) {
+  const m = document.getElementById('legal-modal');
+  document.getElementById('modal-title').textContent = legalData[type].title;
+  document.getElementById('modal-body').innerHTML = legalData[type].content;
+  m.style.display = 'flex';
+  setTimeout(() => m.classList.add('active'), 10);
+  document.body.style.overflow = 'hidden'; 
+}
+
+function closeModal() {
+  const m = document.getElementById('legal-modal');
+  m.classList.remove('active');
+  setTimeout(() => { m.style.display = 'none'; document.body.style.overflow = ''; }, 300);
+}
 
 // ── UI HELPERS ──
 function updateNavIndicator() {
@@ -609,7 +735,7 @@ function goHome() {
   document.getElementById('watch-view').classList.remove('active');
   document.getElementById('home-view').classList.add('active');
   document.getElementById('player-wrap').innerHTML = ''; 
-  clearInterval(window.airingTimer); // Stop countdown when going home
+  clearInterval(window.airingTimer);
   window.history.pushState({}, '', window.location.pathname); 
   window.scrollTo(0,0);
 }
@@ -636,6 +762,24 @@ function updateEpLabel(ep) {
   if(label) label.textContent = ep;
 }
 
+function filterEps(val) {
+  const query = val.trim();
+  const allEps = document.querySelectorAll('.ep-box');
+  
+  if(!query) {
+    allEps.forEach(b => b.style.display = 'block');
+    return;
+  }
+  
+  allEps.forEach(b => {
+    if(b.dataset.ep.startsWith(query)) {
+      b.style.display = 'block';
+    } else {
+      b.style.display = 'none';
+    }
+  });
+}
+
 async function openWatchView(id) {
   window.history.pushState({animeId: id}, '', '?anime=' + id);
   document.getElementById('home-view').classList.remove('active');
@@ -644,11 +788,13 @@ async function openWatchView(id) {
   
   document.getElementById('player-wrap').innerHTML=`<div class="player-placeholder"><div style="font-size:3rem; margin-bottom:10px;">⏳</div><p>Fetching Data...</p></div>`;
   document.getElementById('ep-grid').innerHTML = '';
+  document.querySelector('.ep-search').value = ''; 
 
-  // Added airingAt back to the GraphQL Query
+  // Updated query to fetch relations (More from series)
   const d = await alQ(`query($id:Int){Media(id:$id,type:ANIME){
     id idMal title{romaji} coverImage{large} episodes averageScore status description(asHtml:false) genres
     nextAiringEpisode { episode airingAt } 
+    relations { edges { relationType node { id type format title{romaji english} coverImage{large} startDate{year} } } }
   }}`, {id});
   
   const m = d.Media;
@@ -672,7 +818,6 @@ async function openWatchView(id) {
     srv.appendChild(btn);
   });
 
-  // RESTORED AIRING SCHEDULE LOGIC
   const sched = document.getElementById('airing-schedule');
   const aText = document.getElementById('airing-text');
   if (m.nextAiringEpisode) {
@@ -688,6 +833,42 @@ async function openWatchView(id) {
     sched.style.display = 'none'; 
     clearInterval(window.airingTimer); 
   }
+
+  // Render "More from this series"
+  const relWrap = document.getElementById('relations-wrap');
+  const relGrid = document.getElementById('watch-relations');
+  relGrid.innerHTML = '';
+  
+  if(m.relations && m.relations.edges && m.relations.edges.length > 0) {
+     const validRelations = m.relations.edges.filter(e => e.node && e.node.type === 'ANIME');
+     if(validRelations.length > 0) {
+        relWrap.style.display = 'block';
+        validRelations.forEach(rel => {
+           const node = rel.node;
+           const title = node.title.english || node.title.romaji;
+           const year = node.startDate?.year || 'TBA';
+           let badge = node.format || 'TV';
+           if(badge === 'TV_SHORT') badge = 'SHORT';
+           if(badge === 'SPECIAL') badge = 'SP';
+           if(badge === 'MOVIE') badge = 'FILM';
+           
+           const card = document.createElement('div');
+           card.className = 'rel-card';
+           card.onclick = () => openWatchView(node.id);
+           card.innerHTML = `
+              <img class="rel-img" src="${node.coverImage.large}" alt="">
+              <div class="rel-info">
+                 <div class="rel-title" title="${title}">${title}</div>
+                 <div class="rel-meta">
+                    <span>${year}</span>
+                    <span class="rel-badge">${badge}</span>
+                 </div>
+              </div>
+           `;
+           relGrid.appendChild(card);
+        });
+     } else { relWrap.style.display = 'none'; }
+  } else { relWrap.style.display = 'none'; }
 
   const grid = document.getElementById('ep-grid');
   const watched = Store.watchedEps(state.malId);
