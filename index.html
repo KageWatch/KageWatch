@@ -3,7 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KageWatch | Premium</title>
+
+<title>KageWatch - Watch Anime Online Free | Sub & Dub HD</title>
+<meta name="description" content="Watch anime online for free on KageWatch. Stream the latest anime episodes in HD with Sub and Dub support. Discover trending anime, top-rated series, and recently finished shows safely.">
+<meta name="keywords" content="anime streaming, watch anime online, free anime, anime sub dub, anime episodes, anime website, anime streaming free, watch anime hd">
+
+<meta property="og:title" content="KageWatch - Watch Anime Online Free">
+<meta property="og:description" content="Watch anime online in HD with Sub and Dub support. Ad-free UI and instant streaming.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://kage-watch.vercel.app/favicon.png"> 
+<meta property="og:url" content="https://kage-watch.vercel.app">
+
 <meta name="google-site-verification" content="YGJCluy05g5bxSaSmsodpgoS6j9slUB8ARi5f3rSwI0" />
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -42,7 +52,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 /* --- HEADER --- */
 header{position:fixed;top:0;left:0;right:0;z-index:300;padding:0 44px;height:70px;display:flex;align-items:center;gap:35px;transition:all .4s;background:linear-gradient(to bottom, rgba(6,6,15,0.9) 0%, transparent 100%);}
 header.scrolled{background:rgba(6,6,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);height:62px;}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;}
+
+/* SEO Safe H1 Tag Logo */
+h1.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  font-weight: normal;
+  letter-spacing: 4px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+  margin: 0;
+}
 
 nav{display:flex;gap:8px;flex:1;position:relative;}
 nav a{padding:8px 16px;color:var(--muted2);font-size:0.85rem;font-weight:600;border-radius:8px;cursor:pointer;transition:color .3s;text-decoration:none;position:relative;z-index:2;}
@@ -119,11 +142,12 @@ nav a:hover, nav a.active{color:var(--text);}
 .h-scroll{display:flex;gap:16px;overflow-x:auto;padding:6px 44px 20px;scrollbar-width:none; cursor:grab;}
 .h-scroll:active {cursor:grabbing;}
 .h-scroll::-webkit-scrollbar{display:none}
+
 .h-scroll.dragging .a-card, .h-scroll.dragging .cw-card { pointer-events: none; }
 
 @keyframes cardEntrance { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-/* --- PREMIUM ANIME CARDS --- */
+/* Premium Anime Cards */
 .a-card {
   flex-shrink: 0;
   width: 160px;
@@ -414,7 +438,7 @@ nav a:hover, nav a.active{color:var(--text);}
 @media(max-width: 768px) {
   header { padding: 10px 15px; height: auto; flex-wrap: wrap; gap: 10px; justify-content: space-between; background: rgba(6,6,15,0.98); backdrop-filter: blur(10px); }
   header.scrolled { height: auto; padding: 10px 15px; }
-  .logo { font-size: 1.5rem; letter-spacing: 1px; flex: 1; }
+  h1.logo { font-size: 1.5rem; letter-spacing: 1px; flex: 1; }
   .nav-indicator { display: none; }
   nav { order: 3; width: 100%; overflow-x: auto; white-space: nowrap; padding-bottom: 5px; scrollbar-width: none; border-top: 1px solid var(--border); padding-top: 8px; }
   nav::-webkit-scrollbar { display: none; }
@@ -507,7 +531,7 @@ nav a:hover, nav a.active{color:var(--text);}
 <div id="ambient-bg"></div>
 
 <header id="main-header">
-  <div class="logo" onclick="goHome()">KageWatch</div>
+  <h1 class="logo" onclick="goHome()" style="margin:0; font-weight:normal;">KageWatch</h1>
   <nav id="main-nav">
     <a class="active" onclick="goHome()">Home</a>
     <a onclick="goSearchView('trending', 'Trending Now')">Trending</a>
@@ -665,7 +689,7 @@ nav a:hover, nav a.active{color:var(--text);}
       <div class="anime-details-box">
         <img class="anime-cover" id="watch-cover" src="" alt="">
         <div class="anime-info">
-          <h1 id="watch-title">Anime Title</h1>
+          <h1 id="watch-title" style="font-family:'Bebas Neue',sans-serif; font-size:2rem; margin:0 0 10px 0;">Anime Title</h1>
           <div class="anime-tags" id="watch-tags" style="margin-bottom: 12px;"></div>
           <div class="anime-desc" id="watch-desc">Description goes here...</div>
         </div>
@@ -693,7 +717,7 @@ nav a:hover, nav a.active{color:var(--text);}
   <div class="footer-content">
     <div class="footer-left">
       <div class="logo" onclick="goHome()">KageWatch</div>
-      <p class="footer-desc">Your ultimate destination for premium, high-quality anime streaming. Dive into the shadows and explore thousands of titles ad-free.</p>
+      <p class="footer-desc">Watch Anime Online Free on KageWatch. Your ultimate destination for premium, high-quality anime streaming in Sub and Dub.</p>
     </div>
     <div class="footer-links">
       <div class="link-col">
@@ -989,7 +1013,7 @@ function makeCard(a, index = 0){
   
   el.innerHTML = `
     <div class="a-card-img-wrap" onclick="openWatchView(${a.id})">
-      <img class="a-card-img" src="${a.coverImage.large}" loading="lazy">
+      <img class="a-card-img" src="${a.coverImage.large}" loading="lazy" alt="${getTitle(a.title)}">
       ${score} ${live} ${subDubBadges}
       <div class="a-card-hover">
         <div class="a-card-play">▶</div>
@@ -998,8 +1022,8 @@ function makeCard(a, index = 0){
       </div>
     </div>
     <div class="a-card-body" onclick="openWatchView(${a.id})">
-      <div class="a-card-title">${getTitle(a.title)}</div>
-      <button class="btn-fav ${isFav ? 'saved' : ''}" onclick="event.stopPropagation(); Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')}); this.classList.toggle('saved');">♥</button>
+      <h2 class="a-card-title">${getTitle(a.title)}</h2>
+      <button class="btn-fav ${isFav ? 'saved' : ''}" onclick="event.stopPropagation(); Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')}); this.classList.toggle('saved');" aria-label="Save to Watchlist">♥</button>
     </div>`;
   return el;
 }
@@ -1033,7 +1057,7 @@ function buildHero(list){
           </div>
         </div>
         <div class="hero-right">
-          <img class="hero-cover" src="${a.coverImage.extraLarge||a.coverImage.large}" alt="">
+          <img class="hero-cover" src="${a.coverImage.extraLarge||a.coverImage.large}" alt="${getTitle(a.title)}">
         </div>
       </div>`;
     cont.appendChild(slide);
@@ -1072,7 +1096,7 @@ function renderHistory(){
     el.addEventListener('mouseenter', () => { document.getElementById('ambient-bg').style.backgroundImage = `url('${item.cover}')`; document.getElementById('ambient-bg').classList.add('active'); });
     el.addEventListener('mouseleave', () => { document.getElementById('ambient-bg').classList.remove('active'); });
     el.innerHTML=`
-      <div class="cw-thumb-wrap"><img class="cw-thumb" src="${item.cover}" loading="lazy"><div class="cw-thumb-overlay"><div class="cw-play">▶</div></div></div>
+      <div class="cw-thumb-wrap"><img class="cw-thumb" src="${item.cover}" loading="lazy" alt="History"><div class="cw-thumb-overlay"><div class="cw-play">▶</div></div></div>
       <div class="cw-info"><div class="cw-title">${item.title}</div><div class="cw-ep"><span>Ep ${item.ep}</span><span>${pct}%</span></div><div class="cw-bar"><div class="cw-fill" style="width:${pct}%"></div></div></div>`;
     el.onclick=()=>openWatchView(item.aid);
     sc.appendChild(el);
@@ -1089,6 +1113,10 @@ function goHome() {
   window.scrollTo(0,0);
   document.querySelectorAll('nav a').forEach((l, i) => l.classList.toggle('active', i === 0));
   updateNavIndicator();
+
+  // Reset SEO Title for Home
+  document.title = "KageWatch - Watch Anime Online Free | Sub & Dub";
+  document.querySelector('meta[name="description"]').setAttribute("content", "Watch anime online for free on KageWatch. Stream the latest anime episodes in Sub and Dub, discover trending anime, top-rated series, and recently finished shows.");
 }
 
 let isAutoNext = true;
@@ -1133,6 +1161,11 @@ async function openWatchView(id) {
   
   const m = d.Media;
   state = { anilistId:m.id, malId:m.idMal, currentEp:null, provider:'megaplay', lang:'sub', totalEps: m.episodes || (m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : 12), animeTitle: getTitle(m.title), animeCover: m.coverImage.large, animeObj: m };
+  
+  // SEO Dynamic Updates
+  document.title = `${getTitle(m.title)} - Watch Online Free | KageWatch`;
+  document.querySelector('meta[name="description"]').setAttribute("content", `Watch ${getTitle(m.title)} anime episodes online in HD. Stream subbed and dubbed anime free on KageWatch.`);
+
   document.getElementById('lang-sub').classList.add('active');
   document.getElementById('lang-dub').classList.remove('active');
   document.getElementById('bc-title').textContent = getTitle(m.title);
