@@ -50,6 +50,14 @@ nav a:hover, nav a.active{color:var(--text);}
 .nav-indicator{position:absolute;bottom:0;height:100%;background:rgba(255,255,255,0.08);border-radius:8px;transition:all 0.4s cubic-bezier(0.34,1.3,0.64,1);z-index:1;}
 
 .header-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+
+/* TITLE TOGGLE BUTTON */
+.lang-toggle { cursor: pointer; font-size: 0.75rem; font-weight: 700; background: rgba(255,255,255,0.08); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; color: var(--text); transition: all 0.3s; display: flex; align-items: center; gap: 6px; }
+.lang-toggle:hover { background: var(--accent); border-color: var(--accent); }
+.lang-toggle span { color: var(--muted2); }
+.lang-toggle.en span.en { color: #fff; }
+.lang-toggle.jp span.jp { color: #fff; }
+
 .search-pill{display:flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:24px;cursor:text;transition:all .3s;}
 .search-pill input{background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.85rem;width:180px;}
 .search-pill input::placeholder{color:var(--muted)}
@@ -111,31 +119,147 @@ nav a:hover, nav a.active{color:var(--text);}
 .h-scroll{display:flex;gap:16px;overflow-x:auto;padding:6px 44px 20px;scrollbar-width:none; cursor:grab;}
 .h-scroll:active {cursor:grabbing;}
 .h-scroll::-webkit-scrollbar{display:none}
-
 .h-scroll.dragging .a-card, .h-scroll.dragging .cw-card { pointer-events: none; }
 
 @keyframes cardEntrance { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-/* Premium Anime Cards */
-.a-card{flex-shrink:0;width:160px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);position:relative;transition:all .3s cubic-bezier(0.34,1.3,0.64,1);}
-.a-card:hover{transform:translateY(-8px) scale(1.02);border-color:var(--accent);box-shadow:0 15px 40px var(--glow);z-index:10;}
-.a-card-img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;}
-.a-card-body{padding:12px}
-.a-card-title{font-size:0.8rem;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--text)}
+/* --- PREMIUM ANIME CARDS --- */
+.a-card {
+  flex-shrink: 0;
+  width: 160px;
+  cursor: pointer;
+  border-radius: 12px;
+  background: var(--card); 
+  border: 1px solid var(--border); 
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.a-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--accent);
+  box-shadow: 0 15px 40px var(--glow);
+  z-index: 10;
+}
+
+.a-card-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2/3;
+  overflow: hidden;
+  border-radius: 11px 11px 0 0; 
+}
+
+.a-card-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Perfect Flexbox Title Layout */
+.a-card-body {
+  padding: 12px 10px;
+  background: transparent; 
+  display: flex;
+  align-items: flex-end; 
+  justify-content: space-between;
+  gap: 8px; 
+  height: 62px; 
+}
+
+.a-card-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  flex: 1; 
+  padding: 0;
+}
+
+.btn-fav {
+  position: relative; 
+  inset: auto;
+  flex-shrink: 0; 
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted2);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 5;
+}
+
+.btn-fav:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.btn-fav.saved { color: var(--accent); }
+
+/* --- PREMIUM SUB/DUB/EP BADGES --- */
+.card-badges { position: absolute; bottom: 12px; left: 8px; display: flex; gap: 4px; z-index: 3; pointer-events: none; }
+.badge-item { display: flex; align-items: center; gap: 4px; padding: 2px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; line-height: 1; }
+.badge-item svg { width: 11px; height: 11px; fill: currentColor; }
+.badge-sub { background: rgba(6, 6, 15, 0.85); border: 1px solid var(--accent2); color: var(--accent2); }
+.badge-dub { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+.badge-ep { background: rgba(6, 6, 15, 0.85); border: 1px solid var(--muted2); color: var(--text); }
 
 .live-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);border:1px solid rgba(78,255,158,0.3);border-radius:6px;padding:3px 8px;font-size:0.6rem;font-weight:700;color:#4eff9e;display:flex;align-items:center;gap:4px;z-index:2;}
 .live-badge .dot{width:5px;height:5px;background:#4eff9e;border-radius:50%;animation:blink 1.5s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 .a-card-score{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);border-radius:6px;padding:3px 8px;font-size:0.65rem;font-weight:700;color:#ffd700;z-index:2;}
 
-.a-card-hover{position:absolute;inset:0;background:rgba(6,6,15,0.95);backdrop-filter:blur(5px);display:flex;flex-direction:column;justify-content:center;padding:16px;opacity:0;transition:opacity .3s;text-align:center;}
-.a-card:hover .a-card-hover{opacity:1}
-.a-card-play{width:40px;height:40px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1rem;color:#fff;box-shadow:0 4px 14px var(--glow);transition:transform 0.2s;}
-.a-card-play:hover{transform:scale(1.1);}
-.hover-synopsis{font-size:0.7rem;color:var(--muted2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;}
-.btn-fav{position:absolute;bottom:12px;right:12px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer;transition:all 0.2s;}
-.btn-fav:hover{background:var(--accent);color:#fff;}
-.btn-fav.saved{color:#e63950;}
+/* --- HOVER INFO RESTORED --- */
+.a-card-hover {
+  position: absolute;
+  inset: 0;
+  background: rgba(6,6,15,0.95);
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity .3s;
+  text-align: center;
+  z-index: 4;
+}
+
+.a-card-img-wrap:hover .a-card-hover { opacity: 1; }
+
+.a-card-play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 1rem;
+  color: #fff;
+  box-shadow: 0 4px 14px var(--glow);
+  transition: transform 0.2s;
+}
+
+.a-card-play:hover { transform: scale(1.1); }
+
+.hover-synopsis {
+  font-size: 0.7rem;
+  color: var(--muted2);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.a-card-genres { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
 
 /* Continue Watching Progress */
 .cw-card{flex-shrink:0;width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);position:relative;transition:all .3s;}
@@ -169,41 +293,66 @@ nav a:hover, nav a.active{color:var(--text);}
   cursor: pointer; transition: all 0.2s; margin-bottom: 20px; text-decoration: none;
 }
 .search-back-btn:hover { border-color: var(--muted2); color: var(--text); transform: translateX(-3px); }
-.search-view-title {
-  font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 2px;
-  display: flex; align-items: center; gap: 14px; margin-bottom: 6px;
-}
+.search-view-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 2px; display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
 .search-view-title .bar { width: 5px; height: 32px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
 .search-view-subtitle { font-size: 0.85rem; color: var(--muted2); padding-left: 19px; }
-.search-results-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-  gap: 18px;
-  margin-top: 28px;
-}
-/* Cards in the grid — override flex-shrink so they fill properly */
+.search-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 18px; margin-top: 28px; }
 .search-results-grid .a-card { flex-shrink: unset; width: 100%; }
-
-/* Skeleton grid for loading state */
 .skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 18px; margin-top: 28px; }
 .skeleton-card { aspect-ratio: 2/3; border-radius: 12px; }
 
-/* --- ZORO-STYLE WATCH VIEW --- */
-#watch-view { padding: 90px 44px 40px; max-width: 1600px; margin: 0 auto; }
-.breadcrumb { font-size: 0.8rem; color: var(--muted2); margin-bottom: 20px; display: flex; gap: 8px; }
+/* --- ZORO-STYLE WATCH VIEW (CINEMATIC LARGE) --- */
+#watch-view { 
+  padding: 90px 44px 40px; 
+  max-width: 1650px; 
+  width: 100%;
+  margin: 0 auto; 
+}
+
+.breadcrumb { 
+  font-size: 0.8rem; 
+  color: var(--muted2); 
+  margin-bottom: 20px; 
+  display: flex; 
+  gap: 8px; 
+}
 .breadcrumb span { color: var(--text); font-weight: 600; cursor: pointer; }
-.watch-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
-.player-container { background: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; margin-bottom: 16px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.player-container iframe { width: 100%; height: 100%; border: none; display: block; }
+
+.watch-layout { 
+  display: grid; 
+  grid-template-columns: 1fr 340px; 
+  gap: 24px; 
+  align-items: start; 
+}
+
+.player-container { 
+  background: #000; 
+  border-radius: 8px; 
+  overflow: hidden; 
+  aspect-ratio: 16/9; 
+  width: 100%;
+  height: auto; 
+  margin-bottom: 16px; 
+  position: relative; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+}
+
+.player-container iframe { 
+  width: 100%; 
+  height: 100%; 
+  border: none; 
+  display: block; 
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 .player-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; background: var(--card2); color: var(--muted); }
 
-/* Zoro Actions */
 .player-actions { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); }
 .action-group { display: flex; gap: 20px; }
 .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; transition: color 0.2s; }
 .action-btn:hover { color: var(--text); }
 
-/* Servers & Audio Box */
 .server-box { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
 .server-labels { display: flex; flex-direction: column; gap: 6px; }
 .ep-label { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
@@ -216,10 +365,8 @@ nav a:hover, nav a.active{color:var(--text);}
 .server-btn:hover { border-color: var(--muted2); color: var(--text); }
 .server-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 10px var(--glow); }
 
-/* Airing Schedule Widget */
 #airing-schedule { display:none; background: var(--card2); padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.85rem; color: var(--text); border-left: 4px solid var(--accent); align-items: center; gap: 10px; }
 
-/* Anime Details */
 .anime-details-box { display: flex; gap: 20px; background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 8px; }
 .anime-cover { width: 120px; border-radius: 8px; flex-shrink: 0; }
 .anime-info h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 10px; letter-spacing: 1px; line-height: 1.1; }
@@ -227,7 +374,6 @@ nav a:hover, nav a.active{color:var(--text);}
 .anime-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; color: var(--text); }
 
-/* --- RELATIONS (MORE FROM SERIES) --- */
 .relations-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); display: none; }
 .rel-header { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; }
 .rel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
@@ -239,7 +385,6 @@ nav a:hover, nav a.active{color:var(--text);}
 .rel-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--muted2); }
 .rel-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 0.6rem; color: var(--text); }
 
-/* Right Grid */
 .episodes-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; height: 100%; max-height: 800px; }
 .ep-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 .ep-header-title { font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; color: var(--text); }
@@ -275,6 +420,9 @@ nav a:hover, nav a.active{color:var(--text);}
   nav::-webkit-scrollbar { display: none; }
   nav a { padding: 6px 12px; font-size: 0.85rem; display: inline-block; }
   .header-right { order: 2; flex-shrink: 0; gap: 8px; }
+  
+  .lang-toggle { padding: 4px 8px; font-size: 0.7rem; }
+
   .search-pill { padding: 6px 12px; }
   .search-pill input { width: 90px; transition: width 0.3s; }
   .search-pill input:focus { width: 140px; } 
@@ -368,6 +516,10 @@ nav a:hover, nav a.active{color:var(--text);}
     <div class="nav-indicator" id="nav-indicator"></div>
   </nav>
   <div class="header-right">
+    <div class="lang-toggle jp" id="title-toggle" onclick="toggleTitleLang()">
+      <span class="en">EN</span> / <span class="jp">JP</span>
+    </div>
+
     <div class="search-pill" id="search-trigger">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" id="search-input" placeholder="Quick Search...">
@@ -381,7 +533,6 @@ nav a:hover, nav a.active{color:var(--text);}
 
 <div id="toast"></div>
 
-<!-- ── HOME VIEW ── -->
 <div id="home-view" class="view active">
   <div id="hero">
     <div id="hero-slider-container"></div>
@@ -426,6 +577,13 @@ nav a:hover, nav a.active{color:var(--text);}
       </div>
       <div class="h-scroll" id="strip-airing"></div>
     </section>
+
+    <section class="strip-section">
+      <div class="strip-head">
+        <div class="strip-title"><span class="bar"></span>Recently Finished</div>
+      </div>
+      <div class="h-scroll" id="strip-finished"></div>
+    </section>
     
     <section class="strip-section" style="padding-bottom:20px">
       <div class="strip-head">
@@ -437,7 +595,6 @@ nav a:hover, nav a.active{color:var(--text);}
   </div>
 </div>
 
-<!-- ── SEARCH / BROWSE VIEW ── -->
 <div id="search-view" class="view">
   <div class="search-view-header">
     <div class="search-back-btn" onclick="goHome()">
@@ -450,13 +607,10 @@ nav a:hover, nav a.active{color:var(--text);}
     <div class="search-view-subtitle" id="sv-subtitle"></div>
   </div>
 
-  <div id="sv-skeleton" class="skeleton-grid" style="display:none;">
-    <!-- skeleton cards injected by JS -->
-  </div>
+  <div id="sv-skeleton" class="skeleton-grid" style="display:none;"></div>
   <div class="search-results-grid" id="sv-grid"></div>
 </div>
 
-<!-- ── WATCH VIEW ── -->
 <div id="watch-view" class="view">
   <div class="breadcrumb">
     <span onclick="goHome()">Home</span> / <span id="bc-title">Anime</span>
@@ -588,11 +742,6 @@ let state = { anilistId:null, malId:null, currentEp:null, provider:'megaplay', l
 let heroAnimes = [], heroIdx = 0, heroTimer = null;
 
 // ── UTILS & STORE ──
-async function alQ(query, vars={}) {
-  const r = await fetch(AL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({query, variables:vars}) });
-  const j = await r.json(); return j.data;
-}
-
 const Store = {
   get(k){ try{return JSON.parse(localStorage.getItem(k)||'{}')}catch{return{}} },
   set(k,v){ localStorage.setItem(k,JSON.stringify(v)) },
@@ -609,6 +758,57 @@ const Store = {
   getFavs(){ return Object.values(this.get('otaku_fav')).sort((a,b)=>b.ts-a.ts); },
   clearHist(){ localStorage.removeItem('otaku_hist'); renderHistory(); }
 };
+
+// GLOBAL TITLE LANGUAGE LOGIC
+let prefTitleLang = Store.get('title_lang') || 'jp'; 
+updateToggleBtnUI();
+
+function toggleTitleLang() {
+  prefTitleLang = prefTitleLang === 'jp' ? 'en' : 'jp';
+  Store.set('title_lang', prefTitleLang);
+  location.reload(); 
+}
+
+function updateToggleBtnUI() {
+  const btn = document.getElementById('title-toggle');
+  if(btn) {
+    btn.className = `lang-toggle ${prefTitleLang}`;
+  }
+}
+
+function getTitle(titleObj) {
+  if (!titleObj) return 'Unknown Title';
+  if (prefTitleLang === 'en' && titleObj.english) return titleObj.english;
+  return titleObj.romaji || titleObj.english || 'Unknown Title';
+}
+
+// CACHED FETCH FUNCTION
+async function alQ(query, vars = {}) {
+  const cacheKey = btoa(query + JSON.stringify(vars));
+  const cachedData = localStorage.getItem(cacheKey);
+  
+  if (cachedData) {
+    const { timestamp, data } = JSON.parse(cachedData);
+    if (Date.now() - timestamp < 900000) return data; 
+  }
+
+  try {
+    const r = await fetch(AL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables: vars })
+    });
+
+    if (r.status === 403) { showToast("API Limit hit! Loading from Cache."); return JSON.parse(cachedData || "{}").data || null; }
+    
+    const j = await r.json();
+    localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: j.data }));
+    return j.data;
+  } catch (e) {
+    console.error("API Error:", e);
+    return null;
+  }
+}
 
 function clearHistory() { Store.clearHist(); }
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
@@ -729,7 +929,7 @@ async function filterGenre(genre) {
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.classList.toggle('active', chip.textContent.trim() === (genre || 'All'));
   });
-  if (!genre) return; // "All" just resets chips, no navigation needed
+  if (!genre) return; 
 
   document.getElementById('sv-title').textContent = `Best in ${genre}`;
   document.getElementById('sv-subtitle').textContent = `Top-rated ${genre} anime, sorted by score`;
@@ -752,14 +952,32 @@ function loadWatchlist() {
 
 // ── HOME VIEW LOGIC ──
 function makeCard(a, index = 0){
-  const score=a.averageScore?`<div class="a-card-score">⭐ ${(a.averageScore/10).toFixed(1)}</div>`:'';
-  const live=a.status==='RELEASING'?`<div class="live-badge"><div class="dot"></div>Live</div>`:'';
-  const desc=a.description ? a.description.replace(/<[^>]*>/g,'').slice(0,100)+'...' : 'No synopsis available.';
+  const score = a.averageScore ? `<div class="a-card-score">⭐ ${(a.averageScore/10).toFixed(1)}</div>` : '';
+  const live = a.status === 'RELEASING' ? `<div class="live-badge"><div class="dot"></div>Live</div>` : '';
   const isFav = Store.isFav(a.id);
   const bannerBg = a.bannerImage || a.coverImage.extraLarge || a.coverImage.large;
   
-  const el=document.createElement('div'); 
-  el.className='a-card';
+  const desc = a.description ? a.description.replace(/<[^>]*>/g,'').slice(0,90)+'...' : 'No synopsis available.';
+  const totalEps = a.episodes || '?';
+  const fakeDub = totalEps !== '?' && totalEps > 2 ? totalEps - 2 : totalEps;
+  
+  const subDubBadges = `
+    <div class="card-badges">
+      <div class="badge-item badge-sub">
+        <svg viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm-8 9.5a2.5 2.5 0 01-5 0v-3a2.5 2.5 0 015 0v.5H9.5v-.5a1 1 0 00-2 0v3a1 1 0 002 0v-.5H11v.5zm7 0a2.5 2.5 0 01-5 0v-3a2.5 2.5 0 015 0v.5h-1.5v-.5a1 1 0 00-2 0v3a1 1 0 002 0v-.5H18v.5z"/></svg>
+        ${totalEps}
+      </div>
+      <div class="badge-item badge-dub">
+        <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V6a3 3 0 00-6 0v5a3 3 0 003 3zm5-3a1 1 0 00-2 0 3 3 0 01-6 0 1 1 0 00-2 0 5 5 0 004 4.9V19H8a1 1 0 000 2h8a1 1 0 000-2h-3v-3.1A5 5 0 0017 11z"/></svg>
+        ${fakeDub}
+      </div>
+      <div class="badge-item badge-ep">
+        ${totalEps}
+      </div>
+    </div>`;
+
+  const el = document.createElement('div'); 
+  el.className = 'a-card';
   el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${index * 0.04}s both`;
   
   el.addEventListener('mouseenter', () => {
@@ -769,17 +987,19 @@ function makeCard(a, index = 0){
   });
   el.addEventListener('mouseleave', () => { document.getElementById('ambient-bg').classList.remove('active'); });
   
-  el.innerHTML=`
-    <img class="a-card-img" src="${a.coverImage.large}" loading="lazy">
-    ${score} ${live}
-    <div class="a-card-hover" onclick="openWatchView(${a.id})">
-      <div class="a-card-play">▶</div>
-      <div class="hover-synopsis">${desc}</div>
-      <div class="a-card-genres">${(a.genres||[]).slice(0,2).map(g=>`<span class="a-card-genre">${g}</span>`).join('')}</div>
+  el.innerHTML = `
+    <div class="a-card-img-wrap" onclick="openWatchView(${a.id})">
+      <img class="a-card-img" src="${a.coverImage.large}" loading="lazy">
+      ${score} ${live} ${subDubBadges}
+      <div class="a-card-hover">
+        <div class="a-card-play">▶</div>
+        <div class="hover-synopsis">${desc}</div>
+        <div class="a-card-genres">${(a.genres||[]).slice(0,2).map(g=>`<span class="tag" style="background:rgba(255,255,255,0.1); border:none; padding:2px 6px; font-size:0.6rem;">${g}</span>`).join('')}</div>
+      </div>
     </div>
-    <button class="btn-fav ${isFav?'saved':''}" onclick="event.stopPropagation(); Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')}); this.classList.toggle('saved');">♥</button>
     <div class="a-card-body" onclick="openWatchView(${a.id})">
-      <div class="a-card-title">${a.title.romaji}</div>
+      <div class="a-card-title">${getTitle(a.title)}</div>
+      <button class="btn-fav ${isFav ? 'saved' : ''}" onclick="event.stopPropagation(); Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')}); this.classList.toggle('saved');">♥</button>
     </div>`;
   return el;
 }
@@ -805,7 +1025,7 @@ function buildHero(list){
       <div class="hero-content">
         <div class="hero-left">
           <div class="hero-eyebrow"><span class="pulse"></span>Spotlight</div>
-          <div class="hero-title">${a.title.english||a.title.romaji}</div>
+          <div class="hero-title">${getTitle(a.title)}</div>
           <div class="hero-genres">${(a.genres||[]).slice(0,4).map(g=>`<span class="hero-genre">${g}</span>`).join('')}</div>
           <div class="hero-desc">${(a.description||'').replace(/<[^>]*>/g,'').slice(0,180)}…</div>
           <div class="hero-actions">
@@ -906,17 +1126,17 @@ async function openWatchView(id) {
   document.querySelector('.ep-search').value = ''; 
 
   const d = await alQ(`query($id:Int){Media(id:$id,type:ANIME){
-    id idMal title{romaji} coverImage{large} episodes averageScore status description(asHtml:false) genres
+    id idMal title{romaji english} coverImage{large} episodes averageScore status description(asHtml:false) genres
     nextAiringEpisode { episode airingAt } 
     relations { edges { relationType node { id type format title{romaji english} coverImage{large} startDate{year} } } }
   }}`, {id});
   
   const m = d.Media;
-  state = { anilistId:m.id, malId:m.idMal, currentEp:null, provider:'megaplay', lang:'sub', totalEps: m.episodes || (m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : 12), animeTitle: m.title.romaji, animeCover: m.coverImage.large, animeObj: m };
+  state = { anilistId:m.id, malId:m.idMal, currentEp:null, provider:'megaplay', lang:'sub', totalEps: m.episodes || (m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : 12), animeTitle: getTitle(m.title), animeCover: m.coverImage.large, animeObj: m };
   document.getElementById('lang-sub').classList.add('active');
   document.getElementById('lang-dub').classList.remove('active');
-  document.getElementById('bc-title').textContent = m.title.romaji;
-  document.getElementById('watch-title').textContent = m.title.romaji;
+  document.getElementById('bc-title').textContent = getTitle(m.title);
+  document.getElementById('watch-title').textContent = getTitle(m.title);
   document.getElementById('watch-cover').src = m.coverImage.large;
   document.getElementById('watch-desc').textContent = m.description ? m.description.replace(/<[^>]*>/g,'').slice(0,250)+'...' : 'No description available.';
   
@@ -955,7 +1175,7 @@ async function openWatchView(id) {
       relWrap.style.display = 'block';
       validRelations.forEach(rel => {
         const node = rel.node;
-        const title = node.title.english || node.title.romaji;
+        const title = getTitle(node.title);
         const year = node.startDate?.year || 'TBA';
         let badge = node.format || 'TV';
         if(badge === 'TV_SHORT') badge = 'SHORT';
@@ -1028,15 +1248,18 @@ window.addEventListener('popstate', (e) => {
   const sharedAnimeId = urlParams.get('anime');
   if(sharedAnimeId) { openWatchView(parseInt(sharedAnimeId)); }
   
-  const [trending, airing, top] = await Promise.all([
+  const [trending, airing, top, finished] = await Promise.all([
     alQ(`query{Page(perPage:20){media(sort:TRENDING_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`),
     alQ(`query{Page(perPage:20){media(sort:POPULARITY_DESC,type:ANIME,status:RELEASING,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`),
-    alQ(`query{Page(perPage:20){media(sort:SCORE_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`)
+    alQ(`query{Page(perPage:20){media(sort:SCORE_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`),
+    alQ(`query{Page(perPage:20){media(sort:END_DATE_DESC,type:ANIME,status:FINISHED,format:TV,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`)
   ]);
+  
   const tList=trending?.Page?.media||[];
   buildHero(tList.slice(0,5));
   fillStrip('strip-trending', tList);
   fillStrip('strip-airing', airing?.Page?.media||[]);
+  fillStrip('strip-finished', finished?.Page?.media||[]);
   fillStrip('strip-top', top?.Page?.media||[]);
 })();
 </script>
