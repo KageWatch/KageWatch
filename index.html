@@ -15,7 +15,10 @@
 <meta property="og:url" content="https://kage-watch.vercel.app">
 
 <meta name="google-site-verification" content="YGJCluy05g5bxSaSmsodpgoS6j9slUB8ARi5f3rSwI0" />
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" href="https://kage-watch.vercel.app/favicon.png" sizes="48x48">
+<link rel="icon" type="image/png" href="https://kage-watch.vercel.app/favicon.png" sizes="96x96">
+<link rel="apple-touch-icon" href="https://kage-watch.vercel.app/favicon.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -90,6 +93,52 @@ nav a:hover, nav a.active{color:var(--text);}
 .icon-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--muted2);font-size:0.9rem;}
 .icon-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-2px);box-shadow:0 6px 16px var(--glow)}
 .icon-btn.active-heart{color:#e63950;background:rgba(230,57,80,0.1);border-color:#e63950;}
+
+/* --- PREMIUM GLOBAL HOVER TOOLTIP (FIXED) --- */
+#global-tooltip {
+  position: fixed; /* FIX: Isko wapas 'fixed' kiya taaki card ke saath chipka rahe */
+  width: 340px;
+  background: rgba(14, 14, 28, 0.85); 
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 20px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#global-tooltip.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.tt-title { font-size: 1.1rem; font-weight: 700; color: #fff; line-height: 1.3; }
+.tt-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; font-weight: 700; color: var(--muted2); }
+.tt-meta .score { color: #ffd700; display: flex; align-items: center; gap: 4px; }
+.tt-meta .badge { background: var(--card2); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; color: var(--text); }
+.tt-desc { font-size: 0.8rem; color: var(--muted2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.tt-info { font-size: 0.75rem; color: var(--text); line-height: 1.6; }
+.tt-info span { color: var(--muted2); font-weight: 600; width: 65px; display: inline-block; }
+.tt-actions { display: flex; gap: 10px; margin-top: 4px; }
+.tt-btn-watch { flex: 1; background: var(--accent); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.tt-btn-watch:hover { background: #c92d42; transform: translateY(-2px); }
+.tt-btn-add { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
+.tt-btn-add:hover { background: #fff; color: #000; }
+
+@media (max-width: 1024px) {
+  #global-tooltip { display: none !important; }
+}
 
 /* --- VIEWS LOGIC --- */
 .view { display: none; animation: fadeIn 0.4s ease; flex: 1; }
@@ -168,6 +217,11 @@ nav a:hover, nav a.active{color:var(--text);}
   z-index: 10;
 }
 
+.a-card:hover .a-card-img { filter: blur(3px) brightness(0.5); }
+.a-card-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s; z-index:2; }
+.a-card:hover .a-card-overlay { opacity:1; }
+.a-card-play { width:46px; height:46px; border-radius:50%; background:rgba(230,57,80,0.9); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.1rem; }
+
 .a-card-img-wrap {
   position: relative;
   width: 100%;
@@ -236,54 +290,6 @@ nav a:hover, nav a.active{color:var(--text);}
 .live-badge .dot{width:5px;height:5px;background:#4eff9e;border-radius:50%;animation:blink 1.5s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 .a-card-score{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);border-radius:6px;padding:3px 8px;font-size:0.65rem;font-weight:700;color:#ffd700;z-index:2;}
-
-/* --- HOVER INFO RESTORED --- */
-.a-card-hover {
-  position: absolute;
-  inset: 0;
-  background: rgba(6,6,15,0.95);
-  backdrop-filter: blur(5px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 16px;
-  opacity: 0;
-  transition: opacity .3s;
-  text-align: center;
-  z-index: 4;
-}
-
-.a-card-img-wrap:hover .a-card-hover { opacity: 1; }
-
-.a-card-play {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 12px;
-  font-size: 1rem;
-  color: #fff;
-  box-shadow: 0 4px 14px var(--glow);
-  transition: transform 0.2s;
-}
-
-.a-card-play:hover { transform: scale(1.1); }
-
-.hover-synopsis {
-  font-size: 0.7rem;
-  color: var(--muted2);
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-.a-card-genres { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
 
 /* Continue Watching Progress */
 .cw-card{flex-shrink:0;width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);position:relative;transition:all .3s;}
@@ -530,6 +536,8 @@ nav a:hover, nav a.active{color:var(--text);}
 
 <div id="ambient-bg"></div>
 
+<div id="global-tooltip" onmouseenter="keepTooltip()" onmouseleave="hideTooltip()"></div>
+
 <header id="main-header">
   <h1 class="logo" onclick="goHome()" style="margin:0; font-weight:normal;">KageWatch</h1>
   <nav id="main-nav">
@@ -758,8 +766,8 @@ const AL = 'https://graphql.anilist.co';
 const PROVIDERS = {
   megaplay: { name:'MegaPlay', url:(id,ep,lang)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/${lang}` },
   animeplay:{ name:'AnimePlay',url:(id,ep,lang)=>`https://animeplay.cfd/stream/mal/${id}/${ep}/${lang}` },
-  vidplus:  { name:'VidPlus',  url:(id,ep,lang)=>`https://player.vidplus.to/embed/anime/${id}/${ep}?dub=${lang==='dub'}` },
-  tryembed: { name:'TryEmbed', url:(id,ep,lang)=>`https://tryembed.us.cc/embed/anime/${id}/${ep}/${lang}` }
+  tryembed: { name:'TryEmbed', url:(id,ep,lang)=>`https://tryembed.us.cc/embed/anime/${id}/${ep}/${lang}`},
+  mostream: { name:'MoStream', url:(id,ep,lang)=>`https://mostream.us/anime.php?mal=${id}&e=${ep}&lang=${lang}` }
 };
 
 let state = { anilistId:null, malId:null, currentEp:null, provider:'megaplay', lang:'sub', totalEps:0, animeTitle:'', animeCover:'', animeObj:null };
@@ -839,10 +847,10 @@ function showToast(msg){ const t=document.getElementById('toast'); t.textContent
 
 // ── MODAL LOGIC ──
 const legalData = {
-  terms: { title: "Terms of Service", content: "<p>By accessing KageWatch, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you are prohibited from using this site.</p><h3>Use of Service</h3><p>KageWatch provides a custom user interface that aggregates links to third-party streaming providers. We do not host, upload, or manage any media files on our own servers.</p><h3>Disclaimer</h3><p>The service is provided 'as is' without any warranties. We are not responsible for the content, advertisements, or security of the third-party providers linked on this platform.</p>" },
-  privacy: { title: "Privacy Policy", content: "<p>Your privacy is critically important to us.</p><h3>Data Collection</h3><p>KageWatch operates entirely on the client-side within your browser. We do not collect, store, or sell any of your personal data, IP addresses, or viewing habits on any external databases.</p><h3>Local Storage</h3><p>Your continue watching history and watchlist are saved strictly using your browser's Local Storage. If you clear your browser data, this information will be lost permanently.</p>" },
+  terms: { title: "Terms of Service", content: "<p>By accessing KageWatch, you agree to be bound by these Terms of Service.</p><h3>Use of Service</h3><p>KageWatch provides a custom user interface that aggregates links to third-party streaming providers. We do not host, upload, or manage any media files on our own servers.</p><h3>Disclaimer</h3><p>The service is provided 'as is' without any warranties.</p>" },
+  privacy: { title: "Privacy Policy", content: "<p>Your privacy is critically important to us.</p><h3>Data Collection</h3><p>KageWatch operates entirely on the client-side within your browser. We do not collect, store, or sell any of your personal data.</p><h3>Local Storage</h3><p>Your continue watching history and watchlist are saved strictly using your browser's Local Storage.</p>" },
   dmca: { title: "DMCA Disclaimer", content: "<p>KageWatch respects the intellectual property rights of others.</p><h3>No Hosted Content</h3><p>We do not host any video content, episodes, or movies on our servers. All media streamed on KageWatch is hosted on third-party services that are not affiliated with us.</p><h3>Takedown Requests</h3><p>Since we do not host the files, we cannot remove them. If you believe your copyrighted content is being displayed, please contact the respective media hosting providers (e.g., MegaPlay, VidPlus) to have the files removed. Once removed from their servers, the content will automatically disappear from KageWatch.</p>" },
-  contact: { title: "Contact Us", content: "<p>For any inquiries, bug reports, feature requests, or business propositions, you can reach out to the KageWatch administration.</p><h3>Email</h3><p><a href='mailto:otakustream.admin@gmail.com'>otakustream.admin@gmail.com</a></p><p>Please note that we cannot assist with issues regarding missing episodes or broken videos, as those are handled entirely by our third-party indexers.</p>" }
+  contact: { title: "Contact Us", content: "<p>For any inquiries, bug reports, feature requests, or business propositions, you can reach out to the KageWatch administration.</p><h3>Email</h3><p><a href='mailto:otakustream.admin@gmail.com'>otakustream.admin@gmail.com</a></p><p>Please note that we cannot assist with issues regarding missing episodes or broken videos.</p>" }
 };
 function openModal(type) {
   const m = document.getElementById('legal-modal');
@@ -888,6 +896,76 @@ function setupDragScroll() {
   });
 }
 
+// ── NEW TOOLTIP LOGIC ──
+let ttTimer = null;
+
+// Fake Age Rating Logic (Kyunki AniList explicitly PG-13/R+ text nahi bhejta)
+function getAgeRating(genres) {
+  if (!genres) return 'PG-13';
+  if (genres.includes('Ecchi') || genres.includes('Horror') || genres.includes('Gore')) return 'R+';
+  if (genres.includes('Kids')) return 'PG';
+  return 'PG-13';
+}
+
+function showTooltip(cardEl, a) {
+  clearTimeout(ttTimer);
+  const tt = document.getElementById('global-tooltip');
+  
+  const score = a.averageScore ? (a.averageScore/10).toFixed(1) : 'N/A';
+  const year = a.startDate?.year || 'TBA';
+  const format = a.format ? a.format.replace('_', ' ') : 'TV';
+  const eps = a.episodes || '?';
+  const desc = a.description ? a.description.replace(/<[^>]*>/g,'') : 'No synopsis available.';
+  const genresArray = a.genres || [];
+  const genres = genresArray.slice(0,3).join(', ');
+  const rating = getAgeRating(genresArray);
+  
+  tt.innerHTML = `
+    <div class="tt-title">${getTitle(a.title)}</div>
+    <div class="tt-meta">
+      <span class="score">⭐ ${score}</span>
+      <span class="badge">${rating}</span>
+      <span class="badge">HD</span>
+      <span class="badge" style="border-color:var(--accent2); color:var(--accent2)">CC ${eps}</span>
+      <span class="badge">${format}</span>
+    </div>
+    <div class="tt-desc">${desc}</div>
+    <div class="tt-info">
+      <div><span>Release:</span> ${year}</div>
+      <div><span>Status:</span> ${a.status}</div>
+      <div><span>Genres:</span> ${genres}</div>
+    </div>
+    <div class="tt-actions">
+      <button class="tt-btn-watch" onclick="hideTooltip(); openWatchView(${a.id})">▶ Watch Now</button>
+      <button class="tt-btn-add" onclick="Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')})">+</button>
+    </div>
+  `;
+
+  // FIX: cardEl directly use karo, e.target nahi
+  const rect = cardEl.getBoundingClientRect();
+  let leftPos = rect.right - 10;
+  let topPos = rect.top + (rect.height / 2) - 50;
+
+  if (topPos < 80) topPos = 100;
+  if (topPos + 320 > window.innerHeight) topPos = window.innerHeight - 330;
+  if (leftPos + 340 > window.innerWidth) leftPos = rect.left - 355;
+  if (topPos + 380 > window.innerHeight) topPos = rect.top - 200;
+
+  tt.style.left = leftPos + 'px';
+  tt.style.top = topPos + 'px';
+  tt.classList.add('show');
+}
+
+function hideTooltip() {
+  ttTimer = setTimeout(() => {
+    document.getElementById('global-tooltip').classList.remove('show');
+  }, 200); 
+}
+
+function keepTooltip() {
+  clearTimeout(ttTimer);
+}
+
 // ── SEARCH / BROWSE VIEW ──
 function showView(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -928,7 +1006,8 @@ async function goSearchView(type, label, subtitle) {
   if (type === 'top') sort = 'SCORE_DESC';
   if (type === 'airing') { filter = ',status:RELEASING'; sort = 'POPULARITY_DESC'; }
 
-  const d = await alQ(`query{Page(perPage:40){media(sort:${sort},type:ANIME,isAdult:false${filter}){ id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description }}}`);
+  // API QUERY UPDATED
+  const d = await alQ(`query{Page(perPage:40){media(sort:${sort},type:ANIME,isAdult:false${filter}){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description }}}`);
   fillSearchView(d?.Page?.media || []);
 }
 
@@ -941,7 +1020,8 @@ async function doSearch() {
   showView('search-view');
   showSearchSkeleton();
 
-  const d = await alQ(`query($s:String){Page(perPage:40){media(search:$s,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`, {s: q});
+  // API QUERY UPDATED
+  const d = await alQ(`query($s:String){Page(perPage:40){media(search:$s,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`, {s: q});
   const results = d?.Page?.media || [];
   document.getElementById('sv-subtitle').textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
   fillSearchView(results);
@@ -960,7 +1040,8 @@ async function filterGenre(genre) {
   showView('search-view');
   showSearchSkeleton();
 
-  const d = await alQ(`query($g:String){ Page(perPage:40){ media(genre:$g, sort:SCORE_DESC, type:ANIME, isAdult:false){ id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description } } }`, {g: genre});
+  // API QUERY UPDATED
+  const d = await alQ(`query($g:String){ Page(perPage:40){ media(genre:$g, sort:SCORE_DESC, type:ANIME, isAdult:false){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description } } }`, {g: genre});
   fillSearchView(d?.Page?.media || []);
 }
 
@@ -981,7 +1062,6 @@ function makeCard(a, index = 0){
   const isFav = Store.isFav(a.id);
   const bannerBg = a.bannerImage || a.coverImage.extraLarge || a.coverImage.large;
   
-  const desc = a.description ? a.description.replace(/<[^>]*>/g,'').slice(0,90)+'...' : 'No synopsis available.';
   const totalEps = a.episodes || '?';
   const fakeDub = totalEps !== '?' && totalEps > 2 ? totalEps - 2 : totalEps;
   
@@ -995,33 +1075,30 @@ function makeCard(a, index = 0){
         <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V6a3 3 0 00-6 0v5a3 3 0 003 3zm5-3a1 1 0 00-2 0 3 3 0 01-6 0 1 1 0 00-2 0 5 5 0 004 4.9V19H8a1 1 0 000 2h8a1 1 0 000-2h-3v-3.1A5 5 0 0017 11z"/></svg>
         ${fakeDub}
       </div>
-      <div class="badge-item badge-ep">
-        ${totalEps}
-      </div>
     </div>`;
 
   const el = document.createElement('div'); 
   el.className = 'a-card';
   el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${index * 0.04}s both`;
   
+    
   el.addEventListener('mouseenter', () => {
-    const ambient = document.getElementById('ambient-bg');
-    ambient.style.backgroundImage = `url('${bannerBg}')`;
-    ambient.classList.add('active');
+   showTooltip(el, a); // el = card element, a = data directly
+   document.getElementById('ambient-bg').style.backgroundImage = `url('${bannerBg}')`;
+   document.getElementById('ambient-bg').classList.add('active');
   });
-  el.addEventListener('mouseleave', () => { document.getElementById('ambient-bg').classList.remove('active'); });
+  el.addEventListener('mouseleave', () => {
+   hideTooltip();
+   document.getElementById('ambient-bg').classList.remove('active');
+  });
   
   el.innerHTML = `
-    <div class="a-card-img-wrap" onclick="openWatchView(${a.id})">
+    <div class="a-card-img-wrap" onclick="hideTooltip(); openWatchView(${a.id})">
       <img class="a-card-img" src="${a.coverImage.large}" loading="lazy" alt="${getTitle(a.title)}">
+      <div class="a-card-overlay"><div class="a-card-play">▶</div></div>
       ${score} ${live} ${subDubBadges}
-      <div class="a-card-hover">
-        <div class="a-card-play">▶</div>
-        <div class="hover-synopsis">${desc}</div>
-        <div class="a-card-genres">${(a.genres||[]).slice(0,2).map(g=>`<span class="tag" style="background:rgba(255,255,255,0.1); border:none; padding:2px 6px; font-size:0.6rem;">${g}</span>`).join('')}</div>
-      </div>
     </div>
-    <div class="a-card-body" onclick="openWatchView(${a.id})">
+    <div class="a-card-body" onclick="hideTooltip(); openWatchView(${a.id})">
       <h2 class="a-card-title">${getTitle(a.title)}</h2>
       <button class="btn-fav ${isFav ? 'saved' : ''}" onclick="event.stopPropagation(); Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')}); this.classList.toggle('saved');" aria-label="Save to Watchlist">♥</button>
     </div>`;
@@ -1051,7 +1128,7 @@ function buildHero(list){
           <div class="hero-eyebrow"><span class="pulse"></span>Spotlight</div>
           <div class="hero-title">${getTitle(a.title)}</div>
           <div class="hero-genres">${(a.genres||[]).slice(0,4).map(g=>`<span class="hero-genre">${g}</span>`).join('')}</div>
-          <div class="hero-desc">${(a.description||'').replace(/<[^>]*>/g,'').slice(0,180)}…</div>
+          <div class="hero-desc">${(a.description||'').replace(/<[^>]*>/g,'').slice(0,100)}…</div>
           <div class="hero-actions">
             <button class="btn-watch" onclick="openWatchView(${a.id})">▶ Watch Now</button>
           </div>
@@ -1182,7 +1259,12 @@ async function openWatchView(id) {
     const btn=document.createElement('button');
     btn.className='server-btn'+(k===state.provider?' active':'');
     btn.textContent = PROVIDERS[k].name;
-    btn.onclick=()=> { document.querySelectorAll('.server-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.provider=k; if(state.currentEp) playEp(state.currentEp); };
+    btn.onclick=()=> { 
+      document.querySelectorAll('#server-wrap .server-btn').forEach(b=>b.classList.remove('active')); 
+      btn.classList.add('active'); 
+      state.provider=k; 
+      if(state.currentEp) playEp(state.currentEp); 
+    };
     srv.appendChild(btn);
   });
 
@@ -1251,7 +1333,10 @@ function playEp(ep) {
   const activeBox = document.querySelector(`.ep-box[data-ep="${ep}"]`);
   if(activeBox) { activeBox.classList.add('active', 'watched'); activeBox.scrollIntoView({behavior:'smooth', block:'nearest'}); }
   const url = PROVIDERS[state.provider].url(state.malId, ep, state.lang);
-  document.getElementById('player-wrap').innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
+  
+  // FIX: allow="autoplay; fullscreen" add kiya gaya hai
+  document.getElementById('player-wrap').innerHTML = `<iframe src="${url}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+  
   const h=Store.get('otaku_hist'); const eps=h[state.malId]?.eps||[]; if(!eps.includes(ep)) eps.push(ep);
   Store.addHist(state.malId,{malId:state.malId, aid:state.anilistId, title:state.animeTitle, cover:state.animeCover, ep, total:state.totalEps, eps});
 }
@@ -1281,11 +1366,12 @@ window.addEventListener('popstate', (e) => {
   const sharedAnimeId = urlParams.get('anime');
   if(sharedAnimeId) { openWatchView(parseInt(sharedAnimeId)); }
   
+  // API QUERIES UPDATED to fetch startDate and format
   const [trending, airing, top, finished] = await Promise.all([
-    alQ(`query{Page(perPage:20){media(sort:TRENDING_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`),
-    alQ(`query{Page(perPage:20){media(sort:POPULARITY_DESC,type:ANIME,status:RELEASING,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`),
-    alQ(`query{Page(perPage:20){media(sort:SCORE_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`),
-    alQ(`query{Page(perPage:20){media(sort:END_DATE_DESC,type:ANIME,status:FINISHED,format:TV,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore genres status bannerImage description}}}`)
+    alQ(`query{Page(perPage:20){media(sort:TRENDING_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
+    alQ(`query{Page(perPage:20){media(sort:POPULARITY_DESC,type:ANIME,status:RELEASING,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
+    alQ(`query{Page(perPage:20){media(sort:SCORE_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
+    alQ(`query{Page(perPage:20){media(sort:END_DATE_DESC,type:ANIME,status:FINISHED,format:TV,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`)
   ]);
   
   const tList=trending?.Page?.media||[];
