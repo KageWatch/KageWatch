@@ -403,6 +403,63 @@ nav a:hover, nav a.active{color:var(--text);}
 .modal-body h3 { color: var(--text); margin: 16px 0 8px; font-size: 1.1rem; }
 .modal-body p { margin-bottom: 12px; }
 .modal-body a { color: var(--accent); text-decoration: none; }
+.report-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  backdrop-filter:blur(10px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+}
+
+.report-box{
+  width:520px;
+  max-width:95%;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+}
+
+.report-box h3{
+  margin-bottom:18px;
+  font-size:1.4rem;
+}
+
+.report-box select,
+.report-box textarea{
+  width:100%;
+  background:var(--card2);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:12px;
+}
+
+.report-box textarea{
+  min-height:120px;
+}
+
+.report-actions{
+  display:flex;
+  gap:10px;
+}
+
+.report-actions button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.report-submit{
+  background:var(--accent);
+  color:white;
+}
 </style>
 </head>
 <body>
@@ -646,7 +703,9 @@ nav a:hover, nav a.active{color:var(--text);}
           <div class="action-btn" onclick="navEp(-1)">⏮ Prev</div>
           <div class="action-btn" onclick="navEp(1)">Next ⏭</div>
           <div class="action-btn" onclick="Store.toggleFav(state.animeObj)">♥ Bookmark</div>
-          <div class="action-btn">⚑ Report</div>
+          <div class="action-btn" onclick="openReportModal()">
+          ⚑ Report
+          </div>
         </div>
       </div>
 
@@ -1387,6 +1446,51 @@ window.addEventListener('popstate', (e) => {
   else goHome();
 });
 
+function openReportModal() {
+  const modal = document.getElementById("report-modal");
+  if(modal) modal.style.display = "flex";
+}
+
+function closeReportModal() {
+  const modal = document.getElementById("report-modal");
+  if(modal) modal.style.display = "none";
+}
+
+async function submitReport() {
+
+  const reason =
+    document.getElementById("report-reason").value;
+
+  const note =
+    document.getElementById("report-note").value;
+
+  try {
+
+    await fetch("/api/report", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        anime: state.animeTitle,
+        episode: state.currentEp,
+        provider: state.provider,
+        reason,
+        note
+      })
+    });
+
+    showToast("Report submitted!");
+    closeReportModal();
+
+  } catch(err) {
+
+    console.error(err);
+    showToast("Failed to submit report");
+
+  }
+}
+
 // ── INIT ──
 (async()=>{
   setupDragScroll();
@@ -1413,6 +1517,73 @@ window.addEventListener('popstate', (e) => {
   fillStrip('strip-top', top?.Page?.media||[]);
 })();
 </script>
+<div id="report-modal" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.8);
+z-index:999999;
+align-items:center;
+justify-content:center;
+">
+
+  <div style="
+  width:500px;
+  max-width:95%;
+  background:#111120;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;
+  padding:20px;
+  ">
+
+    <h3 style="margin-bottom:15px;">
+      Report Episode
+    </h3>
+
+    <select
+      id="report-reason"
+      style="
+      width:100%;
+      padding:10px;
+      margin-bottom:12px;
+      ">
+      <option>Video Not Working</option>
+      <option>Wrong Episode</option>
+      <option>Subtitle Issue</option>
+      <option>Dub Missing</option>
+      <option>Server Down</option>
+      <option>Other</option>
+    </select>
+
+    <textarea
+      id="report-note"
+      placeholder="Describe the issue..."
+      style="
+      width:100%;
+      height:120px;
+      padding:10px;
+      margin-bottom:12px;
+      "></textarea>
+
+    <div style="display:flex;gap:10px;">
+
+      <button
+        onclick="closeReportModal()"
+        style="flex:1;padding:12px;">
+        Cancel
+      </button>
+
+      <button
+        onclick="submitReport()"
+        style="flex:1;padding:12px;">
+        Submit
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="5c58b215-eb5e-45c1-a5bc-b2472459cb4e"></script>
 </body>
 </html>
