@@ -84,45 +84,24 @@ nav a:hover, nav a.active{color:var(--text);}
 .lang-toggle.en span.en { color: #fff; }
 .lang-toggle.jp span.jp { color: #fff; }
 
-.search-pill{display:flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:24px;cursor:text;transition:all .3s;}
-.search-pill input{background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.85rem;width:180px;}
+/* MODIFIED SEARCH PILL TO ACCOMMODATE FILTER ICON */
+.search-pill{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 16px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:24px;transition:all .3s;}
+.search-pill input{background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.85rem;width:160px;}
 .search-pill input::placeholder{color:var(--muted)}
 .search-pill:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);background:rgba(230,57,80,0.04)}
-.shortcut-hint{font-size:0.65rem;font-weight:700;color:var(--muted);background:var(--card2);padding:2px 6px;border-radius:4px;border:1px solid var(--border2);letter-spacing:1px;}
+.shortcut-hint{font-size:0.65rem;font-weight:700;color:var(--muted);background:var(--card2);padding:2px 6px;border-radius:4px;border:1px solid var(--border2);letter-spacing:1px; flex-shrink: 0;}
+
+/* NEW FILTER BUTTON INSIDE SEARCH BAR */
+.filter-btn-inside { margin-left: 2px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: var(--muted); }
+.filter-btn-inside:hover { color: var(--text); background: rgba(255,255,255,0.1); }
 
 .icon-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--muted2);font-size:0.9rem;}
 .icon-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-2px);box-shadow:0 6px 16px var(--glow)}
 .icon-btn.active-heart{color:#e63950;background:rgba(230,57,80,0.1);border-color:#e63950;}
 
-/* --- PREMIUM GLOBAL HOVER TOOLTIP (FIXED) --- */
-#global-tooltip {
-  position: fixed; /* FIX: Isko wapas 'fixed' kiya taaki card ke saath chipka rahe */
-  width: 340px;
-  background: rgba(14, 14, 28, 0.85); 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border2);
-  border-radius: 12px;
-  padding: 20px;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  transform: translateY(10px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-#global-tooltip.show {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
+/* --- PREMIUM GLOBAL HOVER TOOLTIP --- */
+#global-tooltip { position: fixed; width: 340px; background: rgba(14, 14, 28, 0.85); backdrop-filter: blur(20px); border: 1px solid var(--border2); border-radius: 12px; padding: 20px; z-index: 1000; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease; transform: translateY(10px); box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 12px; }
+#global-tooltip.show { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
 .tt-title { font-size: 1.1rem; font-weight: 700; color: #fff; line-height: 1.3; }
 .tt-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; font-weight: 700; color: var(--muted2); }
 .tt-meta .score { color: #ffd700; display: flex; align-items: center; gap: 4px; }
@@ -135,10 +114,7 @@ nav a:hover, nav a.active{color:var(--text);}
 .tt-btn-watch:hover { background: #c92d42; transform: translateY(-2px); }
 .tt-btn-add { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
 .tt-btn-add:hover { background: #fff; color: #000; }
-
-@media (max-width: 1024px) {
-  #global-tooltip { display: none !important; }
-}
+@media (max-width: 1024px) { #global-tooltip { display: none !important; } }
 
 /* --- VIEWS LOGIC --- */
 .view { display: none; animation: fadeIn 0.4s ease; flex: 1; }
@@ -155,24 +131,19 @@ nav a:hover, nav a.active{color:var(--text);}
 .hero-grad{position:absolute;inset:0;background:linear-gradient(to right,rgba(6,6,15,0.95) 0%,rgba(6,6,15,0.7) 45%,rgba(6,6,15,0.1) 100%),linear-gradient(to top,rgba(6,6,15,1) 0%,transparent 30%);}
 .hero-content{position:relative;z-index:2;height:100%;display:flex;align-items:center;padding:0 60px;gap:0;transform:translateY(10px);transition:transform 0.8s cubic-bezier(0.34,1.3,0.64,1);opacity:0;}
 .hero-slide.active .hero-content{transform:translateY(0);opacity:1;}
-
 .hero-left{max-width:550px;flex:1}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
 .hero-eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--glow)}50%{box-shadow:0 0 0 6px transparent}}
-
 .hero-title{font-family:'Bebas Neue',sans-serif;font-size:4.2rem;letter-spacing:2px;line-height:0.9;margin-bottom:18px;text-shadow: 0 10px 30px rgba(0,0,0,0.8);}
 .hero-genres{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
 .hero-genre{font-size:0.75rem;font-weight:600;padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(4px);}
 .hero-desc{font-size:0.9rem;color:var(--muted2);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:28px;}
-
 .btn-watch{display:flex;align-items:center;gap:10px;padding:14px 32px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all .3s;box-shadow:0 8px 24px var(--glow);}
 .btn-watch:hover{background:#c92d42;transform:translateY(-3px);box-shadow:0 12px 32px rgba(230,57,80,0.4)}
-
 .hero-right{position:absolute;right:80px;top:50%;transform:translateY(-50%) perspective(1000px) rotateY(-5deg);width:220px;}
 .hero-cover{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.1);animation:coverFloat 6s ease-in-out infinite;}
 @keyframes coverFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(1deg)}}
-
 .hero-dots{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:5;}
 .hero-dot{width:24px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .3s;}
 .hero-dot.active{background:var(--accent);width:40px;box-shadow:0 0 10px var(--glow);}
@@ -191,101 +162,30 @@ nav a:hover, nav a.active{color:var(--text);}
 .h-scroll{display:flex;gap:16px;overflow-x:auto;padding:6px 44px 20px;scrollbar-width:none; cursor:grab;}
 .h-scroll:active {cursor:grabbing;}
 .h-scroll::-webkit-scrollbar{display:none}
-
 .h-scroll.dragging .a-card, .h-scroll.dragging .cw-card { pointer-events: none; }
 
 @keyframes cardEntrance { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 /* Premium Anime Cards */
-.a-card {
-  flex-shrink: 0;
-  width: 160px;
-  cursor: pointer;
-  border-radius: 12px;
-  background: var(--card); 
-  border: 1px solid var(--border); 
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
-  display: flex;
-  flex-direction: column;
-}
-
-.a-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  border-color: var(--accent);
-  box-shadow: 0 15px 40px var(--glow);
-  z-index: 10;
-}
-
+.a-card { flex-shrink: 0; width: 160px; cursor: pointer; border-radius: 12px; background: var(--card); border: 1px solid var(--border); position: relative; transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1); display: flex; flex-direction: column; }
+.a-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--accent); box-shadow: 0 15px 40px var(--glow); z-index: 10; }
 .a-card:hover .a-card-img { filter: blur(3px) brightness(0.5); }
 .a-card-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s; z-index:2; }
 .a-card:hover .a-card-overlay { opacity:1; }
 .a-card-play { width:46px; height:46px; border-radius:50%; background:rgba(230,57,80,0.9); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.1rem; }
-
-.a-card-img-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 2/3;
-  overflow: hidden;
-  border-radius: 11px 11px 0 0; 
-}
-
+.a-card-img-wrap { position: relative; width: 100%; aspect-ratio: 2/3; overflow: hidden; border-radius: 11px 11px 0 0; }
 .a-card-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* Perfect Flexbox Title Layout */
-.a-card-body {
-  padding: 12px 10px;
-  background: transparent; 
-  display: flex;
-  align-items: flex-end; 
-  justify-content: space-between;
-  gap: 8px; 
-  height: 62px; 
-}
-
-.a-card-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--text);
-  display: -webkit-box;
-  -webkit-line-clamp: 2; 
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin: 0;
-  flex: 1; 
-  padding: 0;
-}
-
-.btn-fav {
-  position: relative; 
-  inset: auto;
-  flex-shrink: 0; 
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted2);
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  z-index: 5;
-}
-
+.a-card-body { padding: 12px 10px; background: transparent; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; height: 62px; }
+.a-card-title { font-size: 0.85rem; font-weight: 600; line-height: 1.3; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; flex: 1; padding: 0; }
+.btn-fav { position: relative; inset: auto; flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: var(--muted2); border: none; cursor: pointer; transition: all 0.2s; z-index: 5; }
 .btn-fav:hover { background: rgba(255,255,255,0.2); color: #fff; }
 .btn-fav.saved { color: var(--accent); }
-
-/* --- PREMIUM SUB/DUB/EP BADGES --- */
 .card-badges { position: absolute; bottom: 12px; left: 8px; display: flex; gap: 4px; z-index: 3; pointer-events: none; }
 .badge-item { display: flex; align-items: center; gap: 4px; padding: 2px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; line-height: 1; }
 .badge-item svg { width: 11px; height: 11px; fill: currentColor; }
 .badge-sub { background: rgba(6, 6, 15, 0.85); border: 1px solid var(--accent2); color: var(--accent2); }
 .badge-dub { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
 .badge-ep { background: rgba(6, 6, 15, 0.85); border: 1px solid var(--muted2); color: var(--text); }
-
 .live-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);border:1px solid rgba(78,255,158,0.3);border-radius:6px;padding:3px 8px;font-size:0.6rem;font-weight:700;color:#4eff9e;display:flex;align-items:center;gap:4px;z-index:2;}
 .live-badge .dot{width:5px;height:5px;background:#4eff9e;border-radius:50%;animation:blink 1.5s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
@@ -315,13 +215,34 @@ nav a:hover, nav a.active{color:var(--text);}
 
 /* --- SEARCH / BROWSE VIEW --- */
 #search-view { padding: 100px 44px 80px; flex: 1; }
+
+/* NEW ADVANCED FILTER UI (Inside Search View) */
+#smart-filter-system { display: none; background: var(--card2); padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px; flex-direction: column; gap: 20px; animation: slideDown 0.3s ease-out forwards; }
+#smart-filter-system.active { display: flex; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.filter-section-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: block; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.f-group { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition: 0.2s;}
+.f-group:hover { border-color: var(--muted); }
+.f-label { padding: 8px 12px; font-size: 0.8rem; font-weight: 700; color: #fff; border-right: 1px solid var(--border); white-space: nowrap; }
+.f-select { background: transparent; color: var(--muted); border: none; padding: 8px 24px 8px 12px; outline: none; font-family: inherit; font-size: 0.8rem; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238888aa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 8px top 50%; background-size: 10px auto; }
+.f-select option { background: var(--surface); color: #fff; }
+.f-select.active-val { color: var(--accent); } 
+.f-group-multi { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.f-input-text { background: transparent; border: none; color: var(--accent); padding: 8px; width: 70px; outline: none; font-size: 0.8rem; text-align: center; }
+.f-input-text::placeholder { color: var(--muted); }
+.genre-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.genre-chip { padding: 6px 14px; background: transparent; border: 1px solid var(--muted); border-radius: 6px; font-size: 0.75rem; font-weight: 500; color: var(--text); cursor: pointer; transition: all 0.2s; user-select: none; }
+.genre-chip:hover { border-color: var(--text); }
+.genre-chip.active { background: rgba(230, 57, 80, 0.1); border-color: var(--accent); color: var(--accent); }
+.filter-actions { display: flex; gap: 12px; margin-top: 10px; align-items: center; }
+.btn-filter-submit { background: var(--accent); color: #fff; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
+.btn-filter-submit:hover { background: #c92d42; box-shadow: 0 4px 15px var(--glow); }
+.btn-filter-close { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
+.btn-filter-close:hover { color: #fff; border-color: var(--muted); }
+
 .search-view-header { margin-bottom: 32px; }
-.search-back-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 16px; background: var(--card); border: 1px solid var(--border);
-  border-radius: 8px; color: var(--muted2); font-size: 0.8rem; font-weight: 600;
-  cursor: pointer; transition: all 0.2s; margin-bottom: 20px; text-decoration: none;
-}
+.search-back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--muted2); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; text-decoration: none; }
 .search-back-btn:hover { border-color: var(--muted2); color: var(--text); transform: translateX(-3px); }
 .search-view-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 2px; display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
 .search-view-title .bar { width: 5px; height: 32px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
@@ -338,51 +259,16 @@ nav a:hover, nav a.active{color:var(--text);}
   width: 100%;
   margin: 0 auto; 
 }
-
-.breadcrumb { 
-  font-size: 0.8rem; 
-  color: var(--muted2); 
-  margin-bottom: 20px; 
-  display: flex; 
-  gap: 8px; 
-}
+.breadcrumb { font-size: 0.8rem; color: var(--muted2); margin-bottom: 20px; display: flex; gap: 8px; }
 .breadcrumb span { color: var(--text); font-weight: 600; cursor: pointer; }
-
-.watch-layout { 
-  display: grid; 
-  grid-template-columns: 1fr 340px; 
-  gap: 24px; 
-  align-items: start; 
-}
-
-.player-container { 
-  background: #000; 
-  border-radius: 8px; 
-  overflow: hidden; 
-  aspect-ratio: 16/9; 
-  width: 100%;
-  height: auto; 
-  margin-bottom: 16px; 
-  position: relative; 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-}
-
-.player-container iframe { 
-  width: 100%; 
-  height: 100%; 
-  border: none; 
-  display: block; 
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+.watch-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+.player-container { background: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; width: 100%; height: auto; margin-bottom: 16px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.player-container iframe { width: 100%; height: 100%; border: none; display: block; position: absolute; top: 0; left: 0; }
 .player-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; background: var(--card2); color: var(--muted); }
-
 .player-actions { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); }
 .action-group { display: flex; gap: 20px; }
 .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; transition: color 0.2s; }
 .action-btn:hover { color: var(--text); }
-
 .server-box { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
 .server-labels { display: flex; flex-direction: column; gap: 6px; }
 .ep-label { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
@@ -394,16 +280,13 @@ nav a:hover, nav a.active{color:var(--text);}
 .server-btn { background: var(--card2); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; color: var(--muted2); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .server-btn:hover { border-color: var(--muted2); color: var(--text); }
 .server-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 10px var(--glow); }
-
 #airing-schedule { display:none; background: var(--card2); padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.85rem; color: var(--text); border-left: 4px solid var(--accent); align-items: center; gap: 10px; }
-
 .anime-details-box { display: flex; gap: 20px; background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 8px; }
 .anime-cover { width: 120px; border-radius: 8px; flex-shrink: 0; }
 .anime-info h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 10px; letter-spacing: 1px; line-height: 1.1; }
 .anime-desc { font-size: 0.85rem; color: var(--muted2); line-height: 1.6; margin-bottom: 16px; }
 .anime-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; color: var(--text); }
-
 .relations-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); display: none; }
 .rel-header { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; }
 .rel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
@@ -414,7 +297,6 @@ nav a:hover, nav a.active{color:var(--text);}
 .rel-title { font-size: 0.8rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rel-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--muted2); }
 .rel-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 0.6rem; color: var(--text); }
-
 .episodes-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; height: 100%; max-height: 800px; }
 .ep-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 .ep-header-title { font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; color: var(--text); }
@@ -450,33 +332,27 @@ nav a:hover, nav a.active{color:var(--text);}
   nav::-webkit-scrollbar { display: none; }
   nav a { padding: 6px 12px; font-size: 0.85rem; display: inline-block; }
   .header-right { order: 2; flex-shrink: 0; gap: 8px; }
-  
   .lang-toggle { padding: 4px 8px; font-size: 0.7rem; }
-
   .search-pill { padding: 6px 12px; }
   .search-pill input { width: 90px; transition: width 0.3s; }
   .search-pill input:focus { width: 140px; } 
   .shortcut-hint { display: none; } 
   .icon-btn { width: 34px; height: 34px; font-size: 0.8rem; }
-
   .hero-content { padding: 0 20px; text-align: center; }
   .hero-left { margin: 0 auto; }
   .hero-title { font-size: 3rem; }
   .hero-genres { justify-content: center; }
   .hero-actions { justify-content: center; }
   .hero-right { display: none; } 
-  
   #watch-view { padding: 120px 15px 30px; } 
   .watch-layout { gap: 16px; }
   .player-container { aspect-ratio: 16/9; width: 100%; border-radius: 4px; }
-  
   .server-box { flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px; }
   .server-options { flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
   .lang-btns { width: 100%; display: flex; gap: 8px; }
   .lang-btns .server-btn { flex: 1; text-align: center; }
   .server-list { border-left: none; padding-left: 0; width: 100%; flex-wrap: wrap; display: flex; gap: 8px; }
   .server-list .server-btn { flex: 1 1 calc(50% - 8px); text-align: center; margin: 0; }
-  
   .anime-details-box { flex-direction: column; align-items: center; text-align: center; }
   .anime-cover { width: 100px; margin-bottom: 10px; }
   .anime-tags { justify-content: center; }
@@ -484,18 +360,15 @@ nav a:hover, nav a.active{color:var(--text);}
   .action-group { flex-wrap: wrap; justify-content: center; width: 100%; }
   .episodes-panel { max-height: 350px; }
   .ep-grid { grid-template-columns: repeat(4, 1fr); }
-  
   .genre-filters { padding: 20px 15px 0; }
   .strip-head { padding: 0 15px; }
   .h-scroll { padding: 6px 15px 20px; }
   .footer-content { padding: 0 15px 30px; flex-direction: column; gap: 30px; text-align: center; }
   .footer-links { justify-content: center; gap: 30px; }
-
   #search-view { padding: 110px 15px 60px; }
   .search-results-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
   .skeleton-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
 }
-
 @media(max-width: 480px) {
   .ep-grid { grid-template-columns: repeat(3, 1fr); }
   .search-pill input { width: 70px; }
@@ -556,7 +429,11 @@ nav a:hover, nav a.active{color:var(--text);}
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" id="search-input" placeholder="Quick Search...">
       <span class="shortcut-hint">Ctrl K</span>
+      <div class="filter-btn-inside" onclick="toggleFilterPanel()" title="Advanced Filter">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+      </div>
     </div>
+
     <div class="icon-btn" title="Watchlist" onclick="loadWatchlist()" id="nav-watchlist">
       <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
     </div>
@@ -628,6 +505,104 @@ nav a:hover, nav a.active{color:var(--text);}
 </div>
 
 <div id="search-view" class="view">
+  <div id="smart-filter-system">
+    <div>
+      <span class="filter-section-title">Filter</span>
+      <div class="filter-row">
+        <div class="f-group">
+          <span class="f-label">Type</span>
+          <select class="f-select" id="adv-f-type" onchange="colorSelect(this)">
+            <option value="">All</option>
+            <option value="TV">TV Show</option>
+            <option value="MOVIE">Movie</option>
+            <option value="OVA">OVA</option>
+            <option value="ONA">ONA</option>
+            <option value="SPECIAL">Special</option>
+          </select>
+        </div>
+        <div class="f-group">
+          <span class="f-label">Status</span>
+          <select class="f-select" id="adv-f-status" onchange="colorSelect(this)">
+            <option value="">All</option>
+            <option value="RELEASING">Currently Airing</option>
+            <option value="FINISHED">Finished</option>
+            <option value="NOT_YET_RELEASED">Not Yet Aired</option>
+          </select>
+        </div>
+        <div class="f-group">
+          <span class="f-label">Rated</span>
+          <select class="f-select" id="adv-f-rated" onchange="colorSelect(this)">
+            <option value="">All</option>
+            <option value="false">PG / Safe</option>
+            <option value="true">Adult / Rx</option>
+          </select>
+        </div>
+        <div class="f-group">
+          <span class="f-label">Score</span>
+          <select class="f-select" id="adv-f-score" onchange="colorSelect(this)">
+            <option value="">All</option>
+            <option value="90">Appalling (9+)</option>
+            <option value="80">Great (8+)</option>
+            <option value="70">Good (7+)</option>
+            <option value="60">Fine (6+)</option>
+          </select>
+        </div>
+        <div class="f-group">
+          <span class="f-label">Season</span>
+          <select class="f-select" id="adv-f-season" onchange="colorSelect(this)">
+            <option value="">All</option>
+            <option value="WINTER">Winter</option>
+            <option value="SPRING">Spring</option>
+            <option value="SUMMER">Summer</option>
+            <option value="FALL">Fall</option>
+          </select>
+        </div>
+        <div class="f-group-multi">
+          <span class="f-label">Year</span>
+          <input type="number" id="adv-f-year" class="f-input-text" placeholder="Year" min="1950" max="2027">
+        </div>
+        <div class="f-group">
+          <span class="f-label">Sort</span>
+          <select class="f-select" id="adv-f-sort" onchange="colorSelect(this)">
+            <option value="TRENDING_DESC">Default (Trending)</option>
+            <option value="SCORE_DESC">Top Rated</option>
+            <option value="POPULARITY_DESC">Most Popular</option>
+            <option value="START_DATE_DESC">Recently Added</option>
+            <option value="EPISODES_DESC">Most Episodes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div>
+      <span class="filter-section-title">Genre</span>
+      <div class="genre-grid">
+        <div class="genre-chip" data-genre="Action" onclick="toggleAdvGenre(this)">Action</div>
+        <div class="genre-chip" data-genre="Adventure" onclick="toggleAdvGenre(this)">Adventure</div>
+        <div class="genre-chip" data-genre="Comedy" onclick="toggleAdvGenre(this)">Comedy</div>
+        <div class="genre-chip" data-genre="Drama" onclick="toggleAdvGenre(this)">Drama</div>
+        <div class="genre-chip" data-genre="Ecchi" onclick="toggleAdvGenre(this)">Ecchi</div>
+        <div class="genre-chip" data-genre="Fantasy" onclick="toggleAdvGenre(this)">Fantasy</div>
+        <div class="genre-chip" data-genre="Hentai" onclick="toggleAdvGenre(this)">Hentai</div>
+        <div class="genre-chip" data-genre="Horror" onclick="toggleAdvGenre(this)">Horror</div>
+        <div class="genre-chip" data-genre="Mahou Shoujo" onclick="toggleAdvGenre(this)">Magic</div>
+        <div class="genre-chip" data-genre="Mecha" onclick="toggleAdvGenre(this)">Mecha</div>
+        <div class="genre-chip" data-genre="Music" onclick="toggleAdvGenre(this)">Music</div>
+        <div class="genre-chip" data-genre="Mystery" onclick="toggleAdvGenre(this)">Mystery</div>
+        <div class="genre-chip" data-genre="Psychological" onclick="toggleAdvGenre(this)">Psychological</div>
+        <div class="genre-chip" data-genre="Romance" onclick="toggleAdvGenre(this)">Romance</div>
+        <div class="genre-chip" data-genre="Sci-Fi" onclick="toggleAdvGenre(this)">Sci-Fi</div>
+        <div class="genre-chip" data-genre="Slice of Life" onclick="toggleAdvGenre(this)">Slice of Life</div>
+        <div class="genre-chip" data-genre="Sports" onclick="toggleAdvGenre(this)">Sports</div>
+        <div class="genre-chip" data-genre="Supernatural" onclick="toggleAdvGenre(this)">Supernatural</div>
+        <div class="genre-chip" data-genre="Thriller" onclick="toggleAdvGenre(this)">Thriller</div>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-filter-submit" onclick="executeAdvancedFilter()">Apply Filter</button>
+      <button class="btn-filter-close" onclick="closeFilterPanel()">Hide Filters</button>
+    </div>
+  </div>
+
   <div class="search-view-header">
     <div class="search-back-btn" onclick="goHome()">
       ← Back to Home
@@ -791,7 +766,6 @@ const Store = {
   clearHist(){ localStorage.removeItem('otaku_hist'); renderHistory(); }
 };
 
-// GLOBAL TITLE LANGUAGE LOGIC
 let prefTitleLang = Store.get('title_lang') || 'jp'; 
 updateToggleBtnUI();
 
@@ -814,32 +788,24 @@ function getTitle(titleObj) {
   return titleObj.romaji || titleObj.english || 'Unknown Title';
 }
 
-// CACHED FETCH FUNCTION
 async function alQ(query, vars = {}) {
   const cacheKey = btoa(query + JSON.stringify(vars));
   const cachedData = localStorage.getItem(cacheKey);
-  
   if (cachedData) {
     const { timestamp, data } = JSON.parse(cachedData);
     if (Date.now() - timestamp < 900000) return data; 
   }
-
   try {
     const r = await fetch(AL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables: vars })
     });
-
     if (r.status === 403) { showToast("API Limit hit! Loading from Cache."); return JSON.parse(cachedData || "{}").data || null; }
-    
     const j = await r.json();
     localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: j.data }));
     return j.data;
-  } catch (e) {
-    console.error("API Error:", e);
-    return null;
-  }
+  } catch (e) { return null; }
 }
 
 function clearHistory() { Store.clearHist(); }
@@ -898,8 +864,6 @@ function setupDragScroll() {
 
 // ── NEW TOOLTIP LOGIC ──
 let ttTimer = null;
-
-// Fake Age Rating Logic (Kyunki AniList explicitly PG-13/R+ text nahi bhejta)
 function getAgeRating(genres) {
   if (!genres) return 'PG-13';
   if (genres.includes('Ecchi') || genres.includes('Horror') || genres.includes('Gore')) return 'R+';
@@ -941,7 +905,6 @@ function showTooltip(cardEl, a) {
     </div>
   `;
 
-  // FIX: cardEl directly use karo, e.target nahi
   const rect = cardEl.getBoundingClientRect();
   let leftPos = rect.right - 10;
   let topPos = rect.top + (rect.height / 2) - 50;
@@ -962,11 +925,9 @@ function hideTooltip() {
   }, 200); 
 }
 
-function keepTooltip() {
-  clearTimeout(ttTimer);
-}
+function keepTooltip() { clearTimeout(ttTimer); }
 
-// ── SEARCH / BROWSE VIEW ──
+// ── VIEWS ──
 function showView(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(viewId).classList.add('active');
@@ -990,15 +951,85 @@ function fillSearchView(list) {
   const grid = document.getElementById('sv-grid');
   grid.innerHTML = '';
   if (!list.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:80px 20px;"><p style="font-size:1.1rem;color:var(--muted2);margin-top:12px;">Nothing found. Try a different search.</p></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:80px 20px;"><p style="font-size:1.1rem;color:var(--muted2);margin-top:12px;">Nothing found.</p></div>`;
     return;
   }
   list.forEach((a, i) => grid.appendChild(makeCard(a, i)));
 }
 
+// ── UPDATE 3: ADVANCED FILTER LOGIC (DOES NOT BREAK HOMEPAGE FILTERS) ──
+function toggleFilterPanel() {
+  showView('search-view'); 
+  const panel = document.getElementById('smart-filter-system');
+  panel.classList.toggle('active');
+  if (panel.classList.contains('active')) {
+    document.getElementById('sv-title').textContent = 'Advanced Filter';
+    document.getElementById('sv-subtitle').textContent = 'Select your preferences and apply';
+  }
+}
+
+function closeFilterPanel() {
+  document.getElementById('smart-filter-system').classList.remove('active');
+}
+
+function colorSelect(el) {
+  if(el.value !== "" && el.value !== "TRENDING_DESC") el.classList.add("active-val");
+  else el.classList.remove("active-val");
+}
+
+let advSelectedGenres = [];
+function toggleAdvGenre(el) {
+  const g = el.dataset.genre;
+  if (advSelectedGenres.includes(g)) {
+    advSelectedGenres = advSelectedGenres.filter(i => i !== g);
+    el.classList.remove('active');
+  } else {
+    advSelectedGenres.push(g);
+    el.classList.add('active');
+  }
+}
+
+async function executeAdvancedFilter() {
+  // closeFilterPanel(); <-- Hata diya bhai, ab filter panel open rahega apply dabane ke baad
+  showSearchSkeleton();
+  
+  const format = document.getElementById('adv-f-type').value;
+  const status = document.getElementById('adv-f-status').value;
+  const rated = document.getElementById('adv-f-rated').value;
+  const score = document.getElementById('adv-f-score').value;
+  const season = document.getElementById('adv-f-season').value;
+  const year = document.getElementById('adv-f-year').value;
+  const sort = document.getElementById('adv-f-sort').value || 'TRENDING_DESC';
+
+  let queryArgs = `$s: [MediaSort]`;
+  let mediaArgs = `sort: $s, type: ANIME`;
+  let vars = { s: [sort] };
+
+  if (rated === "true") { mediaArgs += `, isAdult: true`; } 
+  else if (rated === "false") { mediaArgs += `, isAdult: false`; }
+
+  if (format) { queryArgs += `, $format: MediaFormat`; mediaArgs += `, format: $format`; vars.format = format; }
+  if (status) { queryArgs += `, $status: MediaStatus`; mediaArgs += `, status: $status`; vars.status = status; }
+  if (season) { queryArgs += `, $season: MediaSeason`; mediaArgs += `, season: $season`; vars.season = season; }
+  if (score) { queryArgs += `, $score: Int`; mediaArgs += `, averageScore_greater: $score`; vars.score = parseInt(score); }
+  if (year) { queryArgs += `, $year: Int`; mediaArgs += `, seasonYear: $year`; vars.year = parseInt(year); }
+  if (advSelectedGenres.length > 0) { queryArgs += `, $g: [String]`; mediaArgs += `, genre_in: $g`; vars.g = advSelectedGenres; }
+
+  const q = `query(${queryArgs}){ Page(perPage:40){ media(${mediaArgs}){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description } } }`;
+
+  document.getElementById('sv-title').textContent = "Filtered Results";
+  document.getElementById('sv-subtitle').textContent = "Based on your selections";
+
+  const d = await alQ(q, vars);
+  fillSearchView(d?.Page?.media || []);
+}
+
+
+// --- ORIGINAL SEARCH & QUICK FILTER LOGIC ---
 async function goSearchView(type, label, subtitle) {
   document.getElementById('sv-title').textContent = label || 'Results';
   document.getElementById('sv-subtitle').textContent = subtitle || '';
+  closeFilterPanel();
   showView('search-view');
   showSearchSkeleton();
 
@@ -1006,7 +1037,6 @@ async function goSearchView(type, label, subtitle) {
   if (type === 'top') sort = 'SCORE_DESC';
   if (type === 'airing') { filter = ',status:RELEASING'; sort = 'POPULARITY_DESC'; }
 
-  // API QUERY UPDATED
   const d = await alQ(`query{Page(perPage:40){media(sort:${sort},type:ANIME,isAdult:false${filter}){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description }}}`);
   fillSearchView(d?.Page?.media || []);
 }
@@ -1017,30 +1047,30 @@ async function doSearch() {
 
   document.getElementById('sv-title').textContent = `Results for "${q}"`;
   document.getElementById('sv-subtitle').textContent = 'Showing best matches from AniList';
+  closeFilterPanel();
   showView('search-view');
   showSearchSkeleton();
 
-  // API QUERY UPDATED
   const d = await alQ(`query($s:String){Page(perPage:40){media(search:$s,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`, {s: q});
   const results = d?.Page?.media || [];
   document.getElementById('sv-subtitle').textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
   fillSearchView(results);
 }
-
 document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 
+// ORIGINAL HOMEPAGE CHIP FILTER
 async function filterGenre(genre) {
-  document.querySelectorAll('.filter-chip').forEach(chip => {
+  document.querySelectorAll('.genre-filters .filter-chip').forEach(chip => {
     chip.classList.toggle('active', chip.textContent.trim() === (genre || 'All'));
   });
   if (!genre) return; 
 
   document.getElementById('sv-title').textContent = `Best in ${genre}`;
   document.getElementById('sv-subtitle').textContent = `Top-rated ${genre} anime, sorted by score`;
+  closeFilterPanel();
   showView('search-view');
   showSearchSkeleton();
 
-  // API QUERY UPDATED
   const d = await alQ(`query($g:String){ Page(perPage:40){ media(genre:$g, sort:SCORE_DESC, type:ANIME, isAdult:false){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description } } }`, {g: genre});
   fillSearchView(d?.Page?.media || []);
 }
@@ -1048,6 +1078,7 @@ async function filterGenre(genre) {
 function loadWatchlist() {
   document.getElementById('sv-title').textContent = 'My Watchlist';
   document.getElementById('sv-subtitle').textContent = 'Anime you\'ve saved';
+  closeFilterPanel();
   showView('search-view');
   document.getElementById('sv-skeleton').style.display = 'none';
   fillSearchView(Store.getFavs());
@@ -1083,7 +1114,7 @@ function makeCard(a, index = 0){
   
     
   el.addEventListener('mouseenter', () => {
-   showTooltip(el, a); // el = card element, a = data directly
+   showTooltip(el, a); 
    document.getElementById('ambient-bg').style.backgroundImage = `url('${bannerBg}')`;
    document.getElementById('ambient-bg').classList.add('active');
   });
@@ -1190,8 +1221,8 @@ function goHome() {
   window.scrollTo(0,0);
   document.querySelectorAll('nav a').forEach((l, i) => l.classList.toggle('active', i === 0));
   updateNavIndicator();
+  closeFilterPanel();
 
-  // Reset SEO Title for Home
   document.title = "KageWatch - Watch Anime Online Free | Sub & Dub";
   document.querySelector('meta[name="description"]').setAttribute("content", "Watch anime online for free on KageWatch. Stream the latest anime episodes in Sub and Dub, discover trending anime, top-rated series, and recently finished shows.");
 }
@@ -1225,6 +1256,7 @@ function filterEps(val) {
 async function openWatchView(id) {
   window.history.pushState({animeId: id}, '', '?anime=' + id);
   showView('watch-view');
+  closeFilterPanel();
   
   document.getElementById('player-wrap').innerHTML=`<div class="player-placeholder"><div style="font-size:3rem; margin-bottom:10px;">⏳</div><p>Fetching Data...</p></div>`;
   document.getElementById('ep-grid').innerHTML = '';
@@ -1239,7 +1271,6 @@ async function openWatchView(id) {
   const m = d.Media;
   state = { anilistId:m.id, malId:m.idMal, currentEp:null, provider:'megaplay', lang:'sub', totalEps: m.episodes || (m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : 12), animeTitle: getTitle(m.title), animeCover: m.coverImage.large, animeObj: m };
   
-  // SEO Dynamic Updates
   document.title = `${getTitle(m.title)} - Watch Online Free | KageWatch`;
   document.querySelector('meta[name="description"]').setAttribute("content", `Watch ${getTitle(m.title)} anime episodes online in HD. Stream subbed and dubbed anime free on KageWatch.`);
 
