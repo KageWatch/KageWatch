@@ -460,6 +460,95 @@ nav a:hover, nav a.active{color:var(--text);}
   background:var(--accent);
   color:white;
 }
+
+/* --- ESTIMATED SCHEDULE SECTION --- */
+.schedule-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 0 44px 40px;
+  overflow: hidden;
+  position: relative;
+}
+.schedule-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 120px;
+  background: url('https://s4.anilist.co/file/anilistcdn/media/anime/banner/113415-jQ0kbNCKoENo.jpg') center/cover;
+  opacity: 0.05;
+  z-index: 0;
+  pointer-events: none;
+}
+.schedule-header {
+  padding: 20px 24px 10px;
+  position: relative;
+  z-index: 1;
+}
+.schedule-header h2 {
+  font-size: 1.3rem;
+  color: #fff;
+  font-weight: 600;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.schedule-time {
+  font-size: 0.85rem;
+  color: var(--muted2);
+  font-weight: 400;
+}
+.schedule-dates-wrap {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+.date-nav {
+  background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 10px; opacity: 0.5; transition: 0.2s;
+}
+.date-nav:hover { opacity: 1; }
+.schedule-dates {
+  display: flex; flex: 1; overflow-x: auto; scrollbar-width: none; gap: 30px; padding: 10px 20px;
+}
+.schedule-dates::-webkit-scrollbar { display: none; }
+.date-item {
+  display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.3; transition: 0.3s; min-width: 50px; position: relative;
+}
+.date-item:hover, .date-item.active { opacity: 1; }
+.date-item.active::after {
+  content: ''; position: absolute; bottom: -11px; left: -10px; right: -10px; height: 2px; background: #fff; 
+}
+.d-mon { font-size: 0.75rem; font-weight: 700; color: var(--muted2); letter-spacing: 1px; margin-bottom: 2px; }
+.d-day { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: #fff; line-height: 1; letter-spacing: 1px; }
+
+.schedule-list {
+  padding: 10px 24px;
+  position: relative;
+  z-index: 1;
+}
+.schedule-row {
+  display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); gap: 20px;
+}
+.schedule-row:last-child { border-bottom: none; }
+.s-time { font-size: 0.85rem; color: var(--muted2); font-weight: 700; width: 70px; flex-shrink: 0; }
+.s-title { font-size: 0.9rem; color: var(--muted2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; cursor: pointer; }
+.s-title:hover { color: var(--text); }
+.s-ep { font-size: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; color: var(--muted2); cursor: pointer; transition: 0.2s; }
+.s-ep:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
+
+.schedule-more {
+  text-align: center; padding: 15px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); cursor: pointer; border-top: 1px solid var(--border); transition: 0.2s; background: rgba(0,0,0,0.2);
+}
+.schedule-more:hover { color: #fff; background: rgba(255,255,255,0.05); }
+
+@media(max-width: 768px) {
+  .schedule-section { margin: 0 15px 40px; }
+  .schedule-row { gap: 10px; }
+  .s-time { width: 60px; font-size: 0.75rem; }
+  .s-title { font-size: 0.8rem; }
+}
 </style>
 </head>
 <body>
@@ -558,6 +647,22 @@ nav a:hover, nav a.active{color:var(--text);}
       </div>
       <div class="h-scroll" id="strip-top"></div>
     </section>
+
+    <section class="schedule-section" id="schedule-section">
+      <div class="schedule-header">
+        <h2>Estimated Schedule <span class="schedule-time" id="realtime-clock">- Now: Loading...</span></h2>
+      </div>
+      <div class="schedule-dates-wrap">
+        <button class="date-nav prev" onclick="scrollDates(-1)">❮</button>
+        <div class="schedule-dates" id="schedule-dates-container">
+          </div>
+        <button class="date-nav next" onclick="scrollDates(1)">❯</button>
+      </div>
+      <div class="schedule-list" id="schedule-list-container">
+         </div>
+      <div class="schedule-more" id="schedule-more-btn" style="display:none;">Show more</div>
+    </section>
+
   </div>
 </div>
 
@@ -1016,7 +1121,7 @@ function fillSearchView(list) {
   list.forEach((a, i) => grid.appendChild(makeCard(a, i)));
 }
 
-// ── UPDATE 3: ADVANCED FILTER LOGIC (DOES NOT BREAK HOMEPAGE FILTERS) ──
+// ── ADVANCED FILTER LOGIC ──
 function toggleFilterPanel() {
   showView('search-view'); 
   const panel = document.getElementById('smart-filter-system');
@@ -1049,7 +1154,6 @@ function toggleAdvGenre(el) {
 }
 
 async function executeAdvancedFilter() {
-  // closeFilterPanel(); <-- Hata diya bhai, ab filter panel open rahega apply dabane ke baad
   showSearchSkeleton();
   
   const format = document.getElementById('adv-f-type').value;
@@ -1457,20 +1561,12 @@ function closeReportModal() {
 }
 
 async function submitReport() {
-
-  const reason =
-    document.getElementById("report-reason").value;
-
-  const note =
-    document.getElementById("report-note").value;
-
+  const reason = document.getElementById("report-reason").value;
+  const note = document.getElementById("report-note").value;
   try {
-
     await fetch("/api/report", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         anime: state.animeTitle,
         episode: state.currentEp,
@@ -1479,29 +1575,153 @@ async function submitReport() {
         note
       })
     });
-
     showToast("Report submitted!");
     closeReportModal();
-
   } catch(err) {
-
     console.error(err);
     showToast("Failed to submit report");
-
   }
 }
+
+// ── ESTIMATED SCHEDULE LOGIC (REAL DATA FROM ANILIST) ──
+let schedState = { start: 0, end: 0, page: 1, hasNext: false, isLoading: false };
+
+function initScheduleUI() {
+  // Real-time clock update
+  setInterval(() => {
+    const now = new Date();
+    document.getElementById('realtime-clock').textContent = `- Now: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+  }, 1000);
+
+  // Generate Dynamic Dates (Yesterday + Next 5 days)
+  const datesContainer = document.getElementById('schedule-dates-container');
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+  let datesHTML = '';
+  for (let i = -1; i < 6; i++) { 
+    let d = new Date();
+    d.setDate(d.getDate() + i);
+    let activeCls = i === 0 ? 'active' : '';
+    
+    // Calculate 12:00 AM and 11:59 PM for the targeted day in UNIX timestamp
+    let startOfDay = Math.floor(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0).getTime() / 1000);
+    let endOfDay = Math.floor(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59).getTime() / 1000);
+    
+    datesHTML += `
+      <div class="date-item ${activeCls}" data-start="${startOfDay}" data-end="${endOfDay}" onclick="setActiveDate(this)">
+        <span class="d-mon">${months[d.getMonth()]} ${d.getDate()}</span>
+        <span class="d-day">${days[d.getDay()]}</span>
+      </div>
+    `;
+  }
+  if(datesContainer) datesContainer.innerHTML = datesHTML;
+
+  // Auto-click "Today" to load initial data
+  const activeDate = document.querySelector('.date-item.active');
+  if(activeDate) activeDate.click();
+}
+
+async function setActiveDate(el) {
+  if (schedState.isLoading) return;
+  
+  // Highlight correct date
+  document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
+  el.classList.add('active');
+  
+  // Update state with clicked date's timestamps
+  schedState.start = parseInt(el.dataset.start);
+  schedState.end = parseInt(el.dataset.end);
+  schedState.page = 1;
+  schedState.hasNext = false;
+  
+  document.getElementById('schedule-list-container').innerHTML = '<div style="padding:40px 20px; text-align:center; color:var(--muted2);">Loading schedule...</div>';
+  document.getElementById('schedule-more-btn').style.display = 'none';
+  
+  await fetchScheduleData(true);
+}
+
+async function fetchScheduleData(isNewDate = false) {
+  schedState.isLoading = true;
+  
+  // GraphQL Query specifically for Airing Schedules
+  const query = `
+  query($page: Int, $start: Int, $end: Int) {
+    Page(page: $page, perPage: 15) {
+      pageInfo { hasNextPage }
+      airingSchedules(airingAt_greater: $start, airingAt_lesser: $end, sort: TIME) {
+        airingAt episode
+        media { id title { romaji english } }
+      }
+    }
+  }`;
+  
+  const vars = { page: schedState.page, start: schedState.start, end: schedState.end };
+  const d = await alQ(query, vars);
+  
+  schedState.isLoading = false;
+  const listContainer = document.getElementById('schedule-list-container');
+  const moreBtn = document.getElementById('schedule-more-btn');
+  
+  if (!d || !d.Page || !d.Page.airingSchedules.length) {
+    if (isNewDate) listContainer.innerHTML = '<div style="padding:40px 20px; text-align:center; color:var(--muted2);">No anime scheduled for this day.</div>';
+    moreBtn.style.display = 'none';
+    return;
+  }
+  
+  schedState.hasNext = d.Page.pageInfo.hasNextPage;
+  
+  // Build HTML list
+  let html = d.Page.airingSchedules.map(item => {
+    let dateObj = new Date(item.airingAt * 1000);
+    let timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    let title = getTitle(item.media.title);
+    
+    return `
+      <div class="schedule-row">
+        <span class="s-time">${timeStr}</span>
+        <span class="s-title" onclick="openWatchView(${item.media.id})">${title}</span>
+        <span class="s-ep" onclick="openWatchView(${item.media.id})">▶ Episode ${item.episode}</span>
+      </div>
+    `;
+  }).join('');
+  
+  if (isNewDate) listContainer.innerHTML = html;
+  else listContainer.innerHTML += html; // Append on 'Show More'
+  
+  // Manage "Show More" Button
+  if (schedState.hasNext) {
+    moreBtn.style.display = 'block';
+    moreBtn.onclick = () => {
+      schedState.page++;
+      moreBtn.textContent = 'Loading...';
+      fetchScheduleData(false).then(() => {
+        moreBtn.textContent = 'Show more';
+      });
+    };
+  } else {
+    moreBtn.style.display = 'none';
+  }
+}
+
+function scrollDates(dir) {
+  const cont = document.getElementById('schedule-dates-container');
+  if(cont) cont.scrollBy({ left: dir * 150, behavior: 'smooth' });
+}
+
 
 // ── INIT ──
 (async()=>{
   setupDragScroll();
   updateNavIndicator();
   renderHistory();
+  initScheduleUI(); // Initialize Dynamic Real-time Schedule
   
   const urlParams = new URLSearchParams(window.location.search);
   const sharedAnimeId = urlParams.get('anime');
   if(sharedAnimeId) { openWatchView(parseInt(sharedAnimeId)); }
   
-  // API QUERIES UPDATED to fetch startDate and format
+  // API QUERIES
   const [trending, airing, top, finished] = await Promise.all([
     alQ(`query{Page(perPage:20){media(sort:TRENDING_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
     alQ(`query{Page(perPage:20){media(sort:POPULARITY_DESC,type:ANIME,status:RELEASING,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
@@ -1517,36 +1737,11 @@ async function submitReport() {
   fillStrip('strip-top', top?.Page?.media||[]);
 })();
 </script>
-<div id="report-modal" style="
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.8);
-z-index:999999;
-align-items:center;
-justify-content:center;
-">
 
-  <div style="
-  width:500px;
-  max-width:95%;
-  background:#111120;
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:12px;
-  padding:20px;
-  ">
-
-    <h3 style="margin-bottom:15px;">
-      Report Episode
-    </h3>
-
-    <select
-      id="report-reason"
-      style="
-      width:100%;
-      padding:10px;
-      margin-bottom:12px;
-      ">
+<div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999999;align-items:center;justify-content:center;">
+  <div style="width:500px;max-width:95%;background:#111120;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;">
+    <h3 style="margin-bottom:15px;">Report Episode</h3>
+    <select id="report-reason" style="width:100%;padding:10px;margin-bottom:12px;">
       <option>Video Not Working</option>
       <option>Wrong Episode</option>
       <option>Subtitle Issue</option>
@@ -1554,35 +1749,12 @@ justify-content:center;
       <option>Server Down</option>
       <option>Other</option>
     </select>
-
-    <textarea
-      id="report-note"
-      placeholder="Describe the issue..."
-      style="
-      width:100%;
-      height:120px;
-      padding:10px;
-      margin-bottom:12px;
-      "></textarea>
-
+    <textarea id="report-note" placeholder="Describe the issue..." style="width:100%;height:120px;padding:10px;margin-bottom:12px;"></textarea>
     <div style="display:flex;gap:10px;">
-
-      <button
-        onclick="closeReportModal()"
-        style="flex:1;padding:12px;">
-        Cancel
-      </button>
-
-      <button
-        onclick="submitReport()"
-        style="flex:1;padding:12px;">
-        Submit
-      </button>
-
+      <button onclick="closeReportModal()" style="flex:1;padding:12px;">Cancel</button>
+      <button onclick="submitReport()" style="flex:1;padding:12px;">Submit</button>
     </div>
-
   </div>
-
 </div>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="5c58b215-eb5e-45c1-a5bc-b2472459cb4e"></script>
 </body>
