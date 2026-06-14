@@ -1,23 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "favicon.png",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/*.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/api/(.*)",
@@ -30,6 +12,10 @@
     {
       "src": "/robots.txt",
       "dest": "/public/robots.txt"
+    },
+    {
+      "src": "/favicon.png",
+      "dest": "/favicon.png"
     },
     {
       "src": "/(.*)",
