@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kage-watch.vercel.app/sitemap.xml
