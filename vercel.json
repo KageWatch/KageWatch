@@ -9,6 +9,14 @@
       "destination": "/robots.txt"
     },
     {
+      "source": "/auth",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/auth/mal",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
