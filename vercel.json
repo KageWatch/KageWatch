@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/watch/(.*)",
       "destination": "/index.html"
     }
   ]
