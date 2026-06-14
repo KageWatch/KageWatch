@@ -604,7 +604,28 @@ nav a:hover, nav a.active{color:var(--text);}
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
       </div>
     </div>
-
+    <!-- AniList + MAL Login Buttons -->
+    <div id="auth-buttons" style="display:flex;gap:8px;align-items:center;">
+      <button onclick="loginAniList()" id="btn-anilist" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(2,169,255,0.15);border:1px solid rgba(2,169,255,0.4);border-radius:8px;color:#02a9ff;font-size:0.75rem;font-weight:700;cursor:pointer;">
+        <img src="https://anilist.co/img/icons/favicon-32x32.png" width="14" height="14"> AniList
+      </button>
+      <button onclick="loginMAL()" id="btn-mal" style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(46,81,162,0.15);border:1px solid rgba(46,81,162,0.4);border-radius:8px;color:#2e51a2;font-size:0.75rem;font-weight:700;cursor:pointer;">
+        <img src="https://myanimelist.net/favicon.ico" width="14" height="14"> MAL
+      </button>
+    </div>
+    <!-- Logged In User Display -->
+    <div id="auth-user" style="display:none;gap:8px;align-items:center;">
+      <div id="anilist-user" style="display:none;align-items:center;gap:6px;">
+        <img id="anilist-avatar" src="" width="28" height="28" style="border-radius:50%;border:2px solid #02a9ff;">
+        <span id="anilist-name" style="font-size:0.75rem;font-weight:700;color:#02a9ff;"></span>
+        <button onclick="logoutAniList()" style="background:none;border:none;color:var(--muted);cursor:pointer;">✕</button>
+      </div>
+      <div id="mal-user" style="display:none;align-items:center;gap:6px;">
+        <img id="mal-avatar" src="" width="28" height="28" style="border-radius:50%;border:2px solid #2e51a2;">
+        <span id="mal-name" style="font-size:0.75rem;font-weight:700;color:#2e51a2;"></span>
+        <button onclick="logoutMAL()" style="background:none;border:none;color:var(--muted);cursor:pointer;">✕</button>
+      </div>
+    </div>
     <div class="icon-btn" title="Watchlist" onclick="loadWatchlist()" id="nav-watchlist">
       <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
     </div>
@@ -1732,6 +1753,8 @@ async function playEp(ep) {
   
   const h=Store.get('otaku_hist'); const eps=h[state.malId]?.eps||[]; if(!eps.includes(ep)) eps.push(ep);
   Store.addHist(state.malId,{malId:state.malId, aid:state.anilistId, title:state.animeTitle, cover:state.animeCover, ep, total:state.totalEps, eps});
+  syncToAniList(state.anilistId, ep);
+  syncToMAL(state.malId, ep);
 }
 
 function setupPlayerLogic(player, skipBtn, skipTimes, ep) {
@@ -2043,7 +2066,187 @@ function scrollDates(dir) {
   fillStrip('strip-trending', tList);
   fillStrip('strip-airing', airing?.Page?.media||[]);
   fillStrip('strip-finished', finished?.Page?.media||[]);
-  fillStrip('strip-top', top?.Page?.media||[]);
+  
+  // ═══════════════════════════════════════
+  // 🔐 AUTH SYSTEM - AniList + MAL
+  // ═══════════════════════════════════════
+  const ANILIST_CLIENT_ID = '43646';
+  const MAL_CLIENT_ID = '18d90cf74e43ccbedb3184681d7b9284';
+  const SITE_URL = 'https://kage-watch.vercel.app';
+
+  function generateCodeVerifier() {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return btoa(String.fromCharCode(...array)).replace(/[^a-zA-Z0-9]/g, '').substring(0, 43);
+  }
+
+  async function generateCodeChallenge(verifier) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  function loginAniList() {
+    const url = `https://anilist.co/api/v2/oauth/authorize?client_id=${ANILIST_CLIENT_ID}&redirect_uri=${SITE_URL}/auth&response_type=code`;
+    window.location.href = url;
+  }
+
+  function logoutAniList() {
+    localStorage.removeItem('al_token');
+    localStorage.removeItem('al_user');
+    updateAuthUI();
+    showToast('AniList logout ho gaya!');
+  }
+
+  async function loginMAL() {
+    const verifier = generateCodeVerifier();
+    const challenge = await generateCodeChallenge(verifier);
+    localStorage.setItem('mal_verifier', verifier);
+    const url = `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${MAL_CLIENT_ID}&redirect_uri=${SITE_URL}/auth/mal&code_challenge=${challenge}&code_challenge_method=S256`;
+    window.location.href = url;
+  }
+
+  function logoutMAL() {
+    localStorage.removeItem('mal_token');
+    localStorage.removeItem('mal_user');
+    updateAuthUI();
+    showToast('MAL logout ho gaya!');
+  }
+
+  async function handleAuthCallback() {
+    const path = window.location.pathname;
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (!code) return;
+
+    if (path === '/auth') {
+      showToast('AniList login ho raha hai...');
+      try {
+        const res = await fetch('/api/anilist-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+        if (data.access_token) {
+          localStorage.setItem('al_token', data.access_token);
+          await fetchAniListUser(data.access_token);
+          showToast('AniList login successful! ✅');
+        }
+      } catch(e) { showToast('AniList login failed ❌'); }
+      window.history.replaceState({}, '', '/');
+      goHome();
+    }
+
+    if (path === '/auth/mal') {
+      showToast('MAL login ho raha hai...');
+      const verifier = localStorage.getItem('mal_verifier');
+      try {
+        const res = await fetch('/api/mal-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, code_verifier: verifier })
+        });
+        const data = await res.json();
+        if (data.access_token) {
+          localStorage.setItem('mal_token', JSON.stringify(data));
+          await fetchMALUser(data.access_token);
+          showToast('MAL login successful! ✅');
+        }
+      } catch(e) { showToast('MAL login failed ❌'); }
+      localStorage.removeItem('mal_verifier');
+      window.history.replaceState({}, '', '/');
+      goHome();
+    }
+  }
+
+  async function fetchAniListUser(token) {
+    try {
+      const res = await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ query: `{ Viewer { id name avatar { medium } } }` })
+      });
+      const data = await res.json();
+      localStorage.setItem('al_user', JSON.stringify(data.data.Viewer));
+      updateAuthUI();
+    } catch(e) {}
+  }
+
+  async function fetchMALUser(token) {
+    try {
+      const res = await fetch('https://api.myanimelist.net/v2/users/@me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const user = await res.json();
+      localStorage.setItem('mal_user', JSON.stringify(user));
+      updateAuthUI();
+    } catch(e) {}
+  }
+
+  function updateAuthUI() {
+    const alUser = JSON.parse(localStorage.getItem('al_user') || 'null');
+    const malUser = JSON.parse(localStorage.getItem('mal_user') || 'null');
+    const anilistUserDiv = document.getElementById('anilist-user');
+    const malUserDiv = document.getElementById('mal-user');
+    const authUser = document.getElementById('auth-user');
+
+    if (alUser) {
+      document.getElementById('anilist-avatar').src = alUser.avatar?.medium || '';
+      document.getElementById('anilist-name').textContent = alUser.name;
+      anilistUserDiv.style.display = 'flex';
+      document.getElementById('btn-anilist').style.display = 'none';
+    } else {
+      anilistUserDiv.style.display = 'none';
+      document.getElementById('btn-anilist').style.display = 'flex';
+    }
+
+    if (malUser) {
+      document.getElementById('mal-avatar').src = malUser.picture || '';
+      document.getElementById('mal-name').textContent = malUser.name;
+      malUserDiv.style.display = 'flex';
+      document.getElementById('btn-mal').style.display = 'none';
+    } else {
+      malUserDiv.style.display = 'none';
+      document.getElementById('btn-mal').style.display = 'flex';
+    }
+
+    authUser.style.display = (alUser || malUser) ? 'flex' : 'none';
+  }
+
+  async function syncToAniList(anilistId, episode) {
+    const token = localStorage.getItem('al_token');
+    if (!token) return;
+    try {
+      await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          query: `mutation($mediaId:Int,$progress:Int,$status:MediaListStatus){SaveMediaListEntry(mediaId:$mediaId,progress:$progress,status:$status){id}}`,
+          variables: { mediaId: anilistId, progress: episode, status: 'CURRENT' }
+        })
+      });
+      showToast(`AniList sync: Ep ${episode} ✅`);
+    } catch(e) {}
+  }
+
+  async function syncToMAL(malId, episode) {
+    const malData = JSON.parse(localStorage.getItem('mal_token') || 'null');
+    if (!malData) return;
+    try {
+      await fetch(`https://api.myanimelist.net/v2/anime/${malId}/my_list_status`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${malData.access_token}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ status: 'watching', num_watched_episodes: episode })
+      });
+      showToast(`MAL sync: Ep ${episode} ✅`);
+    } catch(e) {}
+  }
+
+  handleAuthCallback();
+  updateAuthUI();
 })();
 </script>
 
