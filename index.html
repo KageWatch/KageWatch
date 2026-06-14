@@ -4,20 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>KageWatch - Watch Anime Online Free | Sub & Dub HD</title>
-<meta name="description" content="Watch anime online for free on KageWatch. Stream the latest anime episodes in HD with Sub and Dub support. Discover trending anime, top-rated series, and recently finished shows safely.">
-<meta name="keywords" content="anime streaming, watch anime online, free anime, anime sub dub, anime episodes, anime website, anime streaming free, watch anime hd">
+<title>KageWatch - Watch Anime Online Free | Sub & Dub Anime Streaming</title>
+<meta name="description" content="Watch anime online for free on KageWatch. Stream the latest anime episodes in Sub and Dub, discover trending anime, top-rated series, and recently finished shows.">
+<meta name="keywords" content="anime streaming, watch anime online, free anime, anime sub dub, anime episodes, anime website, anime streaming free, anime watch online">
 
 <meta property="og:title" content="KageWatch - Watch Anime Online Free">
-<meta property="og:description" content="Watch anime online in HD with Sub and Dub support. Ad-free UI and instant streaming.">
+<meta property="og:description" content="Watch anime online in HD with Sub and Dub support.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://kage-watch.vercel.app/favicon.png"> 
+<meta property="og:image" content="https://kage-watch.vercel.app/favicon.png">
 <meta property="og:url" content="https://kage-watch.vercel.app">
 
-<meta name="google-site-verification" content="YGJCluy05g5bxSaSmsodpgoS6j9slUB8ARi5f3rSwI0" />
-<link rel="icon" type="image/png" href="https://kage-watch.vercel.app/favicon.png" sizes="48x48">
-<link rel="icon" type="image/png" href="https://kage-watch.vercel.app/favicon.png" sizes="96x96">
-<link rel="apple-touch-icon" href="https://kage-watch.vercel.app/favicon.png">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
@@ -42,6 +41,19 @@
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}
 
+/* --- SEO FRIENDLY HIDDEN TEXT (DO NOT USE DISPLAY:NONE) --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* --- AMBIENT DYNAMIC BACKGROUND --- */
 #ambient-bg { position: fixed; inset: -50px; z-index: -1; background-size: cover; background-position: center top; filter: blur(25px) brightness(0.15); opacity: 0; transition: opacity 0.6s ease, background-image 0.6s ease; pointer-events: none; }
 #ambient-bg.active { opacity: 1; }
@@ -52,12 +64,75 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 ::-webkit-scrollbar-thumb{background:var(--muted);border-radius:10px;transition:background 0.3s}
 ::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 
+/* --- 🚀 PLYR CUSTOM THEME --- */
+.plyr {
+    --plyr-color-main: var(--accent); 
+    --plyr-video-control-color-hover: #fff;
+    --plyr-video-control-background-hover: var(--accent);
+    --plyr-menu-background: var(--card); 
+    --plyr-menu-color: var(--text);
+    --plyr-tooltip-background: var(--card2);
+    --plyr-tooltip-color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+}
+.plyr--video .plyr__control.plyr__tab-focus,
+.plyr--video .plyr__control:hover,
+.plyr--video .plyr__control[aria-expanded=true] { background: var(--accent) !important; }
+.plyr__control--overlaid { background: var(--accent) !important; }
+.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before { background: var(--accent) !important; }
+.plyr--full-ui input[type=range] { color: var(--accent) !important; }
+
+/* --- KAGEWATCH NATIVE PLAYER CSS --- */
+#skip-btn {
+  display: none;
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  background-color: rgba(230, 57, 80, 0.9);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: 0.3s;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+#skip-btn:hover { background-color: white; color: black; }
+.player-loading { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#000; color:var(--text); font-size:1.1rem; z-index:10; }
+
+/* --- IN-PLAYER AUTO NEXT BUTTON --- */
+#auto-next-btn {
+  display: none;
+  position: absolute;
+  bottom: 90px;
+  right: 25px;
+  background: rgba(14, 14, 28, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  transition: all 0.3s ease;
+}
+#auto-next-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.05); }
+#auto-next-btn.show { display: flex; align-items: center; gap: 12px; animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+.anb-icon { width: 28px; height: 28px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.anb-info { display: flex; flex-direction: column; text-align: left; }
+.anb-label { font-size: 0.7rem; color: var(--muted2); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.anb-time { font-size: 1.1rem; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; color: #fff; line-height: 1.1; }
+
 /* --- HEADER --- */
 header{position:fixed;top:0;left:0;right:0;z-index:300;padding:0 44px;height:70px;display:flex;align-items:center;gap:35px;transition:all .4s;background:linear-gradient(to bottom, rgba(6,6,15,0.9) 0%, transparent 100%);}
 header.scrolled{background:rgba(6,6,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);height:62px;}
 
-/* SEO Safe H1 Tag Logo */
-h1.logo {
+.logo {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 2rem;
   font-weight: normal;
@@ -84,14 +159,12 @@ nav a:hover, nav a.active{color:var(--text);}
 .lang-toggle.en span.en { color: #fff; }
 .lang-toggle.jp span.jp { color: #fff; }
 
-/* MODIFIED SEARCH PILL TO ACCOMMODATE FILTER ICON */
 .search-pill{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 16px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:24px;transition:all .3s;}
 .search-pill input{background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.85rem;width:160px;}
 .search-pill input::placeholder{color:var(--muted)}
 .search-pill:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);background:rgba(230,57,80,0.04)}
 .shortcut-hint{font-size:0.65rem;font-weight:700;color:var(--muted);background:var(--card2);padding:2px 6px;border-radius:4px;border:1px solid var(--border2);letter-spacing:1px; flex-shrink: 0;}
 
-/* NEW FILTER BUTTON INSIDE SEARCH BAR */
 .filter-btn-inside { margin-left: 2px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: var(--muted); }
 .filter-btn-inside:hover { color: var(--text); background: rgba(255,255,255,0.1); }
 
@@ -216,7 +289,7 @@ nav a:hover, nav a.active{color:var(--text);}
 /* --- SEARCH / BROWSE VIEW --- */
 #search-view { padding: 100px 44px 80px; flex: 1; }
 
-/* NEW ADVANCED FILTER UI (Inside Search View) */
+/* NEW ADVANCED FILTER UI */
 #smart-filter-system { display: none; background: var(--card2); padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px; flex-direction: column; gap: 20px; animation: slideDown 0.3s ease-out forwards; }
 #smart-filter-system.active { display: flex; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -252,13 +325,8 @@ nav a:hover, nav a.active{color:var(--text);}
 .skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 18px; margin-top: 28px; }
 .skeleton-card { aspect-ratio: 2/3; border-radius: 12px; }
 
-/* --- ZORO-STYLE WATCH VIEW (CINEMATIC LARGE) --- */
-#watch-view { 
-  padding: 90px 44px 40px; 
-  max-width: 1650px; 
-  width: 100%;
-  margin: 0 auto; 
-}
+/* --- ZORO-STYLE WATCH VIEW --- */
+#watch-view { padding: 90px 44px 40px; max-width: 1650px; width: 100%; margin: 0 auto; }
 .breadcrumb { font-size: 0.8rem; color: var(--muted2); margin-bottom: 20px; display: flex; gap: 8px; }
 .breadcrumb span { color: var(--text); font-weight: 600; cursor: pointer; }
 .watch-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
@@ -326,7 +394,6 @@ nav a:hover, nav a.active{color:var(--text);}
 @media(max-width: 768px) {
   header { padding: 10px 15px; height: auto; flex-wrap: wrap; gap: 10px; justify-content: space-between; background: rgba(6,6,15,0.98); backdrop-filter: blur(10px); }
   header.scrolled { height: auto; padding: 10px 15px; }
-  h1.logo { font-size: 1.5rem; letter-spacing: 1px; flex: 1; }
   .nav-indicator { display: none; }
   nav { order: 3; width: 100%; overflow-x: auto; white-space: nowrap; padding-bottom: 5px; scrollbar-width: none; border-top: 1px solid var(--border); padding-top: 8px; }
   nav::-webkit-scrollbar { display: none; }
@@ -403,144 +470,40 @@ nav a:hover, nav a.active{color:var(--text);}
 .modal-body h3 { color: var(--text); margin: 16px 0 8px; font-size: 1.1rem; }
 .modal-body p { margin-bottom: 12px; }
 .modal-body a { color: var(--accent); text-decoration: none; }
-.report-modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.8);
-  backdrop-filter:blur(10px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-}
-
-.report-box{
-  width:520px;
-  max-width:95%;
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:24px;
-}
-
-.report-box h3{
-  margin-bottom:18px;
-  font-size:1.4rem;
-}
-
-.report-box select,
-.report-box textarea{
-  width:100%;
-  background:var(--card2);
-  border:1px solid var(--border);
-  color:var(--text);
-  border-radius:10px;
-  padding:12px;
-  margin-bottom:12px;
-}
-
-.report-box textarea{
-  min-height:120px;
-}
-
-.report-actions{
-  display:flex;
-  gap:10px;
-}
-
-.report-actions button{
-  flex:1;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.report-submit{
-  background:var(--accent);
-  color:white;
-}
+.report-modal{ position:fixed; inset:0; background:rgba(0,0,0,.8); backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; z-index:99999; }
+.report-box{ width:520px; max-width:95%; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; }
+.report-box h3{ margin-bottom:18px; font-size:1.4rem; }
+.report-box select, .report-box textarea{ width:100%; background:var(--card2); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:12px; margin-bottom:12px; }
+.report-box textarea{ min-height:120px; }
+.report-actions{ display:flex; gap:10px; }
+.report-actions button{ flex:1; padding:12px; border:none; border-radius:10px; cursor:pointer; }
+.report-submit{ background:var(--accent); color:white; }
 
 /* --- ESTIMATED SCHEDULE SECTION --- */
-.schedule-section {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin: 0 44px 40px;
-  overflow: hidden;
-  position: relative;
-}
-.schedule-section::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 120px;
-  background: url('https://s4.anilist.co/file/anilistcdn/media/anime/banner/113415-jQ0kbNCKoENo.jpg') center/cover;
-  opacity: 0.05;
-  z-index: 0;
-  pointer-events: none;
-}
-.schedule-header {
-  padding: 20px 24px 10px;
-  position: relative;
-  z-index: 1;
-}
-.schedule-header h2 {
-  font-size: 1.3rem;
-  color: #fff;
-  font-weight: 600;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-.schedule-time {
-  font-size: 0.85rem;
-  color: var(--muted2);
-  font-weight: 400;
-}
-.schedule-dates-wrap {
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  z-index: 1;
-}
-.date-nav {
-  background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 10px; opacity: 0.5; transition: 0.2s;
-}
+.schedule-section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin: 0 44px 40px; overflow: hidden; position: relative; }
+.schedule-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 120px; background: url('https://s4.anilist.co/file/anilistcdn/media/anime/banner/113415-jQ0kbNCKoENo.jpg') center/cover; opacity: 0.05; z-index: 0; pointer-events: none; }
+.schedule-header { padding: 20px 24px 10px; position: relative; z-index: 1; }
+.schedule-header h2 { font-size: 1.3rem; color: #fff; font-weight: 600; display: flex; align-items: baseline; gap: 10px; }
+.schedule-time { font-size: 0.85rem; color: var(--muted2); font-weight: 400; }
+.schedule-dates-wrap { display: flex; align-items: center; padding: 0 10px; border-bottom: 1px solid var(--border); position: relative; z-index: 1; }
+.date-nav { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 10px; opacity: 0.5; transition: 0.2s; }
 .date-nav:hover { opacity: 1; }
-.schedule-dates {
-  display: flex; flex: 1; overflow-x: auto; scrollbar-width: none; gap: 30px; padding: 10px 20px;
-}
+.schedule-dates { display: flex; flex: 1; overflow-x: auto; scrollbar-width: none; gap: 30px; padding: 10px 20px; }
 .schedule-dates::-webkit-scrollbar { display: none; }
-.date-item {
-  display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.3; transition: 0.3s; min-width: 50px; position: relative;
-}
+.date-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; opacity: 0.3; transition: 0.3s; min-width: 50px; position: relative; }
 .date-item:hover, .date-item.active { opacity: 1; }
-.date-item.active::after {
-  content: ''; position: absolute; bottom: -11px; left: -10px; right: -10px; height: 2px; background: #fff; 
-}
+.date-item.active::after { content: ''; position: absolute; bottom: -11px; left: -10px; right: -10px; height: 2px; background: #fff; }
 .d-mon { font-size: 0.75rem; font-weight: 700; color: var(--muted2); letter-spacing: 1px; margin-bottom: 2px; }
 .d-day { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: #fff; line-height: 1; letter-spacing: 1px; }
-
-.schedule-list {
-  padding: 10px 24px;
-  position: relative;
-  z-index: 1;
-}
-.schedule-row {
-  display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); gap: 20px;
-}
+.schedule-list { padding: 10px 24px; position: relative; z-index: 1; }
+.schedule-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); gap: 20px; }
 .schedule-row:last-child { border-bottom: none; }
 .s-time { font-size: 0.85rem; color: var(--muted2); font-weight: 700; width: 70px; flex-shrink: 0; }
 .s-title { font-size: 0.9rem; color: var(--muted2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; cursor: pointer; }
 .s-title:hover { color: var(--text); }
 .s-ep { font-size: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; color: var(--muted2); cursor: pointer; transition: 0.2s; }
 .s-ep:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
-
-.schedule-more {
-  text-align: center; padding: 15px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); cursor: pointer; border-top: 1px solid var(--border); transition: 0.2s; background: rgba(0,0,0,0.2);
-}
+.schedule-more { text-align: center; padding: 15px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); cursor: pointer; border-top: 1px solid var(--border); transition: 0.2s; background: rgba(0,0,0,0.2); }
 .schedule-more:hover { color: #fff; background: rgba(255,255,255,0.05); }
 
 @media(max-width: 768px) {
@@ -558,7 +521,9 @@ nav a:hover, nav a.active{color:var(--text);}
 <div id="global-tooltip" onmouseenter="keepTooltip()" onmouseleave="hideTooltip()"></div>
 
 <header id="main-header">
-  <h1 class="logo" onclick="goHome()" style="margin:0; font-weight:normal;">KageWatch</h1>
+  <h1 class="sr-only">Watch Anime Online Free - Sub & Dub Anime Streaming on KageWatch</h1>
+  
+  <div class="logo" onclick="goHome()">KageWatch</div>
   <nav id="main-nav">
     <a class="active" onclick="goHome()">Home</a>
     <a onclick="goSearchView('trending', 'Trending Now')">Trending</a>
@@ -654,12 +619,10 @@ nav a:hover, nav a.active{color:var(--text);}
       </div>
       <div class="schedule-dates-wrap">
         <button class="date-nav prev" onclick="scrollDates(-1)">❮</button>
-        <div class="schedule-dates" id="schedule-dates-container">
-          </div>
+        <div class="schedule-dates" id="schedule-dates-container"></div>
         <button class="date-nav next" onclick="scrollDates(1)">❯</button>
       </div>
-      <div class="schedule-list" id="schedule-list-container">
-         </div>
+      <div class="schedule-list" id="schedule-list-container"></div>
       <div class="schedule-more" id="schedule-more-btn" style="display:none;">Show more</div>
     </section>
 
@@ -744,7 +707,6 @@ nav a:hover, nav a.active{color:var(--text);}
         <div class="genre-chip" data-genre="Drama" onclick="toggleAdvGenre(this)">Drama</div>
         <div class="genre-chip" data-genre="Ecchi" onclick="toggleAdvGenre(this)">Ecchi</div>
         <div class="genre-chip" data-genre="Fantasy" onclick="toggleAdvGenre(this)">Fantasy</div>
-        <div class="genre-chip" data-genre="Hentai" onclick="toggleAdvGenre(this)">Hentai</div>
         <div class="genre-chip" data-genre="Horror" onclick="toggleAdvGenre(this)">Horror</div>
         <div class="genre-chip" data-genre="Mahou Shoujo" onclick="toggleAdvGenre(this)">Magic</div>
         <div class="genre-chip" data-genre="Mecha" onclick="toggleAdvGenre(this)">Mecha</div>
@@ -766,13 +728,8 @@ nav a:hover, nav a.active{color:var(--text);}
   </div>
 
   <div class="search-view-header">
-    <div class="search-back-btn" onclick="goHome()">
-      ← Back to Home
-    </div>
-    <div class="search-view-title">
-      <span class="bar"></span>
-      <span id="sv-title">Results</span>
-    </div>
+    <div class="search-back-btn" onclick="goHome()">← Back to Home</div>
+    <div class="search-view-title"><span class="bar"></span><span id="sv-title">Results</span></div>
     <div class="search-view-subtitle" id="sv-subtitle"></div>
   </div>
 
@@ -808,9 +765,7 @@ nav a:hover, nav a.active{color:var(--text);}
           <div class="action-btn" onclick="navEp(-1)">⏮ Prev</div>
           <div class="action-btn" onclick="navEp(1)">Next ⏭</div>
           <div class="action-btn" onclick="Store.toggleFav(state.animeObj)">♥ Bookmark</div>
-          <div class="action-btn" onclick="openReportModal()">
-          ⚑ Report
-          </div>
+          <div class="action-btn" onclick="openReportModal()">⚑ Report</div>
         </div>
       </div>
 
@@ -858,13 +813,19 @@ nav a:hover, nav a.active{color:var(--text);}
     <div class="rel-header">More from this series</div>
     <div class="rel-grid" id="watch-relations"></div>
   </div>
+
+  <div class="relations-section" id="recommendations-wrap" style="display: none; margin-top: 40px;">
+    <div class="rel-header" style="font-size: 1.1rem; color: #fff; margin-bottom: 16px;">You may also like</div>
+    <div class="search-results-grid" id="watch-recommendations" style="margin-top: 0;"></div>
+  </div>
+
 </div>
 
 <footer id="main-footer">
   <div class="footer-content">
     <div class="footer-left">
       <div class="logo" onclick="goHome()">KageWatch</div>
-      <p class="footer-desc">Watch Anime Online Free on KageWatch. Your ultimate destination for premium, high-quality anime streaming in Sub and Dub.</p>
+      <p class="footer-desc">Watch Anime Online Free with KageWatch. Stream Subbed and Dubbed Anime, Trending Anime, Top Rated Anime, Currently Airing Anime, and Recently Finished Series.</p>
     </div>
     <div class="footer-links">
       <div class="link-col">
@@ -902,15 +863,21 @@ nav a:hover, nav a.active{color:var(--text);}
 <script>
 const AL = 'https://graphql.anilist.co';
 
+// 🚀 UPDATED PROVIDERS LIST WITH KAGEWATCH VIP
 const PROVIDERS = {
-  megaplay: { name:'MegaPlay', url:(id,ep,lang)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/${lang}` },
-  animeplay:{ name:'AnimePlay',url:(id,ep,lang)=>`https://animeplay.cfd/stream/mal/${id}/${ep}/${lang}` },
-  tryembed: { name:'TryEmbed', url:(id,ep,lang)=>`https://tryembed.us.cc/embed/anime/${id}/${ep}/${lang}`},
-  mostream: { name:'MoStream', url:(id,ep,lang)=>`https://mostream.us/anime.php?mal=${id}&e=${ep}&lang=${lang}` }
+  kagewatch: { name:'KageWatch VIP (No Ads)', type: 'native' },
+  megaplay: { name:'MegaPlay', type: 'iframe', url:(id,ep,lang)=>`https://megaplay.buzz/stream/mal/${id}/${ep}/${lang}` },
+  animeplay:{ name:'AnimePlay', type: 'iframe', url:(id,ep,lang)=>`https://animeplay.cfd/stream/mal/${id}/${ep}/${lang}` },
+  tryembed: { name:'TryEmbed', type: 'iframe', url:(id,ep,lang)=>`https://tryembed.us.cc/embed/anime/${id}/${ep}/${lang}`},
+  mostream: { name:'MoStream', type: 'iframe', url:(id,ep,lang)=>`https://mostream.us/anime.php?mal=${id}&e=${ep}&lang=${lang}` }
 };
 
-let state = { anilistId:null, malId:null, currentEp:null, provider:'megaplay', lang:'sub', totalEps:0, animeTitle:'', animeCover:'', animeObj:null };
+// Default provider set to kagewatch
+let state = { anilistId:null, malId:null, currentEp:null, provider:'kagewatch', lang:'sub', totalEps:0, animeTitle:'', animeCover:'', animeObj:null };
 let heroAnimes = [], heroIdx = 0, heroTimer = null;
+
+// Global AutoNext Timer State
+window.autoNextInterval = null;
 
 // ── UTILS & STORE ──
 const Store = {
@@ -1187,7 +1154,6 @@ async function executeAdvancedFilter() {
   fillSearchView(d?.Page?.media || []);
 }
 
-
 // --- ORIGINAL SEARCH & QUICK FILTER LOGIC ---
 async function goSearchView(type, label, subtitle) {
   document.getElementById('sv-title').textContent = label || 'Results';
@@ -1275,7 +1241,6 @@ function makeCard(a, index = 0){
   el.className = 'a-card';
   el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${index * 0.04}s both`;
   
-    
   el.addEventListener('mouseenter', () => {
    showTooltip(el, a); 
    document.getElementById('ambient-bg').style.backgroundImage = `url('${bannerBg}')`;
@@ -1288,7 +1253,7 @@ function makeCard(a, index = 0){
   
   el.innerHTML = `
     <div class="a-card-img-wrap" onclick="hideTooltip(); openWatchView(${a.id})">
-      <img class="a-card-img" src="${a.coverImage.large}" loading="lazy" alt="${getTitle(a.title)}">
+      <img class="a-card-img" src="${a.coverImage.large}" loading="lazy" alt="Watch ${getTitle(a.title)} online">
       <div class="a-card-overlay"><div class="a-card-play">▶</div></div>
       ${score} ${live} ${subDubBadges}
     </div>
@@ -1380,14 +1345,26 @@ function goHome() {
   document.getElementById('home-view').classList.add('active');
   document.getElementById('player-wrap').innerHTML = ''; 
   clearInterval(window.airingTimer);
-  window.history.pushState({}, '', window.location.pathname); 
+  
+  // 🚀 URL ROUTING: Clean push state
+  window.history.pushState({}, '', '/'); 
   window.scrollTo(0,0);
+  
   document.querySelectorAll('nav a').forEach((l, i) => l.classList.toggle('active', i === 0));
   updateNavIndicator();
   closeFilterPanel();
 
-  document.title = "KageWatch - Watch Anime Online Free | Sub & Dub";
+  // 🚀 RESET TO SEO OPTIMIZED DEFAULTS
+  document.title = "KageWatch - Watch Anime Online Free | Sub & Dub Anime Streaming";
   document.querySelector('meta[name="description"]').setAttribute("content", "Watch anime online for free on KageWatch. Stream the latest anime episodes in Sub and Dub, discover trending anime, top-rated series, and recently finished shows.");
+  
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if(ogTitle) {
+      ogTitle.setAttribute("content", "KageWatch - Watch Anime Online Free");
+      document.querySelector('meta[property="og:description"]').setAttribute("content", "Watch anime online in HD with Sub and Dub support.");
+      document.querySelector('meta[property="og:image"]').setAttribute("content", "https://kage-watch.vercel.app/favicon.png");
+      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
+  }
 }
 
 let isAutoNext = true;
@@ -1417,7 +1394,9 @@ function filterEps(val) {
 }
 
 async function openWatchView(id) {
-  window.history.pushState({animeId: id}, '', '?anime=' + id);
+  // 🚀 URL ROUTING: Set initial clean URL before title loads
+  window.history.pushState({animeId: id}, '', `/watch/${id}`);
+  
   showView('watch-view');
   closeFilterPanel();
   
@@ -1426,16 +1405,31 @@ async function openWatchView(id) {
   document.querySelector('.ep-search').value = ''; 
 
   const d = await alQ(`query($id:Int){Media(id:$id,type:ANIME){
-    id idMal title{romaji english} coverImage{large} episodes averageScore status description(asHtml:false) genres
+    id idMal title{romaji english} coverImage{large extraLarge} episodes averageScore status description(asHtml:false) genres
     nextAiringEpisode { episode airingAt } 
     relations { edges { relationType node { id type format title{romaji english} coverImage{large} startDate{year} } } }
+    recommendations(sort: RATING_DESC, page: 1, perPage: 12) { nodes { mediaRecommendation { id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description } } }
   }}`, {id});
   
   const m = d.Media;
-  state = { anilistId:m.id, malId:m.idMal, currentEp:null, provider:'megaplay', lang:'sub', totalEps: m.episodes || (m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : 12), animeTitle: getTitle(m.title), animeCover: m.coverImage.large, animeObj: m };
+  state = { anilistId:m.id, malId:m.idMal, currentEp:null, provider:'kagewatch', lang:'sub', totalEps: m.episodes || (m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : 12), animeTitle: getTitle(m.title), animeCover: m.coverImage.large, animeObj: m };
   
+  // 🚀 URL ROUTING: Update the URL with the proper SEO title
+  const urlTitle = getTitle(m.title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+  window.history.replaceState({animeId: id}, '', `/watch/${id}/${urlTitle}`);
+
+  // 🚀 DYNAMIC SEO TAGS UPDATE
+  const cleanDesc = m.description ? m.description.replace(/<[^>]*>/g,'').slice(0,150)+'...' : 'Watch online now.';
   document.title = `${getTitle(m.title)} - Watch Online Free | KageWatch`;
-  document.querySelector('meta[name="description"]').setAttribute("content", `Watch ${getTitle(m.title)} anime episodes online in HD. Stream subbed and dubbed anime free on KageWatch.`);
+  document.querySelector('meta[name="description"]').setAttribute("content", `${getTitle(m.title)} anime episodes online in HD. Watch subbed and dubbed anime free on KageWatch.`);
+  
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if(ogTitle) {
+      ogTitle.setAttribute("content", `${getTitle(m.title)} - Watch on KageWatch`);
+      document.querySelector('meta[property="og:description"]').setAttribute("content", `${getTitle(m.title)} anime episodes online in HD. Watch subbed and dubbed anime free on KageWatch.`);
+      document.querySelector('meta[property="og:image"]').setAttribute("content", m.coverImage.extraLarge || m.coverImage.large);
+      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
+  }
 
   document.getElementById('lang-sub').classList.add('active');
   document.getElementById('lang-dub').classList.remove('active');
@@ -1494,7 +1488,7 @@ async function openWatchView(id) {
         card.className = 'rel-card';
         card.onclick = () => openWatchView(node.id);
         card.innerHTML = `
-          <img class="rel-img" src="${node.coverImage.large}" alt="">
+          <img class="rel-img" src="${node.coverImage.large}" alt="Watch ${title}">
           <div class="rel-info">
             <div class="rel-title" title="${title}">${title}</div>
             <div class="rel-meta"><span>${year}</span><span class="rel-badge">${badge}</span></div>
@@ -1503,6 +1497,28 @@ async function openWatchView(id) {
       });
     } else { relWrap.style.display = 'none'; }
   } else { relWrap.style.display = 'none'; }
+
+  // Auto Recommendations Render
+  const recWrap = document.getElementById('recommendations-wrap');
+  const recGrid = document.getElementById('watch-recommendations');
+  recGrid.innerHTML = '';
+  
+  if(m.recommendations && m.recommendations.nodes && m.recommendations.nodes.length > 0) {
+    const validRecs = m.recommendations.nodes
+      .map(n => n.mediaRecommendation)
+      .filter(rec => rec && rec.status !== 'NOT_YET_RELEASED');
+      
+    if(validRecs.length > 0) {
+      recWrap.style.display = 'block';
+      validRecs.forEach((rec, i) => {
+        recGrid.appendChild(makeCard(rec, i));
+      });
+    } else { 
+      recWrap.style.display = 'none'; 
+    }
+  } else { 
+    recWrap.style.display = 'none'; 
+  }
 
   const grid = document.getElementById('ep-grid');
   const watched = Store.watchedEps(state.malId);
@@ -1519,23 +1535,215 @@ async function openWatchView(id) {
   if(watched.length > 0) playEp(Math.max(...watched));
 }
 
-function playEp(ep) {
+// 🚀 NATIVE KAGEWATCH VIP PLAYER FUNCTION
+async function playEp(ep) {
+  ep = parseInt(ep); 
   if(ep < 1 || ep > state.totalEps) return;
   state.currentEp = ep;
   updateEpLabel(ep);
   document.querySelectorAll('.ep-box').forEach(b => b.classList.remove('active'));
   const activeBox = document.querySelector(`.ep-box[data-ep="${ep}"]`);
   if(activeBox) { activeBox.classList.add('active', 'watched'); activeBox.scrollIntoView({behavior:'smooth', block:'nearest'}); }
-  const url = PROVIDERS[state.provider].url(state.malId, ep, state.lang);
   
-  // FIX: allow="autoplay; fullscreen" add kiya gaya hai
-  document.getElementById('player-wrap').innerHTML = `<iframe src="${url}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+  const playerWrap = document.getElementById('player-wrap');
+
+  if (PROVIDERS[state.provider].type === 'native') {
+      playerWrap.innerHTML = `<div class="player-loading" id="p-loader">⏳ Loading HD Stream...</div>`;
+
+      let skipTimes = [];
+      fetch(`https://api.aniskip.com/v2/skip-times/${state.malId}/${ep}?types=op&types=ed&episodeLength=0`)
+          .then(r => r.json())
+          .then(res => { if(res.found) skipTimes = res.results; })
+          .catch(e => console.log("AniSkip API unreachable"));
+
+      const apiUrl = `https://anivexa-api-tawny.vercel.app/watch/anikoto/${state.anilistId}/${state.lang}/anikoto-${ep}`;
+      const PROXY_BASE = "https://kagewatch-kagewatch-proxy.hf.space/proxy";
+
+      fetch(apiUrl).then(r => r.json()).then(async (data) => {
+          
+          const streamData = state.lang === 'dub' ? data.sdub : data.ssub;
+          if (!streamData || !streamData.streams || streamData.streams.length === 0) {
+              throw new Error(`${state.lang.toUpperCase()} not found for this episode`);
+          }
+          
+          const stream = streamData.streams.find(s => s.server === 'VidPlay-1' && s.type === 'hls')
+                      || streamData.streams.find(s => s.type === 'hls' && s.default)
+                      || streamData.streams.find(s => s.type === 'hls');
+
+          const rawUrl = stream.url;
+          const referer = stream.referer || "";
+          const proxyUrl = `${PROXY_BASE}?url=${encodeURIComponent(rawUrl)}&referer=${encodeURIComponent(referer)}`;
+
+          const subSource = streamData.subtitles?.filter(s => s.source === stream.server) || [];
+          const subsToUse = subSource.length > 0 ? subSource : (streamData.subtitles || []);
+          const tracksHtml = buildSubtitleTracks(subsToUse, referer, state.lang);
+
+          playerWrap.innerHTML = `
+              <div class="player-loading" id="p-loader" style="display:none;"></div>
+              <video id="anime-player" controls crossorigin="anonymous" playsinline style="width:100%; height:100%;">
+                  ${tracksHtml}
+              </video>
+              <button id="skip-btn">Skip </button>
+              
+              <button id="auto-next-btn" onclick="playEp(${ep + 1})">
+                 <div class="anb-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>
+                 </div>
+                 <div class="anb-info">
+                   <span class="anb-label">Up Next</span>
+                   <span class="anb-time" id="anb-text">Playing in 10s</span>
+                 </div>
+              </button>
+          `;
+
+          const video = document.getElementById('anime-player');
+          let plyrPlayer = null;
+
+          const injectCustomButtons = (playerInstance) => {
+              const plyrContainer = playerWrap.querySelector('.plyr');
+              const skipBtn = document.getElementById('skip-btn');
+              const nextBtn = document.getElementById('auto-next-btn');
+              if (plyrContainer) {
+                  if (skipBtn) plyrContainer.appendChild(skipBtn);
+                  if (nextBtn) plyrContainer.appendChild(nextBtn);
+              }
+              setupPlayerLogic(playerInstance, skipBtn, skipTimes, ep);
+          };
+
+          if (Hls.isSupported()) {
+              const hls = new Hls({ maxBufferLength: 60, maxMaxBufferLength: 600, enableWorker: true });
+              hls.loadSource(proxyUrl);
+              hls.attachMedia(video);
+              
+              hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                  let availableQualities = hls.levels.map((l) => l.height).filter((value, index, self) => self.indexOf(value) === index && value > 0).sort((a, b) => b - a);
+                  availableQualities.unshift(0); 
+
+                  plyrPlayer = new Plyr(video, {
+                      controls: ['play-large', 'rewind', 'play', 'fast-forward', 'progress', 'current-time', 'duration', 'mute', 'volume', 'captions', 'settings', 'pip', 'fullscreen'],
+                      settings: ['captions', 'quality', 'speed'],
+                      captions: { active: true, update: true, language: 'en' },
+                      quality: { default: 0, options: availableQualities, forced: true, onChange: (e) => { hls.currentLevel = (e === 0) ? -1 : hls.levels.findIndex(lvl => lvl.height === e); } },
+                      i18n: { qualityLabel: { 0: 'Auto' } }
+                  });
+
+                  if(isAutoPlay) video.play();
+                  injectCustomButtons(plyrPlayer);
+              });
+              
+              hls.on(Hls.Events.ERROR, (e, d) => {
+                  if(d.fatal) {
+                      document.getElementById('p-loader').style.display = "flex";
+                      document.getElementById('p-loader').innerHTML = "❌ Stream Error. Please use Backup Server.";
+                  }
+              });
+          } else {
+              video.src = proxyUrl;
+              plyrPlayer = new Plyr(video);
+              if(isAutoPlay) video.play();
+              injectCustomButtons(plyrPlayer);
+          }
+
+      }).catch(err => {
+          playerWrap.innerHTML = `<div class="player-loading">❌ ${err.message}. Try switching Server.</div>`;
+      });
+
+  } 
+  else {
+      const url = PROVIDERS[state.provider].url(state.malId, ep, state.lang);
+      playerWrap.innerHTML = `<iframe src="${url}" allow="autoplay; fullscreen" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>`;
+  }
   
   const h=Store.get('otaku_hist'); const eps=h[state.malId]?.eps||[]; if(!eps.includes(ep)) eps.push(ep);
   Store.addHist(state.malId,{malId:state.malId, aid:state.anilistId, title:state.animeTitle, cover:state.animeCover, ep, total:state.totalEps, eps});
 }
 
-function navEp(dir) { if(state.currentEp) playEp(state.currentEp + dir); }
+function setupPlayerLogic(player, skipBtn, skipTimes, ep) {
+    let currentSkip = null;
+    const nextBtn = document.getElementById('auto-next-btn');
+    const anbText = document.getElementById('anb-text');
+    
+    player.on('timeupdate', () => {
+        const t = player.currentTime;
+        const d = player.duration;
+        
+        currentSkip = skipTimes.find(s => t >= s.interval.startTime && t <= s.interval.endTime);
+        if (currentSkip) {
+            if (skipBtn) {
+                skipBtn.innerText = `Skip ${currentSkip.skipType.toUpperCase()} `;
+                skipBtn.style.display = "block";
+            }
+        } else {
+            if (skipBtn) skipBtn.style.display = "none";
+        }
+
+        if (isAutoNext && ep < state.totalEps && d > 0) {
+            const timeLeft = Math.ceil(d - t);
+            
+            if (timeLeft <= 10 && timeLeft > 0) {
+                if (nextBtn) {
+                    nextBtn.classList.add('show');
+                    anbText.textContent = `Playing in ${timeLeft}s`;
+                }
+            } else {
+                if (nextBtn) nextBtn.classList.remove('show');
+            }
+        }
+    });
+
+    if (skipBtn) {
+        skipBtn.addEventListener('click', () => {
+            if (currentSkip) player.currentTime = currentSkip.interval.endTime;
+            skipBtn.style.display = "none";
+        });
+    }
+
+    player.on('ended', () => {
+        if (isAutoNext && ep < state.totalEps) {
+            playEp(ep + 1);
+        }
+    });
+}
+
+function buildSubtitleTracks(subtitles, referer, lang) {
+  if (!subtitles?.length) return '';
+  const PROXY_BASE = "https://kagewatch-kagewatch-proxy.hf.space/proxy";
+
+  const validSubs = subtitles.filter(s => s.file && (s.format === 'vtt' || s.file.includes('.vtt')));
+
+  validSubs.sort((a, b) => {
+      let isAEng = a.label?.toLowerCase().includes('english') ? 1 : 0;
+      let isBEng = b.label?.toLowerCase().includes('english') ? 1 : 0;
+      return isBEng - isAEng;
+  });
+
+  let engAdded = false;
+
+  return validSubs.map(sub => {
+      const isEng = sub.label?.toLowerCase().includes('english') || sub.language?.toLowerCase() === 'en';
+      let isDef = '';
+      
+      if (isEng && !engAdded) {
+          isDef = 'default';
+          engAdded = true;
+      }
+
+      const proxiedSub = `${PROXY_BASE}?url=${encodeURIComponent(sub.file)}&referer=${encodeURIComponent(referer)}`;
+      return `<track kind="captions" label="${sub.label || 'Sub'}" src="${proxiedSub}" srclang="${sub.language || 'en'}" ${isDef}>`;
+  }).join('\n');
+}
+
+function navEp(dir) { 
+  if(state.currentEp) {
+    let nextEp = parseInt(state.currentEp) + parseInt(dir);
+    if(nextEp >= 1 && nextEp <= state.totalEps) {
+      playEp(nextEp);
+    } else {
+      showToast(dir > 0 ? "You are on the last episode!" : "You are on the first episode!");
+    }
+  } 
+}
+
 function setLang(l) {
   state.lang = l;
   document.getElementById('lang-sub').classList.toggle('active', l==='sub');
@@ -1543,11 +1751,15 @@ function setLang(l) {
   if(state.currentEp) playEp(state.currentEp);
 }
 
+// 🚀 URL ROUTING: Updated Popstate Logic
 window.addEventListener('popstate', (e) => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const animeId = urlParams.get('anime');
-  if (animeId) openWatchView(parseInt(animeId));
-  else goHome();
+  const path = window.location.pathname;
+  const watchMatch = path.match(/^\/watch\/(\d+)/);
+  if (watchMatch) {
+    openWatchView(parseInt(watchMatch[1]));
+  } else {
+    goHome();
+  }
 });
 
 function openReportModal() {
@@ -1583,17 +1795,15 @@ async function submitReport() {
   }
 }
 
-// ── ESTIMATED SCHEDULE LOGIC (REAL DATA FROM ANILIST) ──
+// ── ESTIMATED SCHEDULE LOGIC ──
 let schedState = { start: 0, end: 0, page: 1, hasNext: false, isLoading: false };
 
 function initScheduleUI() {
-  // Real-time clock update
   setInterval(() => {
     const now = new Date();
     document.getElementById('realtime-clock').textContent = `- Now: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
   }, 1000);
 
-  // Generate Dynamic Dates (Yesterday + Next 5 days)
   const datesContainer = document.getElementById('schedule-dates-container');
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -1604,7 +1814,6 @@ function initScheduleUI() {
     d.setDate(d.getDate() + i);
     let activeCls = i === 0 ? 'active' : '';
     
-    // Calculate 12:00 AM and 11:59 PM for the targeted day in UNIX timestamp
     let startOfDay = Math.floor(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0).getTime() / 1000);
     let endOfDay = Math.floor(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59).getTime() / 1000);
     
@@ -1617,7 +1826,6 @@ function initScheduleUI() {
   }
   if(datesContainer) datesContainer.innerHTML = datesHTML;
 
-  // Auto-click "Today" to load initial data
   const activeDate = document.querySelector('.date-item.active');
   if(activeDate) activeDate.click();
 }
@@ -1625,11 +1833,9 @@ function initScheduleUI() {
 async function setActiveDate(el) {
   if (schedState.isLoading) return;
   
-  // Highlight correct date
   document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
   el.classList.add('active');
   
-  // Update state with clicked date's timestamps
   schedState.start = parseInt(el.dataset.start);
   schedState.end = parseInt(el.dataset.end);
   schedState.page = 1;
@@ -1644,7 +1850,6 @@ async function setActiveDate(el) {
 async function fetchScheduleData(isNewDate = false) {
   schedState.isLoading = true;
   
-  // GraphQL Query specifically for Airing Schedules
   const query = `
   query($page: Int, $start: Int, $end: Int) {
     Page(page: $page, perPage: 15) {
@@ -1671,7 +1876,6 @@ async function fetchScheduleData(isNewDate = false) {
   
   schedState.hasNext = d.Page.pageInfo.hasNextPage;
   
-  // Build HTML list
   let html = d.Page.airingSchedules.map(item => {
     let dateObj = new Date(item.airingAt * 1000);
     let timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1687,9 +1891,8 @@ async function fetchScheduleData(isNewDate = false) {
   }).join('');
   
   if (isNewDate) listContainer.innerHTML = html;
-  else listContainer.innerHTML += html; // Append on 'Show More'
+  else listContainer.innerHTML += html;
   
-  // Manage "Show More" Button
   if (schedState.hasNext) {
     moreBtn.style.display = 'block';
     moreBtn.onclick = () => {
@@ -1709,19 +1912,20 @@ function scrollDates(dir) {
   if(cont) cont.scrollBy({ left: dir * 150, behavior: 'smooth' });
 }
 
-
 // ── INIT ──
 (async()=>{
   setupDragScroll();
   updateNavIndicator();
   renderHistory();
-  initScheduleUI(); // Initialize Dynamic Real-time Schedule
+  initScheduleUI(); 
   
-  const urlParams = new URLSearchParams(window.location.search);
-  const sharedAnimeId = urlParams.get('anime');
-  if(sharedAnimeId) { openWatchView(parseInt(sharedAnimeId)); }
+  // 🚀 URL ROUTING: Initial Load Check
+  const path = window.location.pathname;
+  const watchMatch = path.match(/^\/watch\/(\d+)/);
+  if(watchMatch) {
+      openWatchView(parseInt(watchMatch[1]));
+  }
   
-  // API QUERIES
   const [trending, airing, top, finished] = await Promise.all([
     alQ(`query{Page(perPage:20){media(sort:TRENDING_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
     alQ(`query{Page(perPage:20){media(sort:POPULARITY_DESC,type:ANIME,status:RELEASING,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
