@@ -9,11 +9,7 @@
       "destination": "/public/robots.txt"
     },
     {
-      "source": "/watch/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/:path*",
+      "source": "/.*",
       "destination": "/index.html"
     }
   ]
