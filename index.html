@@ -2067,7 +2067,8 @@ function scrollDates(dir) {
   fillStrip('strip-airing', airing?.Page?.media||[]);
   fillStrip('strip-finished', finished?.Page?.media||[]);
   
-  // ═══════════════════════════════════════
+})();
+// ═══════════════════════════════════════
   // 🔐 AUTH SYSTEM - AniList + MAL
   // ═══════════════════════════════════════
   const ANILIST_CLIENT_ID = '43646';
@@ -2247,7 +2248,6 @@ function scrollDates(dir) {
 
   handleAuthCallback();
   updateAuthUI();
-})();
 </script>
 
 <div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999999;align-items:center;justify-content:center;">
