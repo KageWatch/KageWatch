@@ -390,19 +390,10 @@ nav a:hover, nav a.active{color:var(--text);}
 .ep-box.watched::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--accent); opacity: 0.5; }
 .ep-box.active.watched::after { background: #fff; opacity: 1; }
 
-/* --- MOBILE RESPONSIVENESS --- */
-@media(max-width: 1100px) { 
-  .watch-layout { display: flex; flex-direction: column; } 
-  .watch-left { display: contents; }
-  #player-wrap { order: 1; }
-  .player-actions { order: 2; }
-  .server-box { order: 3; }
-  #airing-schedule { order: 4; }
-  .episodes-panel { order: 5; margin-bottom: 24px; max-height: 400px; width: 100%; } 
-  .anime-details-box { order: 6; width: 100%; }
-}
-
-@media(max-width: 768px) {
+/* ======================================================
+   🚀 FIX PLYR PLAYER MOBILE UI OVERLAP (YOUTUBE STYLE)
+   ====================================================== */
+@media (max-width: 768px) {
   header { padding: 10px 15px; height: auto; flex-wrap: wrap; gap: 10px; justify-content: space-between; background: rgba(6,6,15,0.98); backdrop-filter: blur(10px); }
   header.scrolled { height: auto; padding: 10px 15px; }
   .nav-indicator { display: none; }
@@ -446,7 +437,42 @@ nav a:hover, nav a.active{color:var(--text);}
   #search-view { padding: 110px 15px 60px; }
   .search-results-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
   .skeleton-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+
+  /* Plyr Mobile Controls Overrides */
+  .plyr__controls {
+    flex-wrap: wrap !important;
+    padding: 10px 10px 15px !important;
+  }
+  .plyr__controls > .plyr__progress {
+    order: -1 !important;
+    flex: 1 0 100% !important;
+    margin-bottom: 10px !important;
+    width: 100% !important;
+  }
+  .plyr__volume { display: none !important; }
+  .plyr__time--duration { display: none !important; }
+  .plyr__controls > button, 
+  .plyr__controls > .plyr__time { margin: 0 2px !important; padding: 6px !important; }
+  
+  #auto-next-btn {
+    bottom: 120px !important;
+    padding: 8px 14px !important;
+  }
+  .anb-icon { width: 22px; height: 22px; }
+  .anb-time { font-size: 0.95rem; }
 }
+
+@media(max-width: 1100px) { 
+  .watch-layout { display: flex; flex-direction: column; } 
+  .watch-left { display: contents; }
+  #player-wrap { order: 1; }
+  .player-actions { order: 2; }
+  .server-box { order: 3; }
+  #airing-schedule { order: 4; }
+  .episodes-panel { order: 5; margin-bottom: 24px; max-height: 400px; width: 100%; } 
+  .anime-details-box { order: 6; width: 100%; }
+}
+
 @media(max-width: 480px) {
   .ep-grid { grid-template-columns: repeat(3, 1fr); }
   .search-pill input { width: 70px; }
@@ -516,13 +542,6 @@ nav a:hover, nav a.active{color:var(--text);}
 .s-ep:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
 .schedule-more { text-align: center; padding: 15px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); cursor: pointer; border-top: 1px solid var(--border); transition: 0.2s; background: rgba(0,0,0,0.2); }
 .schedule-more:hover { color: #fff; background: rgba(255,255,255,0.05); }
-
-@media(max-width: 768px) {
-  .schedule-section { margin: 0 15px 40px; }
-  .schedule-row { gap: 10px; }
-  .s-time { width: 60px; font-size: 0.75rem; }
-  .s-title { font-size: 0.8rem; }
-}
 </style>
 </head>
 <body>
@@ -1548,6 +1567,7 @@ async function openWatchView(id) {
 
 // 🚀 NATIVE KAGEWATCH VIP PLAYER FUNCTION
 async function playEp(ep) {
+  clearInterval(window.autoNextInterval);
   ep = parseInt(ep); 
   if(ep < 1 || ep > state.totalEps) return;
   state.currentEp = ep;
@@ -1559,7 +1579,7 @@ async function playEp(ep) {
   const playerWrap = document.getElementById('player-wrap');
 
   if (PROVIDERS[state.provider].type === 'native') {
-      playerWrap.innerHTML = `<div class="player-loading" id="p-loader">⏳ Loading HD Stream...</div>`;
+      playerWrap.innerHTML = `<div class="player-loading" id="p-loader"> Loading Stream...</div>`;
 
       let skipTimes = [];
       fetch(`https://api.aniskip.com/v2/skip-times/${state.malId}/${ep}?types=op&types=ed&episodeLength=0`)
@@ -1645,7 +1665,7 @@ async function playEp(ep) {
               hls.on(Hls.Events.ERROR, (e, d) => {
                   if(d.fatal) {
                       document.getElementById('p-loader').style.display = "flex";
-                      document.getElementById('p-loader').innerHTML = "❌ Stream Error. Please use Backup Server.";
+                      document.getElementById('p-loader').innerHTML = "Stream Error. Please use Backup Server.";
                   }
               });
           } else {
@@ -1674,6 +1694,19 @@ function setupPlayerLogic(player, skipBtn, skipTimes, ep) {
     const nextBtn = document.getElementById('auto-next-btn');
     const anbText = document.getElementById('anb-text');
     
+    // 📱 AUTO-LANDSCAPE ON FULLSCREEN LOGIC
+    player.on('enterfullscreen', () => {
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch((err) => console.log("Orientation lock not supported on this device"));
+        }
+    });
+
+    player.on('exitfullscreen', () => {
+        if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock();
+        }
+    });
+    
     player.on('timeupdate', () => {
         const t = player.currentTime;
         const d = player.duration;
@@ -1681,7 +1714,7 @@ function setupPlayerLogic(player, skipBtn, skipTimes, ep) {
         currentSkip = skipTimes.find(s => t >= s.interval.startTime && t <= s.interval.endTime);
         if (currentSkip) {
             if (skipBtn) {
-                skipBtn.innerText = `Skip ${currentSkip.skipType.toUpperCase()} ⏭️`;
+                skipBtn.innerText = `Skip ${currentSkip.skipType.toUpperCase()} `;
                 skipBtn.style.display = "block";
             }
         } else {
@@ -1933,8 +1966,15 @@ function scrollDates(dir) {
   // 🚀 URL ROUTING: Initial Load Check
   const path = window.location.pathname;
   const watchMatch = path.match(/^\/watch\/(\d+)/);
+  
+  // Check URL parameter as fallback for old links
+  const urlParams = new URLSearchParams(window.location.search);
+  const oldAnimeId = urlParams.get('anime');
+
   if(watchMatch) {
       openWatchView(parseInt(watchMatch[1]));
+  } else if (oldAnimeId) {
+      openWatchView(parseInt(oldAnimeId));
   }
   
   const [trending, airing, top, finished] = await Promise.all([
