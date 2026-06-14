@@ -41,7 +41,7 @@
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}
 
-/* --- SEO FRIENDLY HIDDEN TEXT (DO NOT USE DISPLAY:NONE) --- */
+/* --- SEO FRIENDLY HIDDEN TEXT --- */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -74,6 +74,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     --plyr-tooltip-background: var(--card2);
     --plyr-tooltip-color: var(--text);
     font-family: 'DM Sans', sans-serif;
+    width: 100% !important;
+    height: 100% !important;
 }
 .plyr--video .plyr__control.plyr__tab-focus,
 .plyr--video .plyr__control:hover,
@@ -81,6 +83,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .plyr__control--overlaid { background: var(--accent) !important; }
 .plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before { background: var(--accent) !important; }
 .plyr--full-ui input[type=range] { color: var(--accent) !important; }
+
+/* --- FIX FOR 4:3 OLD ANIME CROPPING --- */
+.player-container video,
+.plyr video,
+.plyr__video-wrapper video {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
+}
 
 /* --- KAGEWATCH NATIVE PLAYER CSS --- */
 #skip-btn {
@@ -1583,7 +1594,7 @@ async function playEp(ep) {
               <video id="anime-player" controls crossorigin="anonymous" playsinline style="width:100%; height:100%;">
                   ${tracksHtml}
               </video>
-              <button id="skip-btn">Skip </button>
+              <button id="skip-btn">Skip ⏭️</button>
               
               <button id="auto-next-btn" onclick="playEp(${ep + 1})">
                  <div class="anb-icon">
@@ -1670,7 +1681,7 @@ function setupPlayerLogic(player, skipBtn, skipTimes, ep) {
         currentSkip = skipTimes.find(s => t >= s.interval.startTime && t <= s.interval.endTime);
         if (currentSkip) {
             if (skipBtn) {
-                skipBtn.innerText = `Skip ${currentSkip.skipType.toUpperCase()} `;
+                skipBtn.innerText = `Skip ${currentSkip.skipType.toUpperCase()} ⏭️`;
                 skipBtn.style.display = "block";
             }
         } else {
