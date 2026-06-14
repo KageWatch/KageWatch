@@ -20,6 +20,30 @@
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+<!-- Sitemap & Robots -->
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<meta name="robots" content="index, follow">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://kage-watch.vercel.app/">
+
+<!-- Schema.org Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "KageWatch",
+  "url": "https://kage-watch.vercel.app",
+  "description": "Watch anime online for free on KageWatch. Stream the latest anime episodes in Sub and Dub.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://kage-watch.vercel.app/?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
 <style>
 :root {
   --bg: #06060f;
@@ -1193,12 +1217,21 @@ async function goSearchView(type, label, subtitle) {
   showView('search-view');
   showSearchSkeleton();
 
+  // 🚀 URL update
+  const urlMap = { trending: '/trending', top: '/top-rated', airing: '/airing' };
+  if (urlMap[type]) window.history.pushState({ searchType: type, label }, '', urlMap[type]);
+  document.title = `${label} Anime - KageWatch`;
+
   let sort = 'TRENDING_DESC', filter = '';
   if (type === 'top') sort = 'SCORE_DESC';
   if (type === 'airing') { filter = ',status:RELEASING'; sort = 'POPULARITY_DESC'; }
 
   const d = await alQ(`query{Page(perPage:40){media(sort:${sort},type:ANIME,isAdult:false${filter}){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description }}}`);
   fillSearchView(d?.Page?.media || []);
+
+  // SEO tags update
+  document.title = `${label} Anime - KageWatch`;
+  document.querySelector('meta[name="description"]').setAttribute("content", `Watch ${label} anime online free on KageWatch.`);
 }
 
 async function doSearch() {
@@ -1396,6 +1429,9 @@ function goHome() {
       document.querySelector('meta[property="og:image"]').setAttribute("content", "https://kage-watch.vercel.app/favicon.png");
       document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
   }
+  // Canonical reset
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if(canonical) canonical.setAttribute('href', 'https://kage-watch.vercel.app/');
 }
 
 let isAutoNext = true;
@@ -1454,6 +1490,9 @@ async function openWatchView(id) {
   document.title = `${getTitle(m.title)} - Watch Online Free | KageWatch`;
   document.querySelector('meta[name="description"]').setAttribute("content", `${getTitle(m.title)} anime episodes online in HD. Watch subbed and dubbed anime free on KageWatch.`);
   
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if(canonical) canonical.setAttribute('href', window.location.href);
+
   const ogTitle = document.querySelector('meta[property="og:title"]');
   if(ogTitle) {
       ogTitle.setAttribute("content", `${getTitle(m.title)} - Watch on KageWatch`);
@@ -1802,11 +1841,16 @@ window.addEventListener('popstate', (e) => {
   const watchMatch = path.match(/^\/watch\/(\d+)/);
   if (watchMatch) {
     openWatchView(parseInt(watchMatch[1]));
+  } else if (path === '/trending') {
+    goSearchView('trending', 'Trending Now');
+  } else if (path === '/top-rated') {
+    goSearchView('top', 'Top Rated');
+  } else if (path === '/airing') {
+    goSearchView('airing', 'Currently Airing');
   } else {
     goHome();
   }
 });
-
 function openReportModal() {
   const modal = document.getElementById("report-modal");
   if(modal) modal.style.display = "flex";
@@ -1967,17 +2011,21 @@ function scrollDates(dir) {
   // 🚀 URL ROUTING: Initial Load Check
   const path = window.location.pathname;
   const watchMatch = path.match(/^\/watch\/(\d+)/);
-  
-  // Check URL parameter as fallback for old links
   const urlParams = new URLSearchParams(window.location.search);
   const oldAnimeId = urlParams.get('anime');
 
-  if(watchMatch) {
-      openWatchView(parseInt(watchMatch[1]));
+  if (watchMatch) {
+    openWatchView(parseInt(watchMatch[1]));
   } else if (oldAnimeId) {
-      openWatchView(parseInt(oldAnimeId));
+    openWatchView(parseInt(oldAnimeId));
+  } else if (path === '/trending') {
+    goSearchView('trending', 'Trending Now');
+  } else if (path === '/top-rated') {
+    goSearchView('top', 'Top Rated');
+  } else if (path === '/airing') {
+    goSearchView('airing', 'Currently Airing');
   }
-  
+    
   const [trending, airing, top, finished] = await Promise.all([
     alQ(`query{Page(perPage:20){media(sort:TRENDING_DESC,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
     alQ(`query{Page(perPage:20){media(sort:POPULARITY_DESC,type:ANIME,status:RELEASING,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`),
