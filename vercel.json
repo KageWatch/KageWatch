@@ -5,11 +5,11 @@
       "destination": "/public/sitemap.xml"
     },
     {
-      "source": "/robots.txt", 
+      "source": "/robots.txt",
       "destination": "/public/robots.txt"
     },
     {
-      "source": "/.*",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]
