@@ -2330,13 +2330,15 @@ function scrollDates(dir) {
 
   async function fetchMALUser(token) {
     try {
-      const res = await fetch('https://api.myanimelist.net/v2/users/@me', {
+      const res = await fetch('/api/mal-proxy?path=users/@me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const user = await res.json();
       localStorage.setItem('mal_user', JSON.stringify(user));
       updateAuthUI();
-    } catch(e) {}
+    } catch(e) {
+      console.error("fetchMALUser error:", e);
+    }
   }
 
   function updateAuthUI() {
@@ -2373,7 +2375,7 @@ function scrollDates(dir) {
     const token = localStorage.getItem('al_token');
     if (!token) return;
     try {
-      await fetch('https://graphql.anilist.co', {
+      const r = await fetch('https://graphql.anilist.co', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
@@ -2381,21 +2383,35 @@ function scrollDates(dir) {
           variables: { mediaId: anilistId, progress: episode, status: 'CURRENT' }
         })
       });
-      showToast(`AniList sync: Ep ${episode} ✅`);
-    } catch(e) {}
+      const j = await r.json();
+      if (j.errors) {
+        console.error("AniList Sync GraphQL Errors:", j.errors);
+      } else {
+        showToast(`AniList sync: Ep ${episode} ✅`);
+      }
+    } catch(e) {
+      console.error("syncToAniList error:", e);
+    }
   }
 
   async function syncToMAL(malId, episode) {
     const malData = JSON.parse(localStorage.getItem('mal_token') || 'null');
     if (!malData) return;
     try {
-      await fetch(`https://api.myanimelist.net/v2/anime/${malId}/my_list_status`, {
+      const res = await fetch(`/api/mal-proxy?path=anime/${malId}/my_list_status`, {
         method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${malData.access_token}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ status: 'watching', num_watched_episodes: episode })
+        headers: { 'Authorization': `Bearer ${malData.access_token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'watching', num_watched_episodes: episode })
       });
-      showToast(`MAL sync: Ep ${episode} ✅`);
-    } catch(e) {}
+      const data = await res.json();
+      if (data.error) {
+        console.error("MAL Sync error payload:", data);
+      } else {
+        showToast(`MAL sync: Ep ${episode} ✅`);
+      }
+    } catch(e) {
+      console.error("syncToMAL error:", e);
+    }
   }
 
   const savedNick = localStorage.getItem('party_nick');
