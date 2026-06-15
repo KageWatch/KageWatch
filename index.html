@@ -2251,9 +2251,8 @@ function scrollDates(dir) {
 
   async function loginMAL() {
     const verifier = generateCodeVerifier();
-    const challenge = await generateCodeChallenge(verifier);
     localStorage.setItem('mal_verifier', verifier);
-    const url = `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${MAL_CLIENT_ID}&redirect_uri=${SITE_URL}/auth/mal&code_challenge=${challenge}&code_challenge_method=S256`;
+    const url = `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${MAL_CLIENT_ID}&redirect_uri=${SITE_URL}/auth/mal&code_challenge=${verifier}&code_challenge_method=plain`;
     window.location.href = url;
   }
 
