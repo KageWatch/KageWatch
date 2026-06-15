@@ -2091,7 +2091,7 @@ function scrollDates(dir) {
   }
 
   function loginAniList() {
-    const url = `https://anilist.co/api/v2/oauth/authorize?client_id=${ANILIST_CLIENT_ID}&redirect_uri=${SITE_URL}/auth&response_type=code`;
+    const url = `https://anilist.co/api/v2/oauth/authorize?client_id=${ANILIST_CLIENT_ID}&redirect_uri=${SITE_URL}/auth&response_type=token`;
     window.location.href = url;
   }
 
@@ -2119,29 +2119,31 @@ function scrollDates(dir) {
 
   async function handleAuthCallback() {
     const path = window.location.pathname;
+    
+    // --- ANILIST LOGIN WALA PART (Token se handle hoga) ---
+    const hash = window.location.hash.substring(1);
+    const hashParams = new URLSearchParams(hash);
+    const alToken = hashParams.get('access_token');
+  
+    if (path === '/auth' && alToken) {
+      showToast('AniList login ho raha hai...');
+      try {
+        localStorage.setItem('al_token', alToken);
+        await fetchAniListUser(alToken);
+        showToast('AniList login successful! ✅');
+      } catch(e) { 
+        showToast('AniList login failed ❌'); 
+      }
+      window.history.replaceState({}, '', '/');
+      goHome();
+      return; // AniList done, function yahan exit karega
+    }
+  
+    // --- MAL LOGIN WALA PART (Ye code waisa hi chalega jaise chal raha tha) ---
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     if (!code) return;
-
-    if (path === '/auth') {
-      showToast('AniList login ho raha hai...');
-      try {
-        const res = await fetch('/api/anilist-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code })
-        });
-        const data = await res.json();
-        if (data.access_token) {
-          localStorage.setItem('al_token', data.access_token);
-          await fetchAniListUser(data.access_token);
-          showToast('AniList login successful! ✅');
-        }
-      } catch(e) { showToast('AniList login failed ❌'); }
-      window.history.replaceState({}, '', '/');
-      goHome();
-    }
-
+  
     if (path === '/auth/mal') {
       showToast('MAL login ho raha hai...');
       const verifier = localStorage.getItem('mal_verifier');
