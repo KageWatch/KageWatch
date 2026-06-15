@@ -2224,9 +2224,14 @@ function scrollDates(dir) {
   const SITE_URL = 'https://kage-watch.vercel.app';
 
   function generateCodeVerifier() {
-    const array = new Uint8Array(32);
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+    const array = new Uint8Array(128);
     crypto.getRandomValues(array);
-    return btoa(String.fromCharCode(...array)).replace(/[^a-zA-Z0-9]/g, '').substring(0, 43);
+    let result = '';
+    for (let i = 0; i < 128; i++) {
+      result += chars[array[i] % chars.length];
+    }
+    return result;
   }
 
   async function generateCodeChallenge(verifier) {
