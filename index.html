@@ -2330,7 +2330,7 @@ function scrollDates(dir) {
 
   async function fetchMALUser(token) {
     try {
-      const res = await fetch('/api/mal-proxy?path=users/@me', {
+      const res = await fetch('/api/mal-user', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const user = await res.json();
@@ -2398,10 +2398,10 @@ function scrollDates(dir) {
     const malData = JSON.parse(localStorage.getItem('mal_token') || 'null');
     if (!malData) return;
     try {
-      const res = await fetch(`/api/mal-proxy?path=anime/${malId}/my_list_status`, {
-        method: 'PATCH',
+      const res = await fetch(`/api/mal-status`, {
+        method: 'POST',
         headers: { 'Authorization': `Bearer ${malData.access_token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'watching', num_watched_episodes: episode })
+        body: JSON.stringify({ animeId: malId, status: 'watching', episode: episode })
       });
       const data = await res.json();
       if (data.error) {
