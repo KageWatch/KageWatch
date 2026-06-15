@@ -2373,21 +2373,42 @@ function scrollDates(dir) {
 
   async function syncToAniList(anilistId, episode) {
     const token = localStorage.getItem('al_token');
-    if (!token) return;
+    
+    // Fix 1: Corrupted token check
+    if (!token || token === 'undefined' || token === 'null') {
+      console.error("Corrupted AniList Token. Please Logout and Login again.");
+      showToast("AniList Token Error: Please re-login!");
+      return;
+    }
+    
     try {
       const r = await fetch('https://graphql.anilist.co', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
         body: JSON.stringify({
           query: `mutation($mediaId:Int,$progress:Int,$status:MediaListStatus){SaveMediaListEntry(mediaId:$mediaId,progress:$progress,status:$status){id}}`,
-          variables: { mediaId: anilistId, progress: episode, status: 'CURRENT' }
+          variables: { 
+            mediaId: parseInt(anilistId), 
+            progress: parseInt(episode), 
+            status: 'CURRENT' 
+          }
         })
       });
+      
       const j = await r.json();
+      
       if (j.errors) {
         console.error("AniList Sync GraphQL Errors:", j.errors);
+        showToast(`AniList API Error: ${j.errors[0].message}`);
       } else {
-        showToast(`AniList sync: Ep ${episode} ✅`);
+        // Fix 2: Toast Delay so MAL doesn't hide it instantly
+        setTimeout(() => {
+          showToast(`AniList sync: Ep ${episode} ✅`);
+        }, 1500); 
       }
     } catch(e) {
       console.error("syncToAniList error:", e);
