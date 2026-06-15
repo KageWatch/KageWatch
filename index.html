@@ -2373,27 +2373,30 @@ function scrollDates(dir) {
 
   async function syncToAniList(anilistId, episode) {
     const token = localStorage.getItem('al_token');
-    
-    // Fix 1: Corrupted token check
-    if (!token || token === 'undefined' || token === 'null') {
-      console.error("Corrupted AniList Token. Please Logout and Login again.");
-      showToast("AniList Token Error: Please re-login!");
-      return;
-    }
-    
+    if (!token) return;
+
+    // Force data into integers (AniList strict requirement)
+    const safeMediaId = parseInt(anilistId, 10);
+    const safeProgress = parseInt(episode, 10);
+
     try {
       const r = await fetch('https://graphql.anilist.co', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json', 
-          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json', 
           'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify({
-          query: `mutation($mediaId:Int,$progress:Int,$status:MediaListStatus){SaveMediaListEntry(mediaId:$mediaId,progress:$progress,status:$status){id}}`,
+          query: `mutation($mediaId: Int, $progress: Int, $status: MediaListStatus) {
+            SaveMediaListEntry(mediaId: $mediaId, progress: $progress, status: $status) {
+              id
+              progress
+            }
+          }`,
           variables: { 
-            mediaId: parseInt(anilistId), 
-            progress: parseInt(episode), 
+            mediaId: safeMediaId, 
+            progress: safeProgress, 
             status: 'CURRENT' 
           }
         })
@@ -2401,17 +2404,20 @@ function scrollDates(dir) {
       
       const j = await r.json();
       
+      // Yahan actual error pakda jayega
       if (j.errors) {
-        console.error("AniList Sync GraphQL Errors:", j.errors);
-        showToast(`AniList API Error: ${j.errors[0].message}`);
+        console.error("🚨 AniList API Error:", j.errors);
+        showToast(`AniList Sync Error: ${j.errors[0].message}`);
       } else {
-        // Fix 2: Toast Delay so MAL doesn't hide it instantly
+        console.log("✅ AniList Sync Success:", j);
+        // Delay added so MAL toast doesn't hide it instantly
         setTimeout(() => {
-          showToast(`AniList sync: Ep ${episode} ✅`);
-        }, 1500); 
+          showToast(`AniList sync: Ep ${safeProgress} ✅`);
+        }, 1200); 
       }
     } catch(e) {
-      console.error("syncToAniList error:", e);
+      console.error("🚨 AniList Network Error:", e);
+      showToast("AniList Sync Failed (Network Issue)");
     }
   }
 
