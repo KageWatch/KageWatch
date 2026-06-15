@@ -2220,7 +2220,7 @@ function scrollDates(dir) {
   // 🔐 AUTH SYSTEM - AniList + MAL
   // ═══════════════════════════════════════
   const ANILIST_CLIENT_ID = '43646';
-  const MAL_CLIENT_ID = '18d90cf74e43ccbedb3184681d7b9284';
+  const MAL_CLIENT_ID = 'bc840070a0f2635e9e5139ca75929f27';
   const SITE_URL = 'https://kage-watch.vercel.app';
 
   function generateCodeVerifier() {
@@ -2307,8 +2307,14 @@ function scrollDates(dir) {
           localStorage.setItem('mal_token', JSON.stringify(data));
           await fetchMALUser(data.access_token);
           showToast('MAL login successful! ✅');
+        } else {
+          console.error("MAL OAuth Exchange Error Response:", data);
+          showToast('MAL login failed ❌');
         }
-      } catch(e) { showToast('MAL login failed ❌'); }
+      } catch (e) {
+        console.error("MAL OAuth Exchange Exception:", e);
+        showToast('MAL login failed ❌');
+      }
       localStorage.removeItem('mal_verifier');
       window.history.replaceState({}, '', '/');
       goHome();
@@ -2374,50 +2380,23 @@ function scrollDates(dir) {
   async function syncToAniList(anilistId, episode) {
     const token = localStorage.getItem('al_token');
     if (!token) return;
-
-    // Force data into integers (AniList strict requirement)
-    const safeMediaId = parseInt(anilistId, 10);
-    const safeProgress = parseInt(episode, 10);
-
     try {
       const r = await fetch('https://graphql.anilist.co', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json', 
-          'Authorization': `Bearer ${token}` 
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
-          query: `mutation($mediaId: Int, $progress: Int, $status: MediaListStatus) {
-            SaveMediaListEntry(mediaId: $mediaId, progress: $progress, status: $status) {
-              id
-              progress
-            }
-          }`,
-          variables: { 
-            mediaId: safeMediaId, 
-            progress: safeProgress, 
-            status: 'CURRENT' 
-          }
+          query: `mutation($mediaId:Int,$progress:Int,$status:MediaListStatus){SaveMediaListEntry(mediaId:$mediaId,progress:$progress,status:$status){id}}`,
+          variables: { mediaId: anilistId, progress: episode, status: 'CURRENT' }
         })
       });
-      
       const j = await r.json();
-      
-      // Yahan actual error pakda jayega
       if (j.errors) {
-        console.error("🚨 AniList API Error:", j.errors);
-        showToast(`AniList Sync Error: ${j.errors[0].message}`);
+        console.error("AniList Sync GraphQL Errors:", j.errors);
       } else {
-        console.log("✅ AniList Sync Success:", j);
-        // Delay added so MAL toast doesn't hide it instantly
-        setTimeout(() => {
-          showToast(`AniList sync: Ep ${safeProgress} ✅`);
-        }, 1200); 
+        showToast(`AniList sync: Ep ${episode} ✅`);
       }
     } catch(e) {
-      console.error("🚨 AniList Network Error:", e);
-      showToast("AniList Sync Failed (Network Issue)");
+      console.error("syncToAniList error:", e);
     }
   }
 
@@ -2461,7 +2440,7 @@ function scrollDates(dir) {
   window.logoutAniList = logoutAniList;
   window.loginMAL = loginMAL;
   window.logoutMAL = logoutMAL;
-  window.syncToAniList = syncToAniList; // <-- Ye line add ki
+  window.syncToAniList = syncToAniList;
   window.syncToMAL = syncToMAL;
 
   handleAuthCallback();
