@@ -2178,13 +2178,18 @@ async function fetchScheduleData(isNewDate = false) {
 
   async function fetchMALUser(token) {
     try {
-      const res = await fetch('https://api.myanimelist.net/v2/users/@me', {
+      // Direct MAL ki jagah ab hum apne Vercel backend API ko call kar rahe hain
+      const res = await fetch('/api/mal-user', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const user = await res.json();
+      
+      // Data save karke UI update kar do
       localStorage.setItem('mal_user', JSON.stringify(user));
       updateAuthUI();
-    } catch(e) {}
+    } catch(e) {
+      console.error("MAL user fetch error:", e);
+    }
   }
 
   function updateAuthUI() {
