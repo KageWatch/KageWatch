@@ -12,18 +12,25 @@ export default async function handler(req, res) {
           }
         }
       }`;
-    const r = await fetch(AL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, variables: { page } })
-    });
-    const j = await r.json();
-    return j.data?.Page;
+    try {
+      const r = await fetch(AL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: { page } })
+      });
+      const j = await r.json();
+      return j.data?.Page?.media || [];
+    } catch (e) {
+      console.error(`Error fetching page ${page} for sort ${sort}:`, e);
+      return [];
+    }
   }
 
   function toSlug(titleObj) {
     const raw = titleObj.english || titleObj.romaji || titleObj.native || 'anime';
     return raw
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .trim()
@@ -41,15 +48,23 @@ export default async function handler(req, res) {
       { sort: 'POPULARITY_DESC', filter: ', status: RELEASING' },
     ];
 
+    // Build promises to fetch 5 pages concurrently per category (250 items per category)
+    // This is extremely fast, prevents 504 timeouts, and easily keeps under AniList rate limits.
+    const promises = [];
     for (const cat of categories) {
-      for (let page = 1; page <= 10; page++) {
-        const data = await fetchAnime(page, cat.sort, cat.filter);
-        if (!data) break;
-        data.media.forEach(a => allAnime.set(a.id, a));
-        if (!data.pageInfo.hasNextPage) break;
-        await new Promise(r => setTimeout(r, 300));
+      for (let page = 1; page <= 5; page++) {
+        promises.push(fetchAnime(page, cat.sort, cat.filter));
       }
     }
+
+    const results = await Promise.all(promises);
+
+    // Merge unique anime by ID
+    results.flat().forEach(a => {
+      if (a && a.id) {
+        allAnime.set(a.id, a);
+      }
+    });
 
     const staticUrls = `
   <url>
