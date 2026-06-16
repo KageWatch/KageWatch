@@ -21,11 +21,8 @@
 <meta property="og:image" content="https://kage-watch.vercel.app/favicon.png">
 <meta property="og:url" content="https://kage-watch.vercel.app">
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 
 <!-- Sitemap & Robots -->
@@ -1070,6 +1067,54 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 </div>
 
 <script>
+let videoScriptsLoaded = null;
+function ensureVideoScripts() {
+  if (videoScriptsLoaded) return videoScriptsLoaded;
+  videoScriptsLoaded = new Promise((resolve, reject) => {
+    if (typeof Hls !== 'undefined' && typeof Plyr !== 'undefined') {
+      resolve();
+      return;
+    }
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdn.plyr.io/3.7.8/plyr.css';
+    document.head.appendChild(link);
+    
+    const sHls = document.createElement('script');
+    sHls.src = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
+    sHls.async = true;
+    sHls.onload = () => {
+      const sPlyr = document.createElement('script');
+      sPlyr.src = 'https://cdn.plyr.io/3.7.8/plyr.polyfilled.js';
+      sPlyr.async = true;
+      sPlyr.onload = () => resolve();
+      sPlyr.onerror = (err) => reject(new Error('Failed to load Plyr player library'));
+      document.head.appendChild(sPlyr);
+    };
+    sHls.onerror = (err) => reject(new Error('Failed to load HLS streaming library'));
+    document.head.appendChild(sHls);
+  });
+  return videoScriptsLoaded;
+}
+
+let peerScriptLoaded = null;
+function ensurePeerScript() {
+  if (peerScriptLoaded) return peerScriptLoaded;
+  peerScriptLoaded = new Promise((resolve, reject) => {
+    if (typeof Peer !== 'undefined') {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js';
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = (err) => reject(new Error('Failed to load PeerJS library'));
+    document.head.appendChild(script);
+  });
+  return peerScriptLoaded;
+}
+
 const AL = 'https://graphql.anilist.co';
 
 // 🚀 UPDATED PROVIDERS LIST WITH KAGEWATCH VIP
@@ -1497,8 +1542,12 @@ function buildHero(list){
   list.forEach((a,i)=>{
     const slide=document.createElement('div');
     slide.className='hero-slide'+(i===0?' active':'');
+    
+    const bannerUrl = a.bannerImage || a.coverImage.extraLarge;
+    const coverUrl = a.coverImage.extraLarge || a.coverImage.large;
+    
     slide.innerHTML=`
-      <div class="hero-bg" style="background-image:url('${a.bannerImage||a.coverImage.extraLarge}')"></div>
+      <div class="hero-bg" ${i === 0 ? `style="background-image:url('${bannerUrl}')"` : `data-bg="${bannerUrl}"`}></div>
       <div class="hero-grad"></div>
       <div class="hero-content">
         <div class="hero-left">
@@ -1511,7 +1560,7 @@ function buildHero(list){
           </div>
         </div>
         <div class="hero-right">
-          <img class="hero-cover" src="${a.coverImage.extraLarge||a.coverImage.large}" alt="${getTitle(a.title)}">
+          <img class="hero-cover" ${i === 0 ? `src="${coverUrl}"` : `data-src="${coverUrl}"`} alt="${getTitle(a.title)}">
         </div>
       </div>`;
     cont.appendChild(slide);
@@ -1532,7 +1581,39 @@ document.getElementById('hero').addEventListener('mousemove', e => {
 });
 
 function goHero(i){
-  document.querySelectorAll('.hero-slide').forEach((s,j)=>s.classList.toggle('active',j===i));
+  document.querySelectorAll('.hero-slide').forEach((s,j)=>{
+    const isActive = (j === i);
+    s.classList.toggle('active', isActive);
+    if (isActive) {
+      // Load lazy images/backgrounds for this slide
+      const bg = s.querySelector('.hero-bg');
+      if (bg && bg.dataset.bg) {
+        bg.style.backgroundImage = `url('${bg.dataset.bg}')`;
+        delete bg.dataset.bg;
+      }
+      const cover = s.querySelector('.hero-cover');
+      if (cover && cover.dataset.src) {
+        cover.src = cover.dataset.src;
+        delete cover.dataset.src;
+      }
+      
+      // Preload next slide images
+      const nextIdx = (i + 1) % heroAnimes.length;
+      const nextSlide = document.querySelectorAll('.hero-slide')[nextIdx];
+      if (nextSlide) {
+        const nBg = nextSlide.querySelector('.hero-bg');
+        if (nBg && nBg.dataset.bg) {
+          nBg.style.backgroundImage = `url('${nBg.dataset.bg}')`;
+          delete nBg.dataset.bg;
+        }
+        const nCover = nextSlide.querySelector('.hero-cover');
+        if (nCover && nCover.dataset.src) {
+          nCover.src = nCover.dataset.src;
+          delete nCover.dataset.src;
+        }
+      }
+    }
+  });
   document.querySelectorAll('.hero-dot').forEach((d,j)=>d.classList.toggle('active',j===i));
   heroIdx=i;
 }
@@ -1712,7 +1793,7 @@ async function openWatchView(id) {
         card.className = 'rel-card';
         card.onclick = () => openWatchView(node.id);
         card.innerHTML = `
-          <img class="rel-img" src="${node.coverImage.large}" alt="Watch ${title}">
+          <img class="rel-img" src="${node.coverImage.large}" loading="lazy" alt="Watch ${title}">
           <div class="rel-info">
             <div class="rel-title" title="${title}">${title}</div>
             <div class="rel-meta"><span>${year}</span><span class="rel-badge">${badge}</span></div>
@@ -1794,6 +1875,8 @@ async function playEp(ep) {
       const PROXY_BASE = "https://kagewatch-kagewatch-proxy.hf.space/proxy";
 
       fetch(apiUrl).then(r => r.json()).then(async (data) => {
+          
+          await ensureVideoScripts();
           
           const streamData = state.lang === 'dub' ? data.sdub : data.ssub;
           if (!streamData || !streamData.streams || streamData.streams.length === 0) {
@@ -2216,7 +2299,6 @@ function scrollDates(dir) {
   fillStrip('strip-trending', tList);
   fillStrip('strip-airing', airing?.Page?.media||[]);
   fillStrip('strip-finished', finished?.Page?.media||[]);
-  fillStrip('strip-top', top?.Page?.media||[]);
   
   // ═══════════════════════════════════════
   // 🔐 AUTH SYSTEM - AniList + MAL
@@ -2481,7 +2563,8 @@ function switchRightTab(tab) {
   }
 }
 
-function initHostPeer(roomId) {
+async function initHostPeer(roomId) {
+  await ensurePeerScript();
   partyPeer = new Peer(roomId);
 
   partyPeer.on('open', (id) => {
@@ -2533,7 +2616,8 @@ function initHostPeer(roomId) {
   });
 }
 
-function initGuestPeer(roomId) {
+async function initGuestPeer(roomId) {
+  await ensurePeerScript();
   partyPeer = new Peer();
 
   partyPeer.on('open', (myId) => {
