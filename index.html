@@ -223,7 +223,7 @@ nav a:hover, nav a.active{color:var(--text);}
 .tt-info { font-size: 0.75rem; color: var(--text); line-height: 1.6; }
 .tt-info span { color: var(--muted2); font-weight: 600; width: 65px; display: inline-block; }
 .tt-actions { display: flex; gap: 10px; margin-top: 4px; }
-.tt-btn-watch { flex: 1; background: var(--accent); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.tt-btn-watch { flex: 1; background: var(--accent); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
 .tt-btn-watch:hover { background: #c92d42; transform: translateY(-2px); }
 .tt-btn-add { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
 .tt-btn-add:hover { background: #fff; color: #000; }
@@ -252,7 +252,7 @@ nav a:hover, nav a.active{color:var(--text);}
 .hero-genres{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
 .hero-genre{font-size:0.75rem;font-weight:600;padding:4px 12px;border-radius:6px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(4px);}
 .hero-desc{font-size:0.9rem;color:var(--muted2);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:28px;}
-.btn-watch{display:flex;align-items:center;gap:10px;padding:14px 32px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all .3s;box-shadow:0 8px 24px var(--glow);}
+.btn-watch{display:flex;align-items:center;gap:10px;padding:14px 32px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all .3s;box-shadow:0 8px 24px var(--glow);text-decoration:none;}
 .btn-watch:hover{background:#c92d42;transform:translateY(-3px);box-shadow:0 12px 32px rgba(230,57,80,0.4)}
 .hero-right{position:absolute;right:80px;top:50%;transform:translateY(-50%) perspective(1000px) rotateY(-5deg);width:220px;}
 .hero-cover{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.1);animation:coverFloat 6s ease-in-out infinite;}
@@ -285,7 +285,7 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 @keyframes cardEntrance { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 /* Premium Anime Cards */
-.a-card { flex-shrink: 0; width: 160px; cursor: pointer; border-radius: 12px; background: var(--card); border: 1px solid var(--border); position: relative; transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1); display: flex; flex-direction: column; }
+.a-card { flex-shrink: 0; width: 160px; cursor: pointer; border-radius: 12px; background: var(--card); border: 1px solid var(--border); position: relative; transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1); display: flex; flex-direction: column; text-decoration: none; }
 .a-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--accent); box-shadow: 0 15px 40px var(--glow); z-index: 10; }
 .a-card:hover .a-card-img { filter: blur(3px) brightness(0.5); }
 .a-card-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s; z-index:2; }
@@ -310,7 +310,7 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 .a-card-score{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);border-radius:6px;padding:3px 8px;font-size:0.65rem;font-weight:700;color:#ffd700;z-index:2;}
 
 /* Continue Watching Progress */
-.cw-card{flex-shrink:0;width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);position:relative;transition:all .3s;}
+.cw-card{flex-shrink:0;width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);position:relative;transition:all .3s;text-decoration:none;}
 .cw-card:hover{transform:translateY(-5px);border-color:var(--accent);box-shadow:0 10px 30px var(--glow);}
 .cw-thumb-wrap{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden}
 .cw-thumb{width:100%;height:100%;object-fit:cover;display:block}
@@ -403,7 +403,7 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 .relations-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); display: none; }
 .rel-header { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; }
 .rel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
-.rel-card { display: flex; align-items: center; gap: 12px; background: var(--card2); border: 1px solid var(--border); padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.rel-card { display: flex; align-items: center; gap: 12px; background: var(--card2); border: 1px solid var(--border); padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-decoration: none; }
 .rel-card:hover { border-color: var(--muted2); background: rgba(255,255,255,0.05); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 .rel-img { width: 44px; height: 60px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
 .rel-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
@@ -575,9 +575,9 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 .schedule-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); gap: 20px; }
 .schedule-row:last-child { border-bottom: none; }
 .s-time { font-size: 0.85rem; color: var(--muted2); font-weight: 700; width: 70px; flex-shrink: 0; }
-.s-title { font-size: 0.9rem; color: var(--muted2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; cursor: pointer; }
+.s-title { font-size: 0.9rem; color: var(--muted2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; cursor: pointer; text-decoration: none; }
 .s-title:hover { color: var(--text); }
-.s-ep { font-size: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; color: var(--muted2); cursor: pointer; transition: 0.2s; }
+.s-ep { font-size: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; color: var(--muted2); cursor: pointer; transition: 0.2s; text-decoration: none; }
 .s-ep:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
 .schedule-more { text-align: center; padding: 15px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); cursor: pointer; border-top: 1px solid var(--border); transition: 0.2s; background: rgba(0,0,0,0.2); }
 .schedule-more:hover { color: #fff; background: rgba(255,255,255,0.05); }
@@ -653,12 +653,12 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 <header id="main-header">
   <h1 class="sr-only">Watch Anime Online Free - Sub & Dub Anime Streaming on KageWatch</h1>
   
-  <div class="logo" onclick="goHome()">KageWatch</div>
+  <a href="/" class="logo" onclick="event.preventDefault(); goHome();">KageWatch</a>
   <nav id="main-nav">
-    <a class="active" onclick="goHome()">Home</a>
-    <a onclick="goSearchView('trending', 'Trending Now')">Trending</a>
-    <a onclick="goSearchView('top', 'Top Rated')">Top Rated</a>
-    <a onclick="goSearchView('airing', 'Currently Airing')">Airing</a>
+    <a class="active" href="/" onclick="event.preventDefault(); goHome();">Home</a>
+    <a href="/trending" onclick="event.preventDefault(); goSearchView('trending', 'Trending Now');">Trending</a>
+    <a href="/top-rated" onclick="event.preventDefault(); goSearchView('top', 'Top Rated');">Top Rated</a>
+    <a href="/airing" onclick="event.preventDefault(); goSearchView('airing', 'Currently Airing');">Airing</a>
     <div class="nav-indicator" id="nav-indicator"></div>
   </nav>
   <div class="header-right">
@@ -696,9 +696,9 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
         <button onclick="logoutMAL()" style="background:none;border:none;color:var(--muted);cursor:pointer;">✕</button>
       </div>
     </div>
-    <div class="icon-btn" title="Watchlist" onclick="loadWatchlist()" id="nav-watchlist">
+    <a href="/watchlist" class="icon-btn" title="Watchlist" onclick="event.preventDefault(); loadWatchlist();" id="nav-watchlist">
       <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-    </div>
+    </a>
   </div>
 </header>
 
@@ -1030,24 +1030,24 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 <footer id="main-footer">
   <div class="footer-content">
     <div class="footer-left">
-      <div class="logo" onclick="goHome()">KageWatch</div>
-      <p class="footer-desc">Watch Anime Online Free with KageWatch. Stream Subbed and Dubbed Anime, Trending Anime, Top Rated Anime, Currently Airing Anime, and Recently Finished Series.</p>
-    </div>
-    <div class="footer-links">
-      <div class="link-col">
-        <span>Navigation</span>
-        <a onclick="goHome()">Home</a>
-        <a onclick="goSearchView('trending','Trending Now')">Trending</a>
-        <a onclick="goSearchView('top','Top Rated')">Top Rated</a>
-        <a onclick="loadWatchlist()">Watchlist</a>
+        <a href="/" class="logo" onclick="event.preventDefault(); goHome();">KageWatch</a>
+        <p class="footer-desc">Watch Anime Online Free with KageWatch. Stream Subbed and Dubbed Anime, Trending Anime, Top Rated Anime, Currently Airing Anime, and Recently Finished Series.</p>
       </div>
-      <div class="link-col">
-        <span>Legal</span>
-        <a onclick="openModal('terms')">Terms of Service</a>
-        <a onclick="openModal('privacy')">Privacy Policy</a>
-        <a onclick="openModal('dmca')">DMCA</a>
-        <a onclick="openModal('contact')">Contact</a>
-      </div>
+      <div class="footer-links">
+        <div class="link-col">
+          <span>Navigation</span>
+          <a href="/" onclick="event.preventDefault(); goHome();">Home</a>
+          <a href="/trending" onclick="event.preventDefault(); goSearchView('trending','Trending Now');">Trending</a>
+          <a href="/top-rated" onclick="event.preventDefault(); goSearchView('top','Top Rated');">Top Rated</a>
+          <a href="/watchlist" onclick="event.preventDefault(); loadWatchlist();">Watchlist</a>
+        </div>
+        <div class="link-col">
+          <span>Legal</span>
+          <a href="/terms" onclick="event.preventDefault(); openModal('terms');">Terms of Service</a>
+          <a href="/privacy" onclick="event.preventDefault(); openModal('privacy');">Privacy Policy</a>
+          <a href="/dmca" onclick="event.preventDefault(); openModal('dmca');">DMCA</a>
+          <a href="/contact" onclick="event.preventDefault(); openModal('contact');">Contact</a>
+        </div>
     </div>
   </div>
   <div class="footer-bottom">
@@ -1173,6 +1173,17 @@ function getTitle(titleObj) {
   return titleObj.romaji || titleObj.english || 'Unknown Title';
 }
 
+function toSlug(title) {
+  if (!title) return 'anime';
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
 async function alQ(query, vars = {}) {
   const cacheKey = btoa(query + JSON.stringify(vars));
   const cachedData = localStorage.getItem(cacheKey);
@@ -1203,16 +1214,22 @@ const legalData = {
   dmca: { title: "DMCA Disclaimer", content: "<p>KageWatch respects the intellectual property rights of others.</p><h3>No Hosted Content</h3><p>We do not host any video content, episodes, or movies on our servers. All media streamed on KageWatch is hosted on third-party services that are not affiliated with us.</p><h3>Takedown Requests</h3><p>Since we do not host the files, we cannot remove them. If you believe your copyrighted content is being displayed, please contact the respective media hosting providers (e.g., MegaPlay, VidPlus) to have the files removed. Once removed from their servers, the content will automatically disappear from KageWatch.</p>" },
   contact: { title: "Contact Us", content: "<p>For any inquiries, bug reports, feature requests, or business propositions, you can reach out to the KageWatch administration.</p><h3>Email</h3><p><a href='mailto:otakustream.admin@gmail.com'>otakustream.admin@gmail.com</a></p><p>Please note that we cannot assist with issues regarding missing episodes or broken videos.</p>" }
 };
-function openModal(type) {
+function openModal(type, updateHistory = true) {
   const m = document.getElementById('legal-modal');
   document.getElementById('modal-title').textContent = legalData[type].title;
   document.getElementById('modal-body').innerHTML = legalData[type].content;
   m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10);
   document.body.style.overflow = 'hidden'; 
+  if (updateHistory && window.location.pathname !== '/' + type) {
+    window.history.pushState({ modal: type }, '', '/' + type);
+  }
 }
-function closeModal() {
+function closeModal(updateHistory = true) {
   const m = document.getElementById('legal-modal'); m.classList.remove('active');
   setTimeout(() => { m.style.display = 'none'; document.body.style.overflow = ''; }, 300);
+  if (updateHistory && ['/terms', '/privacy', '/dmca', '/contact'].includes(window.location.pathname)) {
+    window.history.pushState({}, '', '/');
+  }
 }
 
 // ── UI HELPERS ──
@@ -1285,7 +1302,7 @@ function showTooltip(cardEl, a) {
       <div><span>Genres:</span> ${genres}</div>
     </div>
     <div class="tt-actions">
-      <button class="tt-btn-watch" onclick="hideTooltip(); openWatchView(${a.id})">▶ Watch Now</button>
+      <a href="/watch/${a.id}/${toSlug(getTitle(a.title))}" class="tt-btn-watch" onclick="event.preventDefault(); hideTooltip(); openWatchView(${a.id});">▶ Watch Now</a>
       <button class="tt-btn-add" onclick="Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')})">+</button>
     </div>
   `;
@@ -1443,6 +1460,12 @@ async function doSearch() {
   showView('search-view');
   showSearchSkeleton();
 
+  const url = new URL(window.location.href);
+  if (url.searchParams.get('search') !== q) {
+    url.searchParams.set('search', q);
+    window.history.pushState({}, '', url.pathname + url.search);
+  }
+
   const d = await alQ(`query($s:String){Page(perPage:40){media(search:$s,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`, {s: q});
   const results = d?.Page?.media || [];
   document.getElementById('sv-subtitle').textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
@@ -1467,7 +1490,7 @@ async function filterGenre(genre) {
   fillSearchView(d?.Page?.media || []);
 }
 
-function loadWatchlist() {
+function loadWatchlist(updateHistory = true) {
   document.getElementById('sv-title').textContent = 'My Watchlist';
   document.getElementById('sv-subtitle').textContent = 'Anime you\'ve saved';
   closeFilterPanel();
@@ -1476,6 +1499,10 @@ function loadWatchlist() {
   fillSearchView(Store.getFavs());
   document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
   updateNavIndicator();
+  if (updateHistory && window.location.pathname !== '/watchlist') {
+    window.history.pushState({ view: 'watchlist' }, '', '/watchlist');
+    document.title = 'My Watchlist - KageWatch';
+  }
 }
 
 // ── HOME VIEW LOGIC ──
@@ -1500,8 +1527,9 @@ function makeCard(a, index = 0){
       </div>
     </div>`;
 
-  const el = document.createElement('div'); 
+  const el = document.createElement('a'); 
   el.className = 'a-card';
+  el.href = `/watch/${a.id}/${toSlug(getTitle(a.title))}`;
   el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${index * 0.04}s both`;
   
   el.addEventListener('mouseenter', () => {
@@ -1513,14 +1541,19 @@ function makeCard(a, index = 0){
    hideTooltip();
    document.getElementById('ambient-bg').classList.remove('active');
   });
+  el.addEventListener('click', (e) => {
+    e.preventDefault();
+    hideTooltip();
+    openWatchView(a.id);
+  });
   
   el.innerHTML = `
-    <div class="a-card-img-wrap" onclick="hideTooltip(); openWatchView(${a.id})">
+    <div class="a-card-img-wrap">
       <img class="a-card-img" src="${a.coverImage.large}" loading="lazy" alt="Watch ${getTitle(a.title)} online">
       <div class="a-card-overlay"><div class="a-card-play">▶</div></div>
       ${score} ${live} ${subDubBadges}
     </div>
-    <div class="a-card-body" onclick="hideTooltip(); openWatchView(${a.id})">
+    <div class="a-card-body">
       <h2 class="a-card-title">${getTitle(a.title)}</h2>
       <button class="btn-fav ${isFav ? 'saved' : ''}" onclick="event.stopPropagation(); Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')}); this.classList.toggle('saved');" aria-label="Save to Watchlist">♥</button>
     </div>`;
@@ -1556,7 +1589,7 @@ function buildHero(list){
           <div class="hero-genres">${(a.genres||[]).slice(0,4).map(g=>`<span class="hero-genre">${g}</span>`).join('')}</div>
           <div class="hero-desc">${(a.description||'').replace(/<[^>]*>/g,'').slice(0,100)}…</div>
           <div class="hero-actions">
-            <button class="btn-watch" onclick="openWatchView(${a.id})">▶ Watch Now</button>
+            <a href="/watch/${a.id}/${toSlug(getTitle(a.title))}" class="btn-watch" onclick="event.preventDefault(); openWatchView(${a.id})">▶ Watch Now</a>
           </div>
         </div>
         <div class="hero-right">
@@ -1626,14 +1659,15 @@ function renderHistory(){
   sec.style.display='block'; sc.innerHTML='';
   items.forEach((item, i)=>{
     const pct = item.total ? Math.round((item.eps.length)/item.total*100) : 0;
-    const el=document.createElement('div'); el.className='cw-card';
+    const el=document.createElement('a'); el.className='cw-card';
+    el.href = `/watch/${item.aid}/${toSlug(item.title)}`;
     el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${i * 0.05}s both`;
     el.addEventListener('mouseenter', () => { document.getElementById('ambient-bg').style.backgroundImage = `url('${item.cover}')`; document.getElementById('ambient-bg').classList.add('active'); });
     el.addEventListener('mouseleave', () => { document.getElementById('ambient-bg').classList.remove('active'); });
+    el.addEventListener('click', (e) => { e.preventDefault(); openWatchView(item.aid); });
     el.innerHTML=`
       <div class="cw-thumb-wrap"><img class="cw-thumb" src="${item.cover}" loading="lazy" alt="History"><div class="cw-thumb-overlay"><div class="cw-play">▶</div></div></div>
       <div class="cw-info"><div class="cw-title">${item.title}</div><div class="cw-ep"><span>Ep ${item.ep}</span><span>${pct}%</span></div><div class="cw-bar"><div class="cw-fill" style="width:${pct}%"></div></div></div>`;
-    el.onclick=()=>openWatchView(item.aid);
     sc.appendChild(el);
   });
 }
@@ -1789,9 +1823,10 @@ async function openWatchView(id) {
         if(badge === 'TV_SHORT') badge = 'SHORT';
         if(badge === 'SPECIAL') badge = 'SP';
         if(badge === 'MOVIE') badge = 'FILM';
-        const card = document.createElement('div');
+        const card = document.createElement('a');
         card.className = 'rel-card';
-        card.onclick = () => openWatchView(node.id);
+        card.href = `/watch/${node.id}/${toSlug(title)}`;
+        card.addEventListener('click', (e) => { e.preventDefault(); openWatchView(node.id); });
         card.innerHTML = `
           <img class="rel-img" src="${node.coverImage.large}" loading="lazy" alt="Watch ${title}">
           <div class="rel-info">
@@ -2100,14 +2135,30 @@ function setLang(l) {
 window.addEventListener('popstate', (e) => {
   const path = window.location.pathname;
   const watchMatch = path.match(/^\/watch\/(\d+)/);
+  const urlParams = new URLSearchParams(window.location.search);
+  const searchQuery = urlParams.get('search');
+  
+  // Close modal if open on back/forward
+  const m = document.getElementById('legal-modal');
+  if (m && m.classList.contains('active')) {
+    closeModal(false);
+  }
+  
   if (watchMatch) {
     openWatchView(parseInt(watchMatch[1]));
+  } else if (searchQuery) {
+    document.getElementById('search-input').value = searchQuery;
+    doSearch();
   } else if (path === '/trending') {
     goSearchView('trending', 'Trending Now');
   } else if (path === '/top-rated') {
     goSearchView('top', 'Top Rated');
   } else if (path === '/airing') {
     goSearchView('airing', 'Currently Airing');
+  } else if (path === '/watchlist') {
+    loadWatchlist(false);
+  } else if (['/terms', '/privacy', '/dmca', '/contact'].includes(path)) {
+    openModal(path.substring(1), false);
   } else {
     goHome();
   }
@@ -2234,8 +2285,8 @@ async function fetchScheduleData(isNewDate = false) {
     return `
       <div class="schedule-row">
         <span class="s-time">${timeStr}</span>
-        <span class="s-title" onclick="openWatchView(${item.media.id})">${title}</span>
-        <span class="s-ep" onclick="openWatchView(${item.media.id})">▶ Episode ${item.episode}</span>
+        <a class="s-title" href="/watch/${item.media.id}/${toSlug(title)}" onclick="event.preventDefault(); openWatchView(${item.media.id});">${title}</a>
+        <a class="s-ep" href="/watch/${item.media.id}/${toSlug(title)}" onclick="event.preventDefault(); openWatchView(${item.media.id});">▶ Episode ${item.episode}</a>
       </div>
     `;
   }).join('');
@@ -2274,17 +2325,25 @@ function scrollDates(dir) {
   const watchMatch = path.match(/^\/watch\/(\d+)/);
   const urlParams = new URLSearchParams(window.location.search);
   const oldAnimeId = urlParams.get('anime');
+  const searchQuery = urlParams.get('search');
 
   if (watchMatch) {
     openWatchView(parseInt(watchMatch[1]));
   } else if (oldAnimeId) {
     openWatchView(parseInt(oldAnimeId));
+  } else if (searchQuery) {
+    document.getElementById('search-input').value = searchQuery;
+    doSearch();
   } else if (path === '/trending') {
     goSearchView('trending', 'Trending Now');
   } else if (path === '/top-rated') {
     goSearchView('top', 'Top Rated');
   } else if (path === '/airing') {
     goSearchView('airing', 'Currently Airing');
+  } else if (path === '/watchlist') {
+    loadWatchlist(false);
+  } else if (['/terms', '/privacy', '/dmca', '/contact'].includes(path)) {
+    openModal(path.substring(1), false);
   }
     
   const [trending, airing, top, finished] = await Promise.all([
