@@ -1,31 +1,6 @@
 export default async function handler(req, res) {
   const AL = 'https://graphql.anilist.co';
 
-  async function fetchAnime(page, sort, filter = '') {
-    const query = `
-      query($page: Int) {
-        Page(page: $page, perPage: 50) {
-          pageInfo { hasNextPage }
-          media(sort: ${sort}, type: ANIME, isAdult: false ${filter}) {
-            id
-            title { romaji english native }
-          }
-        }
-      }`;
-    try {
-      const r = await fetch(AL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, variables: { page } })
-      });
-      const j = await r.json();
-      return j.data?.Page?.media || [];
-    } catch (e) {
-      console.error(`Error fetching page ${page} for sort ${sort}:`, e);
-      return [];
-    }
-  }
-
   function toSlug(titleObj) {
     const raw = titleObj.english || titleObj.romaji || titleObj.native || 'anime';
     return raw
@@ -40,31 +15,43 @@ export default async function handler(req, res) {
   }
 
   try {
-    const allAnime = new Map();
+    const query = `query {
+      t1: Page(page: 1, perPage: 50) { media(sort: TRENDING_DESC, type: ANIME, isAdult: false) { id title { romaji english native } } }
+      t2: Page(page: 2, perPage: 50) { media(sort: TRENDING_DESC, type: ANIME, isAdult: false) { id title { romaji english native } } }
+      t3: Page(page: 3, perPage: 50) { media(sort: TRENDING_DESC, type: ANIME, isAdult: false) { id title { romaji english native } } }
+      t4: Page(page: 4, perPage: 50) { media(sort: TRENDING_DESC, type: ANIME, isAdult: false) { id title { romaji english native } } }
+      s1: Page(page: 1, perPage: 50) { media(sort: SCORE_DESC, type: ANIME, isAdult: false) { id title { romaji english native } } }
+      s2: Page(page: 2, perPage: 50) { media(sort: SCORE_DESC, type: ANIME, isAdult: false) { id title { romaji english native } } }
+      s3: Page(page: 3, perPage: 50) { media(sort: SCORE_DESC, type: ANIME, isAdult: false) { id title { romaji english native } } }
+      s4: Page(page: 4, perPage: 50) { media(sort: SCORE_DESC, type: ANIME, isAdult: false) { id title { romaji english native } } }
+      r1: Page(page: 1, perPage: 50) { media(sort: POPULARITY_DESC, type: ANIME, status: RELEASING, isAdult: false) { id title { romaji english native } } }
+      r2: Page(page: 2, perPage: 50) { media(sort: POPULARITY_DESC, type: ANIME, status: RELEASING, isAdult: false) { id title { romaji english native } } }
+      r3: Page(page: 3, perPage: 50) { media(sort: POPULARITY_DESC, type: ANIME, status: RELEASING, isAdult: false) { id title { romaji english native } } }
+      r4: Page(page: 4, perPage: 50) { media(sort: POPULARITY_DESC, type: ANIME, status: RELEASING, isAdult: false) { id title { romaji english native } } }
+    }`;
 
-    const categories = [
-      { sort: 'TRENDING_DESC', filter: '' },
-      { sort: 'SCORE_DESC', filter: '' },
-      { sort: 'POPULARITY_DESC', filter: ', status: RELEASING' },
-    ];
+    const r = await fetch(AL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query })
+    });
+    const j = await r.json();
 
-    // Build promises to fetch 5 pages concurrently per category (250 items per category)
-    // This is extremely fast, prevents 504 timeouts, and easily keeps under AniList rate limits.
-    const promises = [];
-    for (const cat of categories) {
-      for (let page = 1; page <= 5; page++) {
-        promises.push(fetchAnime(page, cat.sort, cat.filter));
-      }
+    if (j.errors && j.errors.length > 0) {
+      throw new Error(j.errors[0].message);
     }
 
-    const results = await Promise.all(promises);
-
-    // Merge unique anime by ID
-    results.flat().forEach(a => {
-      if (a && a.id) {
-        allAnime.set(a.id, a);
-      }
-    });
+    const allAnime = new Map();
+    if (j.data) {
+      Object.keys(j.data).forEach(key => {
+        const mediaList = j.data[key]?.media || [];
+        mediaList.forEach(a => {
+          if (a && a.id) {
+            allAnime.set(a.id, a);
+          }
+        });
+      });
+    }
 
     const staticUrls = `
   <url>
