@@ -30,7 +30,10 @@
 <meta name="robots" content="index, follow">
 
 <!-- Canonical URL -->
-<link rel="canonical" href="https://kage-watch.vercel.app/">
+<link id="canonical-link" rel="canonical" href="https://kage-watch.vercel.app/">
+<script>
+  document.getElementById('canonical-link').setAttribute('href', window.location.origin + window.location.pathname);
+</script>
 
 <!-- Schema.org Structured Data -->
 <script type="application/ld+json">
@@ -1206,6 +1209,17 @@ async function alQ(query, vars = {}) {
 function clearHistory() { Store.clearHist(); }
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 
+function updateCanonical() {
+  const canonical = document.getElementById('canonical-link') || document.querySelector('link[rel="canonical"]');
+  if (canonical) {
+    canonical.setAttribute('href', window.location.origin + window.location.pathname);
+  }
+  const ogUrl = document.querySelector('meta[property="og:url"]');
+  if (ogUrl) {
+    ogUrl.setAttribute('content', window.location.origin + window.location.pathname);
+  }
+}
+
 // ── MODAL LOGIC ──
 const legalData = {
   terms: { title: "Terms of Service", content: "<p>By accessing KageWatch, you agree to be bound by these Terms of Service.</p><h3>Use of Service</h3><p>KageWatch provides a custom user interface that aggregates links to third-party streaming providers. We do not host, upload, or manage any media files on our own servers.</p><h3>Disclaimer</h3><p>The service is provided 'as is' without any warranties.</p>" },
@@ -1221,6 +1235,7 @@ function openModal(type, updateHistory = true) {
   document.body.style.overflow = 'hidden'; 
   if (updateHistory && window.location.pathname !== '/' + type) {
     window.history.pushState({ modal: type }, '', '/' + type);
+    updateCanonical();
   }
 }
 function closeModal(updateHistory = true) {
@@ -1228,6 +1243,7 @@ function closeModal(updateHistory = true) {
   setTimeout(() => { m.style.display = 'none'; document.body.style.overflow = ''; }, 300);
   if (updateHistory && ['/terms', '/privacy', '/dmca', '/contact'].includes(window.location.pathname)) {
     window.history.pushState({}, '', '/');
+    updateCanonical();
   }
 }
 
@@ -1434,7 +1450,10 @@ async function goSearchView(type, label, subtitle) {
 
   // 🚀 URL update
   const urlMap = { trending: '/trending', top: '/top-rated', airing: '/airing' };
-  if (urlMap[type]) window.history.pushState({ searchType: type, label }, '', urlMap[type]);
+  if (urlMap[type]) {
+    window.history.pushState({ searchType: type, label }, '', urlMap[type]);
+    updateCanonical();
+  }
   document.title = `${label} Anime - KageWatch`;
 
   let sort = 'TRENDING_DESC', filter = '';
@@ -1463,6 +1482,7 @@ async function doSearch() {
   if (url.searchParams.get('search') !== q) {
     url.searchParams.set('search', q);
     window.history.pushState({}, '', url.pathname + url.search);
+    updateCanonical();
   }
 
   const d = await alQ(`query($s:String){Page(perPage:40){media(search:$s,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`, {s: q});
@@ -1500,6 +1520,7 @@ function loadWatchlist(updateHistory = true) {
   updateNavIndicator();
   if (updateHistory && window.location.pathname !== '/watchlist') {
     window.history.pushState({ view: 'watchlist' }, '', '/watchlist');
+    updateCanonical();
     document.title = 'My Watchlist - KageWatch';
   }
 }
@@ -1695,11 +1716,8 @@ function goHome() {
       ogTitle.setAttribute("content", "KageWatch - Watch Anime Online Free");
       document.querySelector('meta[property="og:description"]').setAttribute("content", "Watch anime online in HD with Sub and Dub support.");
       document.querySelector('meta[property="og:image"]').setAttribute("content", "https://kage-watch.vercel.app/favicon.png");
-      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
   }
-  // Canonical reset
-  const canonical = document.querySelector('link[rel="canonical"]');
-  if(canonical) canonical.setAttribute('href', 'https://kage-watch.vercel.app/');
+  updateCanonical();
 }
 
 let isAutoNext = true;
@@ -1758,15 +1776,13 @@ async function openWatchView(id) {
   document.title = `${getTitle(m.title)} - Watch Online Free | KageWatch`;
   document.querySelector('meta[name="description"]').setAttribute("content", `${getTitle(m.title)} anime episodes online in HD. Watch subbed and dubbed anime free on KageWatch.`);
   
-  const canonical = document.querySelector('link[rel="canonical"]');
-  if(canonical) canonical.setAttribute('href', window.location.href);
+  updateCanonical();
 
   const ogTitle = document.querySelector('meta[property="og:title"]');
   if(ogTitle) {
       ogTitle.setAttribute("content", `${getTitle(m.title)} - Watch on KageWatch`);
       document.querySelector('meta[property="og:description"]').setAttribute("content", `${getTitle(m.title)} anime episodes online in HD. Watch subbed and dubbed anime free on KageWatch.`);
       document.querySelector('meta[property="og:image"]').setAttribute("content", m.coverImage.extraLarge || m.coverImage.large);
-      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
   }
 
   document.getElementById('lang-sub').classList.add('active');
