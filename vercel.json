@@ -17,6 +17,30 @@
       "destination": "/index.html"
     },
     {
+      "source": "/watch/:id",
+      "destination": "/api/render-seo?id=:id"
+    },
+    {
+      "source": "/watch/:id/:slug",
+      "destination": "/api/render-seo?id=:id&slug=:slug"
+    },
+    {
+      "source": "/trending",
+      "destination": "/api/render-seo?path=trending"
+    },
+    {
+      "source": "/top-rated",
+      "destination": "/api/render-seo?path=top-rated"
+    },
+    {
+      "source": "/airing",
+      "destination": "/api/render-seo?path=airing"
+    },
+    {
+      "source": "/watchlist",
+      "destination": "/api/render-seo?path=watchlist"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
