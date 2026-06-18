@@ -195,6 +195,7 @@ export default async function handler(req, res) {
 
         const parsedHtml = replaceMeta(html, metadata);
         res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=600');
         return res.status(200).send(parsedHtml);
       } else {
         throw new Error('Media not found on AniList');
@@ -209,6 +210,7 @@ export default async function handler(req, res) {
       };
       const parsedHtml = replaceMeta(html, fallbackMetadata);
       res.setHeader('Content-Type', 'text/html');
+      res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=60');
       return res.status(200).send(parsedHtml);
     }
   }
@@ -276,10 +278,12 @@ export default async function handler(req, res) {
   if (metadata) {
     const parsedHtml = replaceMeta(html, metadata);
     res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=600');
     return res.status(200).send(parsedHtml);
   }
 
   // Final fallback: serve unmodified index.html
   res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=600');
   res.status(200).send(html);
 }
