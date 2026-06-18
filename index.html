@@ -23,7 +23,19 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://graphql.anilist.co">
+<link rel="preconnect" href="https://cdn.plyr.io">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="dns-prefetch" href="https://graphql.anilist.co">
+<link rel="dns-prefetch" href="https://cdn.plyr.io">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://unpkg.com">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" media="print" onload="this.media='all'">
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+</noscript>
 
 <!-- Sitemap & Robots -->
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
@@ -289,7 +301,7 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 @keyframes cardEntrance { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 /* Premium Anime Cards */
-.a-card { flex-shrink: 0; width: 160px; cursor: pointer; border-radius: 12px; background: var(--card); border: 1px solid var(--border); position: relative; transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1); display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+.a-card { flex-shrink: 0; width: 160px; cursor: pointer; border-radius: 12px; background: var(--card); border: 1px solid var(--border); position: relative; transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1); display: flex; flex-direction: column; text-decoration: none; color: inherit; will-change: transform, opacity; }
 .a-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--accent); box-shadow: 0 15px 40px var(--glow); z-index: 10; }
 .a-card:hover .a-card-img { filter: blur(3px) brightness(0.5); }
 .a-card-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s; z-index:2; }
@@ -397,7 +409,7 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
 .server-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 10px var(--glow); }
 #airing-schedule { display:none; background: var(--card2); padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.85rem; color: var(--text); border-left: 4px solid var(--accent); align-items: center; gap: 10px; }
 .anime-details-box { display: flex; gap: 20px; background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 8px; }
-.anime-cover { width: 120px; border-radius: 8px; flex-shrink: 0; }
+.anime-cover { width: 120px; aspect-ratio: 2/3; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
 .anime-info h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 10px; letter-spacing: 1px; line-height: 1.1; }
 .anime-desc { font-size: 0.85rem; color: var(--muted2); line-height: 1.6; margin-bottom: 16px; }
 .anime-tags { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -644,6 +656,14 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
   from { transform: translateX(0); }
   to { transform: translateX(-5px); }
 }
+/* --- 🏎️ Rendering & CSS Containment Optimizations --- */
+#history-section { content-visibility: auto; contain-intrinsic-size: 200px; }
+#trending-section { content-visibility: auto; contain-intrinsic-size: 300px; }
+#airing-section { content-visibility: auto; contain-intrinsic-size: 300px; }
+#finished-section { content-visibility: auto; contain-intrinsic-size: 300px; }
+#top-section { content-visibility: auto; contain-intrinsic-size: 300px; }
+.schedule-section { content-visibility: auto; contain-intrinsic-size: 500px; }
+#main-footer { content-visibility: auto; contain-intrinsic-size: 350px; }
 </style>
 </head>
 <body>
@@ -735,7 +755,7 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
       <div class="h-scroll" id="history-scroll"></div>
     </section>
     
-    <section class="strip-section">
+    <section class="strip-section" id="trending-section">
       <div class="strip-head">
         <div class="strip-title"><span class="bar"></span>Trending Now</div>
         <span class="see-all" onclick="goSearchView('trending','Trending Now')" style="cursor:pointer;font-size:0.8rem;color:var(--muted2)">See all →</span>
@@ -743,7 +763,7 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
       <div class="h-scroll" id="strip-trending"></div>
     </section>
     
-    <section class="strip-section">
+    <section class="strip-section" id="airing-section">
       <div class="strip-head">
         <div class="strip-title"><span class="bar"></span>Currently Airing</div>
         <span class="see-all" onclick="goSearchView('airing','Currently Airing')" style="cursor:pointer;font-size:0.8rem;color:var(--muted2)">See all →</span>
@@ -751,14 +771,14 @@ button:active, .btn-watch:active, .filter-chip:active, .server-btn:active, .acti
       <div class="h-scroll" id="strip-airing"></div>
     </section>
 
-    <section class="strip-section">
+    <section class="strip-section" id="finished-section">
       <div class="strip-head">
         <div class="strip-title"><span class="bar"></span>Recently Finished</div>
       </div>
       <div class="h-scroll" id="strip-finished"></div>
     </section>
     
-    <section class="strip-section" style="padding-bottom:20px">
+    <section class="strip-section" id="top-section" style="padding-bottom:20px">
       <div class="strip-head">
         <div class="strip-title"><span class="bar"></span>Top Rated</div>
         <span class="see-all" onclick="goSearchView('top','Top Rated')" style="cursor:pointer;font-size:0.8rem;color:var(--muted2)">See all →</span>
@@ -1186,24 +1206,137 @@ function toSlug(title) {
     .replace(/(^-|-$)/g, '');
 }
 
-async function alQ(query, vars = {}) {
-  const cacheKey = btoa(query + JSON.stringify(vars));
-  const cachedData = localStorage.getItem(cacheKey);
-  if (cachedData) {
-    const { timestamp, data } = JSON.parse(cachedData);
-    if (Date.now() - timestamp < 900000) return data; 
-  }
+const memoryCache = new Map();
+const pendingRequests = new Map();
+
+function pruneLocalStorageCache() {
   try {
-    const r = await fetch(AL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, variables: vars })
-    });
-    if (r.status === 403) { showToast("API Limit hit! Loading from Cache."); return JSON.parse(cachedData || "{}").data || null; }
-    const j = await r.json();
-    localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: j.data }));
-    return j.data;
-  } catch (e) { return null; }
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('al_cache_')) {
+        keys.push(key);
+      }
+    }
+    if (keys.length > 150) {
+      const parsed = keys.map(k => {
+        try {
+          const item = JSON.parse(localStorage.getItem(k));
+          return { key: k, timestamp: item.timestamp || 0 };
+        } catch {
+          return { key: k, timestamp: 0 };
+        }
+      });
+      parsed.sort((a, b) => a.timestamp - b.timestamp);
+      for (let i = 0; i < 75; i++) {
+        localStorage.removeItem(parsed[i].key);
+      }
+    }
+  } catch (e) {
+    console.warn("Cache pruning failed", e);
+  }
+}
+
+async function fetchWithRetry(query, vars, cacheKey, isBackground = false, abortSignal = null, retries = 3, delay = 1000) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const startTime = performance.now();
+      const r = await fetch(AL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: vars }),
+        signal: abortSignal
+      });
+      
+      if (r.status === 429 || r.status === 403) {
+        throw new Error(`API Status Code: ${r.status}`);
+      }
+
+      if (!r.ok) {
+        throw new Error(`HTTP Error: ${r.statusText}`);
+      }
+
+      const j = await r.json();
+      if (j.errors) {
+        throw new Error(j.errors[0]?.message || "GraphQL Error");
+      }
+
+      const data = j.data;
+      if (data) {
+        const duration = performance.now() - startTime;
+        if (typeof KageWatchAnalytics !== 'undefined') {
+          KageWatchAnalytics.logApiLatency('AniList GraphQL API', duration);
+        }
+        memoryCache.set(cacheKey, { timestamp: Date.now(), data });
+        try {
+          pruneLocalStorageCache();
+          localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data }));
+        } catch (e) {}
+        return data;
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') {
+        throw e;
+      }
+      if (attempt === retries) {
+        console.warn(`Request failed after ${retries} attempts:`, e);
+        if (isBackground) return null;
+        try {
+          const fallback = localStorage.getItem(cacheKey);
+          if (fallback) {
+            return JSON.parse(fallback).data;
+          }
+        } catch {}
+        return null;
+      }
+      await new Promise(res => setTimeout(res, delay * attempt));
+    }
+  }
+}
+
+async function alQ(query, vars = {}, abortSignal = null) {
+  const cacheKey = 'al_cache_' + btoa(unescape(encodeURIComponent(query + JSON.stringify(vars))));
+  const now = Date.now();
+  
+  if (memoryCache.has(cacheKey)) {
+    const { timestamp, data } = memoryCache.get(cacheKey);
+    if (now - timestamp < 300000) {
+      return data;
+    }
+    if (now - timestamp < 3600000) {
+      fetchWithRetry(query, vars, cacheKey, true, abortSignal).catch(() => {});
+      return data;
+    }
+  }
+
+  try {
+    const cachedData = localStorage.getItem(cacheKey);
+    if (cachedData) {
+      const { timestamp, data } = JSON.parse(cachedData);
+      memoryCache.set(cacheKey, { timestamp, data });
+      if (now - timestamp < 300000) {
+        return data;
+      }
+      if (now - timestamp < 3600000) {
+        fetchWithRetry(query, vars, cacheKey, true, abortSignal).catch(() => {});
+        return data;
+      }
+    }
+  } catch (e) {}
+
+  if (pendingRequests.has(cacheKey)) {
+    return pendingRequests.get(cacheKey);
+  }
+
+  const fetchPromise = fetchWithRetry(query, vars, cacheKey, false, abortSignal);
+  pendingRequests.set(cacheKey, fetchPromise);
+
+  try {
+    const data = await fetchPromise;
+    return data;
+  } finally {
+    pendingRequests.delete(cacheKey);
+  }
 }
 
 function clearHistory() { Store.clearHist(); }
@@ -1349,6 +1482,9 @@ function showView(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(viewId).classList.add('active');
   window.scrollTo(0, 0);
+  if (viewId !== 'search-view' && viewId !== 'watch-view' && window.lazyCardObserver) {
+    window.lazyCardObserver.disconnect();
+  }
 }
 
 function showSearchSkeleton(count = 20) {
@@ -1371,7 +1507,7 @@ function fillSearchView(list) {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:80px 20px;"><p style="font-size:1.1rem;color:var(--muted2);margin-top:12px;">Nothing found.</p></div>`;
     return;
   }
-  list.forEach((a, i) => grid.appendChild(makeCard(a, i)));
+  list.forEach((a, i) => grid.appendChild(makeCard(a, i, true)));
 }
 
 // ── ADVANCED FILTER LOGIC ──
@@ -1406,7 +1542,13 @@ function toggleAdvGenre(el) {
   }
 }
 
+let filterAbortController = null;
 async function executeAdvancedFilter() {
+  if (filterAbortController) {
+    filterAbortController.abort();
+  }
+  filterAbortController = new AbortController();
+
   showSearchSkeleton();
   
   const format = document.getElementById('adv-f-type').value;
@@ -1436,8 +1578,14 @@ async function executeAdvancedFilter() {
   document.getElementById('sv-title').textContent = "Filtered Results";
   document.getElementById('sv-subtitle').textContent = "Based on your selections";
 
-  const d = await alQ(q, vars);
-  fillSearchView(d?.Page?.media || []);
+  try {
+    const d = await alQ(q, vars, filterAbortController.signal);
+    fillSearchView(d?.Page?.media || []);
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      console.error("Advanced Filter Error:", err);
+    }
+  }
 }
 
 // --- ORIGINAL SEARCH & QUICK FILTER LOGIC ---
@@ -1468,9 +1616,15 @@ async function goSearchView(type, label, subtitle) {
   document.querySelector('meta[name="description"]').setAttribute("content", `Watch ${label} anime online free on KageWatch.`);
 }
 
+let searchAbortController = null;
 async function doSearch() {
   const q = document.getElementById('search-input').value.trim();
   if (!q) return;
+
+  if (searchAbortController) {
+    searchAbortController.abort();
+  }
+  searchAbortController = new AbortController();
 
   document.getElementById('sv-title').textContent = `Results for "${q}"`;
   document.getElementById('sv-subtitle').textContent = 'Showing best matches from AniList';
@@ -1485,10 +1639,17 @@ async function doSearch() {
     updateCanonical();
   }
 
-  const d = await alQ(`query($s:String){Page(perPage:40){media(search:$s,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`, {s: q});
-  const results = d?.Page?.media || [];
-  document.getElementById('sv-subtitle').textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
-  fillSearchView(results);
+  try {
+    const d = await alQ(`query($s:String){Page(perPage:40){media(search:$s,type:ANIME,isAdult:false){id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description}}}`, {s: q}, searchAbortController.signal);
+    const results = d?.Page?.media || [];
+    document.getElementById('sv-subtitle').textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
+    fillSearchView(results);
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      console.error("Search Error:", err);
+      document.getElementById('sv-subtitle').textContent = 'Error loading results';
+    }
+  }
 }
 document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 
@@ -1526,7 +1687,19 @@ function loadWatchlist(updateHistory = true) {
 }
 
 // ── HOME VIEW LOGIC ──
-function makeCard(a, index = 0){
+const lazyCardObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const card = entry.target;
+      const animeData = JSON.parse(card.dataset.anime);
+      const index = parseInt(card.dataset.index || "0");
+      renderCardContents(card, animeData, index);
+      observer.unobserve(card);
+    }
+  });
+}, { rootMargin: '100px 100px 300px 100px' });
+
+function renderCardContents(el, a, index) {
   const score = a.averageScore ? `<div class="a-card-score">⭐ ${(a.averageScore/10).toFixed(1)}</div>` : '';
   const live = a.status === 'RELEASING' ? `<div class="live-badge"><div class="dot"></div>Live</div>` : '';
   const isFav = Store.isFav(a.id);
@@ -1547,19 +1720,14 @@ function makeCard(a, index = 0){
       </div>
     </div>`;
 
-  const el = document.createElement('a'); 
-  el.className = 'a-card';
-  el.href = `/watch/${a.id}/${toSlug(getTitle(a.title))}`;
-  el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${index * 0.04}s both`;
-  
   el.addEventListener('mouseenter', () => {
-   showTooltip(el, a); 
-   document.getElementById('ambient-bg').style.backgroundImage = `url('${bannerBg}')`;
-   document.getElementById('ambient-bg').classList.add('active');
+    showTooltip(el, a); 
+    document.getElementById('ambient-bg').style.backgroundImage = `url('${bannerBg}')`;
+    document.getElementById('ambient-bg').classList.add('active');
   });
   el.addEventListener('mouseleave', () => {
-   hideTooltip();
-   document.getElementById('ambient-bg').classList.remove('active');
+    hideTooltip();
+    document.getElementById('ambient-bg').classList.remove('active');
   });
   el.addEventListener('click', (e) => {
     e.preventDefault();
@@ -1569,7 +1737,7 @@ function makeCard(a, index = 0){
   
   el.innerHTML = `
     <div class="a-card-img-wrap">
-      <img class="a-card-img" src="${a.coverImage.large}" loading="lazy" alt="Watch ${getTitle(a.title)} online">
+      <img class="a-card-img" src="${a.coverImage.large}" loading="lazy" decoding="async" alt="Watch ${getTitle(a.title)} online">
       <div class="a-card-overlay"><div class="a-card-play">▶</div></div>
       ${score} ${live} ${subDubBadges}
     </div>
@@ -1577,13 +1745,33 @@ function makeCard(a, index = 0){
       <h2 class="a-card-title">${getTitle(a.title)}</h2>
       <button class="btn-fav ${isFav ? 'saved' : ''}" onclick="event.stopPropagation(); Store.toggleFav(${JSON.stringify(a).replace(/"/g, '&quot;')}); this.classList.toggle('saved');" aria-label="Save to Watchlist">♥</button>
     </div>`;
+}
+
+function makeCard(a, index = 0, lazy = false){
+  const el = document.createElement('a'); 
+  el.className = 'a-card';
+  el.href = `/watch/${a.id}/${toSlug(getTitle(a.title))}`;
+  el.style.animation = `cardEntrance 0.5s cubic-bezier(0.34,1.3,0.64,1) ${index * 0.04}s both`;
+  
+  if (lazy) {
+    el.dataset.anime = JSON.stringify(a);
+    el.dataset.index = index;
+    el.innerHTML = `
+      <div class="a-card-img-wrap skeleton" style="aspect-ratio:2/3; border-radius: 11px 11px 0 0;"></div>
+      <div class="a-card-body" style="height:62px; display:flex; align-items:center; padding:12px 10px;">
+        <div class="skeleton" style="height:12px; width:75%; border-radius:3px;"></div>
+      </div>`;
+    lazyCardObserver.observe(el);
+  } else {
+    renderCardContents(el, a, index);
+  }
   return el;
 }
 
 function fillStrip(id,list){
   const c=document.getElementById(id); c.innerHTML='';
   if(!list.length) { c.innerHTML = `<div class="empty-state"><p>Nothing found here.</p></div>`; return; }
-  list.forEach((a, i)=>c.appendChild(makeCard(a, i)));
+  list.forEach((a, i)=>c.appendChild(makeCard(a, i, false)));
 }
 
 function buildHero(list){
@@ -1592,11 +1780,31 @@ function buildHero(list){
   const dotsEl = document.getElementById('hero-dots');
   cont.innerHTML = ''; dotsEl.innerHTML = '';
   
+  if (list.length > 0) {
+    const firstBanner = list[0].bannerImage || list[0].coverImage.extraLarge || list[0].coverImage.large;
+    const firstCover = list[0].coverImage.extraLarge || list[0].coverImage.large;
+    
+    if (firstBanner) {
+      const linkB = document.createElement('link');
+      linkB.rel = 'preload';
+      linkB.as = 'image';
+      linkB.href = firstBanner;
+      document.head.appendChild(linkB);
+    }
+    if (firstCover) {
+      const linkC = document.createElement('link');
+      linkC.rel = 'preload';
+      linkC.as = 'image';
+      linkC.href = firstCover;
+      document.head.appendChild(linkC);
+    }
+  }
+  
   list.forEach((a,i)=>{
     const slide=document.createElement('div');
     slide.className='hero-slide'+(i===0?' active':'');
     
-    const bannerUrl = a.bannerImage || a.coverImage.extraLarge;
+    const bannerUrl = a.bannerImage || a.coverImage.extraLarge || a.coverImage.large;
     const coverUrl = a.coverImage.extraLarge || a.coverImage.large;
     
     slide.innerHTML=`
@@ -1613,7 +1821,7 @@ function buildHero(list){
           </div>
         </div>
         <div class="hero-right">
-          <img class="hero-cover" ${i === 0 ? `src="${coverUrl}"` : `data-src="${coverUrl}"`} alt="${getTitle(a.title)}">
+          <img class="hero-cover" ${i === 0 ? `src="${coverUrl}" fetchpriority="high" decoding="async"` : `data-src="${coverUrl}" loading="lazy" decoding="async"`} alt="${getTitle(a.title)}">
         </div>
       </div>`;
     cont.appendChild(slide);
@@ -1623,15 +1831,21 @@ function buildHero(list){
   startHeroTimer();
 }
 
+let heroParallaxFrame = null;
 document.getElementById('hero').addEventListener('mousemove', e => {
   const { clientX, clientY } = e;
-  const x = (clientX / window.innerWidth - 0.5) * 20;
-  const y = (clientY / window.innerHeight - 0.5) * 20;
-  const activeBg = document.querySelector('.hero-slide.active .hero-bg');
-  const activeCover = document.querySelector('.hero-slide.active .hero-cover');
-  if(activeBg) activeBg.style.transform = `scale(1.05) translate(${x}px, ${y}px)`;
-  if(activeCover) activeCover.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-});
+  if (heroParallaxFrame) {
+    cancelAnimationFrame(heroParallaxFrame);
+  }
+  heroParallaxFrame = requestAnimationFrame(() => {
+    const x = (clientX / window.innerWidth - 0.5) * 20;
+    const y = (clientY / window.innerHeight - 0.5) * 20;
+    const activeBg = document.querySelector('.hero-slide.active .hero-bg');
+    const activeCover = document.querySelector('.hero-slide.active .hero-cover');
+    if (activeBg) activeBg.style.transform = `scale(1.05) translate3d(${x}px, ${y}px, 0)`;
+    if (activeCover) activeCover.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg)`;
+  });
+}, { passive: true });
 
 function goHero(i){
   document.querySelectorAll('.hero-slide').forEach((s,j)=>{
@@ -1696,6 +1910,7 @@ function renderHistory(){
 function goHome() {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('home-view').classList.add('active');
+  destroyActivePlayer();
   document.getElementById('player-wrap').innerHTML = ''; 
   clearInterval(window.airingTimer);
   
@@ -1866,7 +2081,7 @@ async function openWatchView(id) {
     if(validRecs.length > 0) {
       recWrap.style.display = 'block';
       validRecs.forEach((rec, i) => {
-        recGrid.appendChild(makeCard(rec, i));
+        recGrid.appendChild(makeCard(rec, i, true));
       });
     } else { 
       recWrap.style.display = 'none'; 
@@ -1890,9 +2105,32 @@ async function openWatchView(id) {
   if(watched.length > 0) playEp(Math.max(...watched));
 }
 
+window.activeHlsInstance = null;
+window.activePlyrInstance = null;
+
+function destroyActivePlayer() {
+  if (window.activePlyrInstance) {
+    try {
+      window.activePlyrInstance.destroy();
+    } catch (e) {
+      console.warn("Failed to destroy Plyr:", e);
+    }
+    window.activePlyrInstance = null;
+  }
+  if (window.activeHlsInstance) {
+    try {
+      window.activeHlsInstance.destroy();
+    } catch (e) {
+      console.warn("Failed to destroy Hls:", e);
+    }
+    window.activeHlsInstance = null;
+  }
+}
+
 // 🚀 NATIVE KAGEWATCH VIP PLAYER FUNCTION
 async function playEp(ep) {
   clearInterval(window.autoNextInterval);
+  destroyActivePlayer();
   ep = parseInt(ep); 
   if(ep < 1 || ep > state.totalEps) return;
   state.currentEp = ep;
@@ -1915,10 +2153,10 @@ async function playEp(ep) {
   if (PROVIDERS[state.provider].type === 'native') {
       playerWrap.innerHTML = `<div class="player-loading" id="p-loader"> Loading Stream...</div>`;
 
-      let skipTimes = [];
+      const skipTimes = [];
       fetch(`https://api.aniskip.com/v2/skip-times/${state.malId}/${ep}?types=op&types=ed&episodeLength=0`)
           .then(r => r.json())
-          .then(res => { if(res.found) skipTimes = res.results; })
+          .then(res => { if(res && res.found && res.results) skipTimes.push(...res.results); })
           .catch(e => console.log("AniSkip API unreachable"));
 
       const apiUrl = `https://anivexa-api-tawny.vercel.app/watch/anikoto/${state.anilistId}/${state.lang}/anikoto-${ep}`;
@@ -1941,7 +2179,7 @@ async function playEp(ep) {
           const referer = stream.referer || "";
           const proxyUrl = `${PROXY_BASE}?url=${encodeURIComponent(rawUrl)}&referer=${encodeURIComponent(referer)}`;
 
-          const subSource = streamData.subtitles?.filter(s => s.source === stream.server) || [];
+          const subSource = streamData.subtitles?.filter(s => s && s.source === stream.server) || [];
           const subsToUse = subSource.length > 0 ? subSource : (streamData.subtitles || []);
           const tracksHtml = buildSubtitleTracks(subsToUse, referer, state.lang);
 
@@ -1987,8 +2225,14 @@ async function playEp(ep) {
               setupPlayerLogic(playerInstance, skipBtn, skipTimes, ep);
           };
 
-          if (Hls.isSupported()) {
-              const hls = new Hls({ maxBufferLength: 60, maxMaxBufferLength: 600, enableWorker: true });
+          if (window.Hls && Hls.isSupported()) {
+              const hls = new Hls({
+                  maxBufferLength: 30,
+                  maxMaxBufferLength: 90,
+                  enableWorker: true,
+                  backBufferLength: 30
+              });
+              window.activeHlsInstance = hls;
               hls.loadSource(proxyUrl);
               hls.attachMedia(video);
               
@@ -2003,8 +2247,9 @@ async function playEp(ep) {
                       quality: { default: 0, options: availableQualities, forced: true, onChange: (e) => { hls.currentLevel = (e === 0) ? -1 : hls.levels.findIndex(lvl => lvl.height === e); } },
                       i18n: { qualityLabel: { 0: 'Auto' } }
                   });
+                  window.activePlyrInstance = plyrPlayer;
 
-                  if(isAutoPlay) video.play();
+                  if(isAutoPlay) video.play().catch(() => {});
                   injectCustomButtons(plyrPlayer);
               });
               
@@ -2017,7 +2262,8 @@ async function playEp(ep) {
           } else {
               video.src = proxyUrl;
               plyrPlayer = new Plyr(video);
-              if(isAutoPlay) video.play();
+              window.activePlyrInstance = plyrPlayer;
+              if(isAutoPlay) video.play().catch(() => {});
               injectCustomButtons(plyrPlayer);
           }
 
@@ -2039,6 +2285,7 @@ async function playEp(ep) {
 
 function setupPlayerLogic(player, skipBtn, skipTimes, ep) {
     let currentSkip = null;
+    let nextEpisodePrefetched = false;
     const nextBtn = document.getElementById('auto-next-btn');
     const anbText = document.getElementById('anb-text');
     
@@ -2080,6 +2327,11 @@ function setupPlayerLogic(player, skipBtn, skipTimes, ep) {
             } else {
                 if (nextBtn) nextBtn.classList.remove('show');
             }
+
+            if (!nextEpisodePrefetched && t > d * 0.60) {
+                nextEpisodePrefetched = true;
+                prefetchNextEpisode(ep + 1);
+            }
         }
     });
 
@@ -2098,6 +2350,25 @@ function setupPlayerLogic(player, skipBtn, skipTimes, ep) {
     if (typeof setupPartyPlayerListeners === 'function') {
         setupPartyPlayerListeners(player);
     }
+}
+
+function prefetchNextEpisode(nextEp) {
+  const nextApiUrl = `https://anivexa-api-tawny.vercel.app/watch/anikoto/${state.anilistId}/${state.lang}/anikoto-${nextEp}`;
+  fetch(nextApiUrl)
+    .then(r => r.json())
+    .then(data => {
+      const streamData = state.lang === 'dub' ? data?.sdub : data?.ssub;
+      const stream = streamData?.streams?.find(s => s.server === 'VidPlay-1' && s.type === 'hls')
+                  || streamData?.streams?.find(s => s.type === 'hls' && s.default)
+                  || streamData?.streams?.find(s => s.type === 'hls');
+      if (stream && stream.url) {
+        const PROXY_BASE = "https://kagewatch-kagewatch-proxy.hf.space/proxy";
+        const referer = stream.referer || "";
+        const proxyUrl = `${PROXY_BASE}?url=${encodeURIComponent(stream.url)}&referer=${encodeURIComponent(referer)}`;
+        fetch(proxyUrl, { method: 'HEAD' }).catch(() => {});
+      }
+    })
+    .catch(() => {});
 }
 
 function buildSubtitleTracks(subtitles, referer, lang) {
@@ -2332,8 +2603,44 @@ function scrollDates(dir) {
 (async()=>{
   setupDragScroll();
   updateNavIndicator();
-  renderHistory();
-  initScheduleUI(); 
+  
+  if (window.requestIdleCallback) {
+    requestIdleCallback(() => {
+      renderHistory();
+      initScheduleUI();
+    });
+  } else {
+    setTimeout(() => {
+      renderHistory();
+      initScheduleUI();
+    }, 1);
+  }
+
+  // Nav prefetch on hover
+  document.querySelectorAll('#main-nav a, .footer-links a').forEach(link => {
+    link.addEventListener('mouseenter', () => {
+      const href = link.getAttribute('href');
+      if (href === '/trending') {
+        alQ(`query{Page(perPage:40){media(sort:TRENDING_DESC,type:ANIME,isAdult:false){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description }}}`);
+      } else if (href === '/top-rated') {
+        alQ(`query{Page(perPage:40){media(sort:SCORE_DESC,type:ANIME,isAdult:false){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description }}}`);
+      } else if (href === '/airing') {
+        alQ(`query{Page(perPage:40){media(sort:POPULARITY_DESC,type:ANIME,status:RELEASING,isAdult:false){ id title{romaji english} coverImage{large extraLarge} episodes averageScore startDate{year} format genres status bannerImage description }}}`);
+      }
+    }, { passive: true });
+  }); 
+  
+  let headerScrolled = false;
+  const mainHeader = document.getElementById('main-header');
+  if (mainHeader) {
+    window.addEventListener('scroll', () => {
+      const shouldScroll = window.scrollY > 20;
+      if (shouldScroll !== headerScrolled) {
+        headerScrolled = shouldScroll;
+        mainHeader.classList.toggle('scrolled', headerScrolled);
+      }
+    }, { passive: true });
+  } 
   
   // 🚀 URL ROUTING: Initial Load Check
   const path = window.location.pathname;
@@ -2374,6 +2681,14 @@ function scrollDates(dir) {
   fillStrip('strip-airing', airing?.Page?.media||[]);
   fillStrip('strip-finished', finished?.Page?.media||[]);
   fillStrip('strip-top', top?.Page?.media||[]);
+  
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker registered successfully!', reg.scope))
+        .catch(err => console.warn('Service Worker registration failed:', err));
+    });
+  }
   
   // ═══════════════════════════════════════
   // 🔐 AUTH SYSTEM - AniList + MAL
@@ -2602,8 +2917,17 @@ function scrollDates(dir) {
   window.syncToAniList = syncToAniList;
   window.syncToMAL = syncToMAL;
 
-  handleAuthCallback();
-  updateAuthUI();
+  if (window.requestIdleCallback) {
+    requestIdleCallback(() => {
+      handleAuthCallback();
+      updateAuthUI();
+    });
+  } else {
+    setTimeout(() => {
+      handleAuthCallback();
+      updateAuthUI();
+    }, 1);
+  }
 })();
 
 // ── WATCH TOGETHER PEERJS INTEGRATION ──
@@ -3130,6 +3454,122 @@ document.addEventListener('keydown', (e) => {
 
 window.handlePlayerDoubleTap = handlePlayerDoubleTap;
 window.showDoubleTapOverlay = showDoubleTapOverlay;
+
+// ── KAGEWATCH ADVANCED PERFORMANCE ANALYTICS ──
+const KageWatchAnalytics = {
+  metrics: {
+    LCP: null,
+    FID: null,
+    CLS: 0,
+    INP: 0,
+    FPS: 60,
+    usedMemoryMB: 0,
+    apiLatencies: []
+  },
+  
+  init() {
+    this.observeVitals();
+    this.trackFPS();
+    this.trackMemory();
+    this.setupConsoleReport();
+  },
+  
+  observeVitals() {
+    try {
+      const lcpObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        this.metrics.LCP = (lastEntry.startTime / 1000).toFixed(2) + 's';
+      });
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+
+      const fidObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        if (entries.length > 0) {
+          this.metrics.FID = entries[0].processingStart - entries[0].startTime + 'ms';
+        }
+      });
+      fidObserver.observe({ type: 'first-input', buffered: true });
+
+      const clsObserver = new PerformanceObserver((entryList) => {
+        for (const entry of entryList.getEntries()) {
+          if (!entry.hadRecentInput) {
+            this.metrics.CLS += entry.value;
+          }
+        }
+      });
+      clsObserver.observe({ type: 'layout-shift', buffered: true });
+
+      const inpObserver = new PerformanceObserver((entryList) => {
+        for (const entry of entryList.getEntries()) {
+          if (entry.duration > this.metrics.INP) {
+            this.metrics.INP = entry.duration;
+          }
+        }
+      });
+      inpObserver.observe({ type: 'event', durationThreshold: 16, buffered: true });
+    } catch (e) {
+      console.warn("PerformanceObserver not fully supported", e);
+    }
+  },
+
+  trackFPS() {
+    let lastTime = performance.now();
+    let frames = 0;
+    
+    const loop = () => {
+      const now = performance.now();
+      frames++;
+      if (now > lastTime + 1000) {
+        this.metrics.FPS = Math.round((frames * 1000) / (now - lastTime));
+        frames = 0;
+        lastTime = now;
+      }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  },
+
+  trackMemory() {
+    setInterval(() => {
+      if (performance.memory) {
+        this.metrics.usedMemoryMB = Math.round(performance.memory.usedJSHeapSize / 1048576) + 'MB';
+      } else {
+        this.metrics.usedMemoryMB = 'N/A';
+      }
+    }, 5000);
+  },
+
+  logApiLatency(url, duration) {
+    this.metrics.apiLatencies.push({ url, duration, timestamp: Date.now() });
+    if (this.metrics.apiLatencies.length > 20) {
+      this.metrics.apiLatencies.shift();
+    }
+  },
+
+  setupConsoleReport() {
+    setInterval(() => {
+      const avgLatency = this.metrics.apiLatencies.length > 0 
+        ? Math.round(this.metrics.apiLatencies.reduce((a, b) => a + b.duration, 0) / this.metrics.apiLatencies.length) + 'ms' 
+        : 'N/A';
+        
+      console.log(
+        `%c🏎️ KageWatch Core Web Vitals Analytics %c\n` +
+        `• LCP: ${this.metrics.LCP || 'Calculating...'} (Target: <2.5s)\n` +
+        `• FID: ${this.metrics.FID || 'Awaiting interaction...'} (Target: <100ms)\n` +
+        `• CLS: ${this.metrics.CLS.toFixed(4)} (Target: <0.1)\n` +
+        `• INP: ${this.metrics.INP}ms (Target: <200ms)\n` +
+        `• FPS: ${this.metrics.FPS} (Target: 60 FPS)\n` +
+        `• JS Memory: ${this.metrics.usedMemoryMB}\n` +
+        `• Average AniList latency: ${avgLatency}`,
+        "color: #e63950; font-weight: bold; font-size: 1.1rem;",
+        "color: inherit; font-size: 0.9rem;"
+      );
+    }, 10000);
+  }
+};
+
+KageWatchAnalytics.init();
 </script>
 
 <div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999999;align-items:center;justify-content:center;">
